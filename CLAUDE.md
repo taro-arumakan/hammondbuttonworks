@@ -92,15 +92,34 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   product URL, which has no price for guests — production B2B pricing needs Snipcart's
   server-side price-validation webhook, or graduate to Stripe/Medusa.
 
+## Status (2026-06-26)
+- **Repo:** standalone git repo initialized and pushed to
+  **https://github.com/taro-arumakan/hammondbuttonworks** (public). Connected to Vercel,
+  so pushes to `main` auto-deploy.
+- **`src/lib/` was MISSING and has been reconstructed.** The whole library layer
+  (schema, products, pricing, session, auth, allowlist, email, ratelimit, url) never
+  existed in this copy *or* the parent repo / any branch / history — the app had never
+  built. It was rebuilt from the consumers' exact import contracts + the spec above. The
+  contract each lib file must satisfy = the imports in `src/app/**` and `src/components/**`.
+- **Live preview:** **https://hammondbuttonworks.vercel.app** (Vercel production alias,
+  public). Guest gating verified live: 0 prices in guest HTML; `/api/price` 401s guests;
+  magic-link login issues a session and returns correct tiered pricing.
+- **`AUTH_SECRET`** is set on Vercel for all envs as a **Sensitive** var (not readable via
+  `vercel env pull` — expected, not a bug). `NEXT_PUBLIC_SITE_URL` is unset, so email/quote
+  links fall back to the request host (fine for the preview; set it when the domain lands).
+- **Demo login:** no email provider is wired, so magic links print to the Vercel function
+  logs (`vercel logs`), not an inbox. Clicking a link grants a 30-day trade session.
+
 ## Open items / next steps
 - ⚠️ **Trademark check:** an established Japanese brand **"Button Works" (ボタンワークス)**
   exists in the *same* workwear-button niche. Verify "Hammond Button Works" is clear before
-  committing the name to packaging/hardware.
-- Initialize this as its own git repo and push to a dedicated remote.
+  committing the name to packaging/hardware. (Repo is now **public** under this name.)
 - Replace placeholder product specs/prices with the owner's real data.
 - Pixel-perfect logo once the original vector/font is supplied.
 - Photoreal hero images (prompts ready in `content/image-prompts.md`); save to
   `public/images/products/<variantSku>.jpg` and wire via `next/image`.
+- Wire **Resend** (+ verified domain) so trade magic links email instead of hitting logs.
+- Set `NEXT_PUBLIC_SITE_URL` once the domain is finalized.
 - Optional `DEPLOY.md` (Route 53 + Vercel records) — offered, not yet written.
 
 ## Env vars (see `.env.local.example`)
