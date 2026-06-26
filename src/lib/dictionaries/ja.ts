@@ -15,18 +15,21 @@ const ja = {
   },
 
   home: {
-    eyebrow: "日本製のヘリテージ・ワークウェアボタン",
-    title: "本気で使うためのボタンを、業者価格で。",
+    // Display captions are kept in English (brand/display voice); the body copy,
+    // CTAs, and details below stay Japanese. Auto-translated marketing headlines
+    // read awkwardly, so headlines/section titles use the English original.
+    eyebrow: "Heritage workwear buttons · Made in Japan",
+    title: "Buttons built for hard wear, supplied for the trade.",
     subtitle:
       "アパレルメーカー様向けのタック・ジャンパーコート・オーバーオール・刻印ワークボタン。卸売の段階別価格、小ロット対応、名入れ刻印に対応します。",
     browse: "カタログを見る",
     requestQuote: "見積もりを依頼",
     props: [
-      { t: "卸売価格", d: "数量に応じた段階別の卸売価格。ログインで料金を表示します。" },
-      { t: "小ロット対応", d: "サンプル用の小ロットから量産ロットまで対応します。" },
-      { t: "別注対応", d: "名入れ刻印・ロゴ金型・ニッケルセーフの認証仕上げ。" },
+      { t: "Trade pricing", d: "数量に応じた段階別の卸売価格。ログインで料金を表示します。" },
+      { t: "Low minimums", d: "サンプル用の小ロットから量産ロットまで対応します。" },
+      { t: "Made to spec", d: "名入れ刻印・ロゴ金型・ニッケルセーフの認証仕上げ。" },
     ],
-    rangeTitle: "パイロットラインナップ",
+    rangeTitle: "The pilot range",
     viewAll: "すべて見る →",
     guestNote: "価格は承認済みの取引先アカウントに表示されます。",
     guestLogin: "取引先ログイン",
