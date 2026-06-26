@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { ButtonSwatch } from "./ButtonSwatch";
 import type { HoleType, Material } from "@/lib/schema";
+import type { Dictionary } from "@/lib/i18n";
+import { type Locale, fmt } from "@/lib/i18n-config";
 
 /**
  * Logged-in ordering panel. Prices are fetched from the gated /api/price
@@ -24,12 +26,15 @@ type Props = {
   productName: string;
   slug: string;
   unit: string;
+  unitLabel: string;
   moq: number;
   material: Material;
   holeType: HoleType;
   variants: VariantView[];
   productUrl: string;
   snipcartEnabled: boolean;
+  locale: Locale;
+  dict: Dictionary;
 };
 
 type Quote = {
@@ -47,14 +52,17 @@ function money(n: number, currency: string) {
 export function TradeOrderPanel({
   productName,
   slug,
-  unit,
+  unitLabel,
   moq,
   material,
   holeType,
   variants,
   productUrl,
   snipcartEnabled,
+  locale,
+  dict,
 }: Props) {
+  const t = dict.order;
   const [sku, setSku] = useState(variants[0].variantSku);
   const [qty, setQty] = useState(moq);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -73,7 +81,7 @@ export function TradeOrderPanel({
       body: JSON.stringify({ slug, variantSku: sku, qty: Math.max(moq, qty) }),
     })
       .then(async (r) => {
-        if (!r.ok) throw new Error((await r.json()).error ?? "Pricing error");
+        if (!r.ok) throw new Error((await r.json()).error ?? t.pricingError);
         return r.json();
       })
       .then((data: Quote) => active && setQuote(data))
@@ -82,15 +90,15 @@ export function TradeOrderPanel({
     return () => {
       active = false;
     };
-  }, [slug, sku, qty, moq]);
+  }, [slug, sku, qty, moq, t.pricingError]);
 
   return (
     <div className="rounded-xl border border-stone-200 bg-white p-6">
-      <h2 className="text-lg font-semibold">Trade order</h2>
+      <h2 className="text-lg font-semibold">{t.heading}</h2>
 
       {/* Variant (size × finish) selector */}
       <fieldset className="mt-4">
-        <legend className="text-sm font-medium text-stone-700">Size &amp; finish</legend>
+        <legend className="text-sm font-medium text-stone-700">{t.sizeFinish}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {variants.map((v) => {
             const isSel = v.variantSku === sku;
@@ -123,14 +131,14 @@ export function TradeOrderPanel({
       {/* Quantity */}
       <div className="mt-5">
         <label htmlFor="qty" className="text-sm font-medium text-stone-700">
-          Quantity ({unit}) · MOQ {moq}
+          {t.quantity} ({unitLabel}) · {t.moq} {moq}
         </label>
         <div className="mt-2 flex items-center gap-2">
           <button
             type="button"
             onClick={() => setQty((q) => Math.max(moq, q - 1))}
             className="h-9 w-9 rounded-md border border-stone-300 text-lg leading-none"
-            aria-label="Decrease quantity"
+            aria-label={t.decrease}
           >
             −
           </button>
@@ -146,7 +154,7 @@ export function TradeOrderPanel({
             type="button"
             onClick={() => setQty((q) => q + 1)}
             className="h-9 w-9 rounded-md border border-stone-300 text-lg leading-none"
-            aria-label="Increase quantity"
+            aria-label={t.increase}
           >
             +
           </button>
@@ -158,22 +166,24 @@ export function TradeOrderPanel({
         {error ? (
           <p className="text-sm text-red-600">{error}</p>
         ) : loading || !quote ? (
-          <p className="text-sm text-stone-400">Calculating trade price…</p>
+          <p className="text-sm text-stone-400">{t.calculating}</p>
         ) : (
           <>
             <div className="flex items-baseline justify-between">
-              <span className="text-sm text-stone-600">Unit price</span>
+              <span className="text-sm text-stone-600">{t.unitPrice}</span>
               <span className="text-xl font-semibold">
                 {money(quote.unitPrice, quote.currency)}
-                <span className="text-sm font-normal text-stone-400"> / {unit}</span>
+                <span className="text-sm font-normal text-stone-400"> / {unitLabel}</span>
               </span>
             </div>
             <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-sm text-stone-600">Line total ({qty} {unit})</span>
+              <span className="text-sm text-stone-600">
+                {t.lineTotal} ({qty} {unitLabel})
+              </span>
               <span className="font-medium">{money(quote.lineTotal, quote.currency)}</span>
             </div>
             <p className="mt-2 text-xs text-stone-400">
-              Volume price applied at {quote.appliedMinQty}+ {unit}.
+              {fmt(t.volumeApplied, { qty: quote.appliedMinQty, unit: unitLabel })}
             </p>
           </>
         )}
@@ -192,9 +202,9 @@ export function TradeOrderPanel({
           data-item-quantity={String(qty)}
           data-item-min-quantity={String(moq)}
           data-item-custom1-name="Unit"
-          data-item-custom1-value={unit}
+          data-item-custom1-value={unitLabel}
         >
-          Add to cart
+          {t.addToCart}
         </button>
       ) : (
         <button
@@ -203,15 +213,15 @@ export function TradeOrderPanel({
           className="mt-5 w-full rounded-md bg-stone-200 px-4 py-2.5 font-medium text-stone-500"
           title="Set NEXT_PUBLIC_SNIPCART_KEY to enable checkout"
         >
-          {snipcartEnabled ? "Add to cart" : "Cart not configured (test mode)"}
+          {snipcartEnabled ? t.addToCart : t.cartDisabled}
         </button>
       )}
 
       <a
-        href={`/quote?sku=${encodeURIComponent(sku)}&qty=${qty}`}
+        href={`/${locale}/quote?sku=${encodeURIComponent(sku)}&qty=${qty}`}
         className="mt-3 block text-center text-sm text-stone-600 underline"
       >
-        Prefer a custom quote? Request one →
+        {t.customQuote}
       </a>
     </div>
   );

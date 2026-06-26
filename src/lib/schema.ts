@@ -82,6 +82,20 @@ export const VariantSchema = z.object({
 });
 export type Variant = z.infer<typeof VariantSchema>;
 
+// --- Translations (optional, per-locale overrides) ---------------------------
+export const TranslationSchema = z.object({
+  name: z.string().optional(),
+  shortDescription: z.string().optional(),
+  longDescription: z.string().optional(),
+  careNotes: z.string().optional(),
+  // Map of English finish text → localized finish text.
+  finishes: z.record(z.string()).optional(),
+  seo: z
+    .object({ title: z.string().optional(), description: z.string().optional() })
+    .optional(),
+});
+export type Translation = z.infer<typeof TranslationSchema>;
+
 // --- Product (a button style) ------------------------------------------------
 export const ProductSchema = z.object({
   sku: z.string().min(1),
@@ -108,5 +122,6 @@ export const ProductSchema = z.object({
       description: z.string().optional(),
     })
     .default({}),
+  translations: z.object({ ja: TranslationSchema.optional() }).optional(),
 });
 export type Product = z.infer<typeof ProductSchema>;

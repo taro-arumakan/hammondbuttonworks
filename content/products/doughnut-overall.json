@@ -6,10 +6,16 @@
   "longDescription": "A ring-edged 'doughnut' tack button with an open center, hammer-set like a jeans button but with the distinctive overall silhouette. The raised rim takes a stamped maker's name cleanly and stands up to decades of laundering. Period-correct for bib overalls, carpenter pants, and chore garments. Pairs with a matching tack pin or burr.",
   "material": "metal",
   "holeType": "tack",
-  "application": ["denim", "workwear"],
+  "application": [
+    "denim",
+    "workwear"
+  ],
   "careNotes": "Industrial-wash safe. Uncoated brass and copper patina over time; nickel keeps a brighter finish.",
   "countryOfOrigin": "Japan",
-  "certifications": ["Nickel-release compliant (EN 1811)", "REACH compliant"],
+  "certifications": [
+    "Nickel-release compliant (EN 1811)",
+    "REACH compliant"
+  ],
   "leadTimeDays": 30,
   "moq": 10,
   "unit": "gross",
@@ -23,19 +29,55 @@
       "inStockSample": true,
       "priceByTier": {
         "tier_standard": [
-          { "minQty": 10, "unitPrice": 12.2, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 10.7, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 9.1, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 12.2,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 10.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 9.1,
+            "currency": "USD"
+          }
         ],
         "tier_volume": [
-          { "minQty": 10, "unitPrice": 10.7, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 9.1, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 7.9, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 10.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 9.1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 7.9,
+            "currency": "USD"
+          }
         ],
         "tier_partner": [
-          { "minQty": 10, "unitPrice": 9.5, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 8.1, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 6.9, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 9.5,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 8.1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 6.9,
+            "currency": "USD"
+          }
         ]
       }
     },
@@ -48,19 +90,55 @@
       "inStockSample": true,
       "priceByTier": {
         "tier_standard": [
-          { "minQty": 10, "unitPrice": 12.2, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 10.7, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 9.1, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 12.2,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 10.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 9.1,
+            "currency": "USD"
+          }
         ],
         "tier_volume": [
-          { "minQty": 10, "unitPrice": 10.7, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 9.1, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 7.9, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 10.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 9.1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 7.9,
+            "currency": "USD"
+          }
         ],
         "tier_partner": [
-          { "minQty": 10, "unitPrice": 9.5, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 8.1, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 6.9, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 9.5,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 8.1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 6.9,
+            "currency": "USD"
+          }
         ]
       }
     },
@@ -73,19 +151,55 @@
       "inStockSample": false,
       "priceByTier": {
         "tier_standard": [
-          { "minQty": 10, "unitPrice": 13.6, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 11.9, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 10.2, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 13.6,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 11.9,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 10.2,
+            "currency": "USD"
+          }
         ],
         "tier_volume": [
-          { "minQty": 10, "unitPrice": 11.9, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 10.2, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 8.8, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 11.9,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 10.2,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 8.8,
+            "currency": "USD"
+          }
         ],
         "tier_partner": [
-          { "minQty": 10, "unitPrice": 10.6, "currency": "USD" },
-          { "minQty": 50, "unitPrice": 9.0, "currency": "USD" },
-          { "minQty": 200, "unitPrice": 7.7, "currency": "USD" }
+          {
+            "minQty": 10,
+            "unitPrice": 10.6,
+            "currency": "USD"
+          },
+          {
+            "minQty": 50,
+            "unitPrice": 9,
+            "currency": "USD"
+          },
+          {
+            "minQty": 200,
+            "unitPrice": 7.7,
+            "currency": "USD"
+          }
         ]
       }
     }
@@ -93,5 +207,22 @@
   "seo": {
     "title": "Doughnut Overall Button — Bib Overall Hardware Wholesale",
     "description": "Open-center doughnut tack buttons for bib overalls and chore wear in brass gilt, copper oxide, and nickel. Made in Japan."
+  },
+  "translations": {
+    "ja": {
+      "name": "ドーナツ オーバーオールボタン",
+      "shortDescription": "中空（オープンセンター）のドーナツ型タックボタン — ビブオーバーオールやチョアウェアを象徴する金具。",
+      "longDescription": "中央が抜けたリング状の「ドーナツ」タックボタン。ジーンズボタンと同じく打ち込み式ながら、オーバーオール特有のシルエットが特徴です。立ち上がったリムには製造元名の刻印がきれいに入り、数十年の洗濯にも耐えます。ビブオーバーオール・カーペンターパンツ・作業着に時代考証的にも最適。専用のタックピンまたはバーと組み合わせます。",
+      "careNotes": "工業洗濯対応。無垢の真鍮・銅は経年で風合いが出ます。ニッケルはより明るい仕上がりを保ちます。",
+      "finishes": {
+        "Brass gilt": "真鍮ギルト",
+        "Copper oxide": "銅古美",
+        "Nickel": "ニッケル"
+      },
+      "seo": {
+        "title": "ドーナツ オーバーオールボタン — ビブオーバーオール金具卸売",
+        "description": "ビブオーバーオールや作業着向けの中空ドーナツ型タックボタン。真鍮ギルト・銅古美・ニッケル。日本製。"
+      }
+    }
   }
 }

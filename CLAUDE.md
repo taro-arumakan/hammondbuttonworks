@@ -39,8 +39,8 @@ when no Resend key is set:
    `src/lib/pricing.ts` (marked `import "server-only"`; returns `null` for guests).
    `ProductCard`/`PriceBlock` only render prices when a `tier` is present; `/api/price`
    returns **401** for guests via `src/middleware.ts`. Guard check: a guest's
-   `/catalog` HTML must contain **0** price strings. (A price leak was found and fixed
-   once already — keep it fixed.)
+   `/en/catalog` **and** `/ja/catalog` HTML must each contain **0** price strings. (A price
+   leak was found and fixed once already — keep it fixed.)
 2. **Catalog & product pages are public for SEO** — only the *prices* are gated, not the
    pages. Don't move catalog behind auth.
 3. **Product JSON is the source of truth and is Zod-validated at build.** Bad data
@@ -58,21 +58,37 @@ when no Resend key is set:
 | Signed magic-link + session tokens (Web Crypto) | `src/lib/session.ts` |
 | `auth()` / session cookie helpers | `src/lib/auth.ts` |
 | Approved trade accounts (+ `TRADE_ALLOWLIST` env) | `src/lib/allowlist.ts` |
-| Edge gate for `/api/price` + `/account` | `src/middleware.ts` |
+| Edge gate (`/api/price`) + locale routing | `src/middleware.ts` |
 | Swappable cart (Snipcart adapter) | `src/lib/cart.ts` |
 | Resend wrapper (console fallback) | `src/lib/email.ts` |
 | Rate limit / base URL helpers | `src/lib/ratelimit.ts`, `src/lib/url.ts` |
+| **i18n**: Edge-safe locale config (en/ja, detection, `fmt`) | `src/lib/i18n-config.ts` |
+| **i18n**: dictionary loader + `Dictionary` type | `src/lib/i18n.ts`, `src/lib/dictionaries/{en,ja}.ts` |
+| **i18n**: per-product copy localizer (falls back to EN) | `src/lib/localize.ts` |
+| Language switcher (swaps the `/{locale}` segment) | `src/components/LanguageSwitcher.tsx` |
 | SVG logo (compact/full/stamp) | `src/components/Logo.tsx` |
-| SVG button render (incl. `tack` stud) | `src/components/ButtonSwatch.tsx` |
+| Photoreal-ish SVG button render (struck metal, patina, emboss, warp) | `src/components/ButtonSwatch.tsx` |
 | Grid cell / price block / order panel / quote form | `src/components/{ProductCard,PriceBlock,TradeOrderPanel,QuoteForm}.tsx` |
-| Pages | `src/app/{page,catalog,catalog/[slug],quote,login}` |
-| APIs | `src/app/api/{price,quote,auth/verify,auth/logout}/route.ts` + `app/login/actions.ts` |
+| Pages (under `/[locale]`) | `src/app/[locale]/{page,catalog,catalog/[slug],quote,login}` |
+| Root vs locale layout | `src/app/layout.tsx` (pass-through) · `src/app/[locale]/layout.tsx` (chrome) |
+| APIs (NOT locale-prefixed) | `src/app/api/{price,quote,auth/verify,auth/logout}/route.ts` + `app/[locale]/login/actions.ts` |
 | 4 products | `content/products/*.json` |
 | AI hero prompts | `content/image-prompts.md` |
 
 **Data model:** product = a button *style*; variants = size (ligne) × finish. Tiers:
 `tier_standard` / `tier_volume` / `tier_partner`, each with ascending quantity breaks.
 `unit` is `gross` (144). `holeType` includes `tack` for rivet-set jeans/work buttons.
+Each product JSON may carry an optional `translations.ja` block (name, descriptions,
+careNotes, per-finish names, seo); `localizeProduct()` applies it and falls back to EN.
+
+**i18n (bilingual EN/JA):** all pages live under `/[locale]` (`en` | `ja`); the root
+layout is a pass-through and `[locale]/layout.tsx` renders `<html lang>` + chrome.
+Middleware redirects bare paths to a locale (Accept-Language detected) **and** keeps the
+`/api/price` guest 401. APIs are NOT locale-prefixed. UI strings live in the dictionaries;
+data-value labels (material/holeType/application/unit) are in `dict.labels`. To add a
+locale: extend `LOCALES`, add a dictionary, add `translations.<loc>` to products. **Guard
+check now spans both locales** — `/en/catalog` and `/ja/catalog` must each contain 0 prices
+for guests.
 
 ## Branding / design system
 Heritage-minimal: background cream `#f3efe6`, ink `#1a1714`, brass accent `#8a6d3b`

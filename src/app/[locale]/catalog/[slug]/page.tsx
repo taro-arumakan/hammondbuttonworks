@@ -4,21 +4,28 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { baseUrl } from "@/lib/url";
 import { getAllProducts, getProductBySlug } from "@/lib/products";
+import { localizeProduct } from "@/lib/localize";
+import { getDictionary } from "@/lib/i18n";
+import { DEFAULT_LOCALE, LOCALES, fmt, isLocale } from "@/lib/i18n-config";
 import { ButtonSwatch } from "@/components/ButtonSwatch";
 import { PriceBlock } from "@/components/PriceBlock";
 
 export function generateStaticParams() {
-  return getAllProducts().map((p) => ({ slug: p.slug }));
+  return LOCALES.flatMap((locale) =>
+    getAllProducts().map((p) => ({ locale, slug: p.slug })),
+  );
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const product = getProductBySlug(slug);
-  if (!product) return {};
+  const { locale: raw, slug } = await params;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  const base = getProductBySlug(slug);
+  if (!base) return {};
+  const product = localizeProduct(base, locale);
   return {
     title: product.seo.title ?? product.name,
     description: product.seo.description ?? product.shortDescription,
@@ -37,25 +44,40 @@ function Spec({ label, value }: { label: string; value: string }) {
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const product = getProductBySlug(slug);
-  if (!product) notFound();
+  const { locale: raw, slug } = await params;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  const dict = getDictionary(locale);
+
+  const base = getProductBySlug(slug);
+  if (!base) notFound();
+  const product = localizeProduct(base, locale);
 
   const session = await auth();
   const tier = session?.user.tier ?? null;
-  const productUrl = `${await baseUrl()}/catalog/${product.slug}`;
+  const productUrl = `${await baseUrl()}/${locale}/catalog/${product.slug}`;
 
   const sizes = [...new Set(product.variants.map((v) => v.sizeLigne))].sort(
     (a, b) => a - b,
   );
 
+  const materialLabel = dict.labels.material[product.material] ?? product.material;
+  const holeLabel = dict.labels.holeType[product.holeType] ?? product.holeType;
+  const unitLabel = dict.labels.unit[product.unit] ?? product.unit;
+  const applications = product.application
+    .map((a) => dict.labels.application[a] ?? a)
+    .join(locale === "ja" ? "・" : ", ");
+  const origin =
+    locale === "ja" && product.countryOfOrigin === "Japan"
+      ? "日本"
+      : product.countryOfOrigin;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <nav className="text-sm text-stone-500">
-        <Link href="/catalog" className="hover:text-accent">
-          Catalog
+        <Link href={`/${locale}/catalog`} className="hover:text-accent">
+          {dict.nav.catalog}
         </Link>{" "}
         / <span className="text-stone-700">{product.name}</span>
       </nav>
@@ -85,37 +107,33 @@ export default async function ProductPage({
                   material={product.material}
                   size={48}
                 />
-                <span className="mt-1 text-[11px] text-stone-500">
-                  {v.sizeLigne}L
-                </span>
+                <span className="mt-1 text-[11px] text-stone-500">{v.sizeLigne}L</span>
               </div>
             ))}
           </div>
 
-          <h2 className="mt-8 text-lg font-semibold">Specifications</h2>
+          <h2 className="mt-8 text-lg font-semibold">{dict.product.specs}</h2>
           <dl className="mt-2">
-            <Spec label="Material" value={cap(product.material)} />
-            <Spec label="Attachment" value={product.holeType} />
+            <Spec label={dict.product.material} value={materialLabel} />
+            <Spec label={dict.product.attachment} value={holeLabel} />
+            <Spec label={dict.product.sizes} value={sizes.map((s) => `${s}L`).join(", ")} />
+            <Spec label={dict.product.applications} value={applications || "—"} />
+            <Spec label={dict.product.moq} value={`${product.moq} ${unitLabel}`} />
             <Spec
-              label="Sizes"
-              value={sizes.map((s) => `${s}L`).join(", ")}
+              label={dict.product.leadTime}
+              value={fmt(dict.product.leadTimeValue, { days: product.leadTimeDays })}
             />
-            <Spec
-              label="Applications"
-              value={product.application.map(cap).join(", ") || "—"}
-            />
-            <Spec label="MOQ" value={`${product.moq} ${product.unit}`} />
-            <Spec label="Lead time" value={`~${product.leadTimeDays} days`} />
-            {product.countryOfOrigin && (
-              <Spec label="Origin" value={product.countryOfOrigin} />
-            )}
+            {origin && <Spec label={dict.product.origin} value={origin} />}
             {product.certifications.length > 0 && (
-              <Spec label="Certifications" value={product.certifications.join(", ")} />
+              <Spec
+                label={dict.product.certifications}
+                value={product.certifications.join(locale === "ja" ? "・" : ", ")}
+              />
             )}
           </dl>
           {product.careNotes && (
             <p className="mt-4 text-sm text-stone-500">
-              <span className="font-medium text-stone-700">Care:</span>{" "}
+              <span className="font-medium text-stone-700">{dict.product.careLabel}</span>{" "}
               {product.careNotes}
             </p>
           )}
@@ -124,27 +142,25 @@ export default async function ProductPage({
         {/* Title, copy, pricing/order */}
         <div>
           <h1 className="font-serif text-4xl tracking-tight">{product.name}</h1>
-          <p className="mt-1 text-sm uppercase tracking-wide text-stone-400">
-            {product.sku}
-          </p>
+          <p className="mt-1 text-sm uppercase tracking-wide text-stone-400">{product.sku}</p>
           <p className="mt-4 text-stone-600">{product.shortDescription}</p>
           <p className="mt-3 text-sm leading-relaxed text-stone-600">
             {product.longDescription}
           </p>
 
           <div className="mt-8">
-            <PriceBlock product={product} tier={tier} productUrl={productUrl} />
+            <PriceBlock
+              product={product}
+              tier={tier}
+              productUrl={productUrl}
+              locale={locale}
+              dict={dict}
+            />
           </div>
 
-          <p className="mt-4 text-xs text-stone-400">
-            Visuals are representative mockups; physical samples available on request.
-          </p>
+          <p className="mt-4 text-xs text-stone-400">{dict.product.mockupNote}</p>
         </div>
       </div>
     </div>
   );
-}
-
-function cap(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
