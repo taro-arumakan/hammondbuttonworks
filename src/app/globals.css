@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3efe6; /* warm cream */
+  --surface: #faf7f0; /* slightly lighter cell/paper */
+  --foreground: #1a1714; /* near-black ink */
+  --accent: #8a6d3b; /* muted brass */
+  --line: #d8d0c0; /* thin gridline / divider */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-line: var(--line);
+  --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
+  --font-serif: var(--font-display, ui-serif, Georgia, "Times New Roman", serif);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Heritage double-line frame — mirrors the Hammond logo lockup. */
+.frame-double {
+  border: 1px solid var(--foreground);
+  box-shadow:
+    inset 0 0 0 4px var(--background),
+    inset 0 0 0 5px var(--foreground);
+}
