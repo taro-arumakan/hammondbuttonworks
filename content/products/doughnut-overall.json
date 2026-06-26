@@ -6,6 +6,7 @@
   "longDescription": "A ring-edged 'doughnut' tack button with an open center, hammer-set like a jeans button but with the distinctive overall silhouette. The raised rim takes a stamped maker's name cleanly and stands up to decades of laundering. Period-correct for bib overalls, carpenter pants, and chore garments. Pairs with a matching tack pin or burr.",
   "material": "metal",
   "holeType": "tack",
+  "face": "open",
   "application": [
     "denim",
     "workwear"

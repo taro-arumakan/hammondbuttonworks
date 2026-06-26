@@ -1,40 +1,36 @@
 import type { HoleType, Material } from "@/lib/schema";
 
 /**
- * Pure SVG render of a garment button — no photos required. Tuned to read as a
- * real, struck-metal heritage button (à la the vintage Scovill sample cards):
- * layered metallic gradients, a turbulence-displacement filter that warps the
- * surface and silhouette so it looks cast and worn rather than vector-perfect,
- * patina pooled at the rim, embossed/stamped relief, fine grain, and a soft
- * contact shadow. Consistent, infinitely scalable, varied by finish + hole type.
- *
- * It's a plain server-renderable component (no interactivity), so it works
- * inside Server Components and ships zero client JS.
+ * Pure SVG render of a garment button, tuned to the vintage Scovill sample-card
+ * look: a FLAT, top-lit metal disc with crisp machined edges, a matte/satin
+ * sheen (not glossy), a clean raised rim, and a stamped face that varies by
+ * `face` — flat tack, relief medallion (stamped/engraved), open-center
+ * "doughnut", or a gently domed jumper-coat face. Muted, consistent, scalable;
+ * no photos, zero client JS.
  */
+
+export type ButtonFace = "flat" | "stamped" | "open" | "domed";
 
 type Props = {
   colorHex: string;
   holeType: HoleType;
   material: Material;
+  face?: ButtonFace;
   size?: number; // px
   label?: string;
   className?: string;
 };
 
 function shade(hex: string, amount: number): string {
-  // amount in [-1,1]; positive lightens, negative darkens.
   const n = hex.replace("#", "");
   const r = parseInt(n.slice(0, 2), 16);
   const g = parseInt(n.slice(2, 4), 16);
   const b = parseInt(n.slice(4, 6), 16);
-  const adj = (c: number) =>
-    Math.max(0, Math.min(255, Math.round(c + amount * 255)));
+  const adj = (c: number) => Math.max(0, Math.min(255, Math.round(c + amount * 255)));
   const to2 = (c: number) => adj(c).toString(16).padStart(2, "0");
   return `#${to2(r)}${to2(g)}${to2(b)}`;
 }
 
-// Stable per-finish seed so each button has its own (but unchanging) wear,
-// grain, and patina pattern — no two finishes look stamped from one mold.
 function seedFrom(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
@@ -48,47 +44,60 @@ export function ButtonSwatch({
   colorHex,
   holeType,
   material,
+  face,
   size = 160,
   label,
   className,
 }: Props) {
-  const seed = seedFrom(`${colorHex}-${holeType}-${material}`);
-  const id = `b${seed}-${holeType.replace(/[^a-z0-9]/gi, "")}`;
+  const seed = seedFrom(`${colorHex}-${holeType}-${face ?? ""}`);
+  const id = `b${seed}-${holeType.replace(/[^a-z0-9]/gi, "")}-${face ?? "x"}`;
   const isMetal = material === "metal";
   const isShell = material === "shell";
 
-  const light = shade(colorHex, 0.26);
-  const hot = shade(colorHex, 0.42);
-  const dark = shade(colorHex, -0.3);
-  const rim = shade(colorHex, -0.16);
-  const edgeDark = shade(colorHex, -0.42);
-  const patina = shade(colorHex, -0.52);
-  const embossLight = shade(colorHex, isMetal ? 0.34 : 0.16);
-  const embossDark = shade(colorHex, -0.34);
+  // Decide the effective face: shank/toggle read as domed; sew-through types
+  // keep their holes; tack defaults to a flat struck face.
+  const eff: ButtonFace | "holes" =
+    holeType === "2-hole" || holeType === "4-hole"
+      ? "holes"
+      : holeType === "shank" || holeType === "toggle"
+        ? "domed"
+        : (face ?? (holeType === "tack" ? "flat" : "flat"));
+
+  // Muted, top-lit palette — gentle contrast for a matte metal read.
+  const rimLight = shade(colorHex, 0.2);
+  const rimDark = shade(colorHex, -0.22);
+  const faceTop = shade(colorHex, 0.1);
+  const faceBot = shade(colorHex, -0.12);
+  const groove = shade(colorHex, -0.3); // recessed engraving / ring shadow
+  const ridge = shade(colorHex, isMetal ? 0.18 : 0.1); // raised highlight
+  const innerWall = shade(colorHex, -0.34);
+  const holeDark = shade(colorHex, -0.52);
 
   const cx = 50;
   const cy = 50;
-  const r = 42;
+  const rRim = 42; // outer edge
+  const rFace = 37.5; // recessed flat face
 
-  // Hole geometry (sew-through types)
-  const holeR = 4.1;
-  const holeFill = shade(colorHex, -0.58);
-  const holeOffset = 12;
-  const holes: Array<[number, number]> = [];
-  if (holeType === "2-hole") {
-    holes.push([cx - holeOffset, cy], [cx + holeOffset, cy]);
-  } else if (holeType === "4-hole") {
-    holes.push(
-      [cx - holeOffset, cy - holeOffset],
-      [cx + holeOffset, cy - holeOffset],
-      [cx - holeOffset, cy + holeOffset],
-      [cx + holeOffset, cy + holeOffset],
-    );
-  }
+  // Embossed concentric ring: a dark groove with a light upper edge.
+  const Ring = ({ r, w = 1.2, op = 0.7 }: { r: number; w?: number; op?: number }) => (
+    <>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={groove} strokeWidth={w} opacity={op} />
+      <circle
+        cx={cx}
+        cy={cy - 0.5}
+        r={r}
+        fill="none"
+        stroke={ridge}
+        strokeWidth={w * 0.7}
+        opacity={op * 0.8}
+      />
+    </>
+  );
 
-  // A small, stable rotation so the surface texture/highlight isn't identical
-  // across every button in the grid.
-  const rot = (seed % 24) - 12;
+  const sewHoles: Array<[number, number]> = [];
+  if (holeType === "2-hole") sewHoles.push([cx - 11, cy], [cx + 11, cy]);
+  if (holeType === "4-hole")
+    sewHoles.push([cx - 10, cy - 10], [cx + 10, cy - 10], [cx - 10, cy + 10], [cx + 10, cy + 10]);
 
   return (
     <svg
@@ -100,191 +109,144 @@ export function ButtonSwatch({
       className={className}
     >
       <defs>
-        {/* Brushed/struck metal face */}
-        <radialGradient id={`${id}-face`} cx="40%" cy="34%" r="78%">
-          <stop offset="0%" stopColor={hot} />
-          <stop offset="30%" stopColor={light} />
-          <stop offset="68%" stopColor={colorHex} />
-          <stop offset="100%" stopColor={dark} />
-        </radialGradient>
-        {/* Vertical edge gradient — the button's milled thickness */}
-        <linearGradient id={`${id}-edge`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={shade(colorHex, 0.1)} />
-          <stop offset="50%" stopColor={rim} />
-          <stop offset="100%" stopColor={edgeDark} />
+        {/* Flat top-lit face */}
+        <linearGradient id={`${id}-face`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={faceTop} />
+          <stop offset="52%" stopColor={colorHex} />
+          <stop offset="100%" stopColor={faceBot} />
         </linearGradient>
-        {/* Patina / tarnish pooled toward the rim */}
-        <radialGradient id={`${id}-patina`} cx="50%" cy="50%" r="52%">
-          <stop offset="52%" stopColor={patina} stopOpacity="0" />
-          <stop offset="86%" stopColor={patina} stopOpacity="0.32" />
-          <stop offset="100%" stopColor={patina} stopOpacity="0.62" />
+        {/* Convex face for domed (jumper-coat) buttons */}
+        <radialGradient id={`${id}-dome`} cx="42%" cy="38%" r="72%">
+          <stop offset="0%" stopColor={shade(colorHex, 0.16)} />
+          <stop offset="58%" stopColor={colorHex} />
+          <stop offset="100%" stopColor={shade(colorHex, -0.16)} />
+        </radialGradient>
+        {/* Milled rim edge */}
+        <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={rimLight} />
+          <stop offset="100%" stopColor={rimDark} />
+        </linearGradient>
+        {/* Soft satin sheen near the top (matte, low opacity) */}
+        <radialGradient id={`${id}-sheen`} cx="50%" cy="24%" r="55%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={isMetal ? 0.22 : 0.12} />
+          <stop offset="70%" stopColor="#ffffff" stopOpacity="0" />
         </radialGradient>
         {isShell && (
-          <radialGradient id={`${id}-iri`} cx="64%" cy="68%" r="62%">
-            <stop offset="0%" stopColor="#bfe3e0" stopOpacity="0.55" />
-            <stop offset="45%" stopColor="#e9d6e8" stopOpacity="0.28" />
+          <radialGradient id={`${id}-iri`} cx="64%" cy="66%" r="60%">
+            <stop offset="0%" stopColor="#bfe3e0" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="#e9d6e8" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
         )}
-        <radialGradient id={`${id}-cast`} cx="50%" cy="50%" r="60%">
-          <stop offset="60%" stopColor="#000000" stopOpacity="0.22" />
+        <radialGradient id={`${id}-cast`} cx="50%" cy="50%" r="58%">
+          <stop offset="62%" stopColor="#000000" stopOpacity="0.16" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
-
-        {/* Organic warp: makes the silhouette + surface read cast/worn, not
-            machined-perfect. Anisotropic noise = faint struck/brushed grain. */}
-        <filter id={`${id}-warp`} x="-12%" y="-12%" width="124%" height="124%">
-          <feTurbulence
-            type="turbulence"
-            baseFrequency="0.14 0.13"
-            numOctaves={2}
-            seed={seed}
-            stitchTiles="stitch"
-            result="n"
-          />
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="n"
-            scale={isMetal ? 2.1 : 1.4}
-            xChannelSelector="R"
-            yChannelSelector="G"
-          />
-        </filter>
-
-        {/* Fine metallic grain speckle, mapped to alpha only */}
-        <filter id={`${id}-grain`}>
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.9"
-            numOctaves={2}
-            seed={seed + 7}
-            result="g"
-          />
+        {/* Fine cast grain — applied to the FACE only, edges stay crisp */}
+        <filter id={`${id}-grain`} x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={2} seed={seed} result="g" />
           <feColorMatrix
             in="g"
             type="matrix"
-            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.8 0"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0"
           />
         </filter>
-
         <clipPath id={`${id}-clip`}>
-          <circle cx={cx} cy={cy} r={r - 2} />
+          <circle cx={cx} cy={cy} r={rFace} />
         </clipPath>
       </defs>
 
-      {/* Cast contact shadow (stays crisp — not warped) */}
-      <ellipse cx={cx} cy={cy + 7} rx={r} ry={r * 0.9} fill={`url(#${id}-cast)`} />
+      {/* contact shadow */}
+      <ellipse cx={cx} cy={cy + 6} rx={rRim} ry={rRim * 0.92} fill={`url(#${id}-cast)`} />
 
-      {/* Everything from here is gently warped for an organic, worn read. */}
-      <g filter={`url(#${id}-warp)`}>
-        {/* Milled edge / body */}
-        <circle cx={cx} cy={cy} r={r} fill={`url(#${id}-edge)`} />
-        {/* Face */}
-        <circle cx={cx} cy={cy} r={r - 2} fill={`url(#${id}-face)`} />
+      {/* milled rim */}
+      <circle cx={cx} cy={cy} r={rRim} fill={`url(#${id}-rim)`} />
+      <circle cx={cx} cy={cy} r={rRim - 1.6} fill="none" stroke={ridge} strokeWidth={0.7} opacity={0.6} />
 
-        <g transform={`rotate(${rot} ${cx} ${cy})`}>
-          {/* fine grain over the face */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={r - 2}
-            fill="#000000"
-            filter={`url(#${id}-grain)`}
-            clipPath={`url(#${id}-clip)`}
-            opacity={isMetal ? 0.07 : 0.05}
+      {/* recessed face */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={rFace}
+        fill={`url(#${id}-${eff === "domed" ? "dome" : "face"})`}
+      />
+      {/* seat shadow where the face meets the rim */}
+      <circle cx={cx} cy={cy} r={rFace} fill="none" stroke={groove} strokeWidth={1} opacity={0.45} />
+
+      {/* cast grain + sheen on the face */}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={rFace}
+        fill="#000000"
+        filter={`url(#${id}-grain)`}
+        clipPath={`url(#${id}-clip)`}
+        opacity={isMetal ? 0.05 : 0.04}
+      />
+      {isShell && <circle cx={cx} cy={cy} r={rFace} fill={`url(#${id}-iri)`} />}
+      <circle cx={cx} cy={cy} r={rFace} fill={`url(#${id}-sheen)`} />
+
+      {/* ---- face detailing ---- */}
+      {eff === "open" ? (
+        <>
+          {/* open-center "doughnut": stamped ring + recessed central hole */}
+          <Ring r={26} w={1.3} op={0.7} />
+          <circle cx={cx} cy={cy} r={15} fill={innerWall} />
+          <circle cx={cx} cy={cy} r={15} fill="none" stroke={groove} strokeWidth={1.2} opacity={0.8} />
+          <circle cx={cx} cy={cy} r={10.5} fill={holeDark} />
+          {/* inner-wall shading: dark at top, faint light at bottom (top-lit) */}
+          <path
+            d={`M ${cx - 10.5} ${cy} A 10.5 10.5 0 0 1 ${cx + 10.5} ${cy}`}
+            fill="none"
+            stroke="#000000"
+            strokeOpacity="0.35"
+            strokeWidth={1.6}
           />
-          {/* patina pooled at the rim */}
-          <circle cx={cx} cy={cy} r={r - 2} fill={`url(#${id}-patina)`} />
-        </g>
-
-        {/* rim bevel ring */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={r - 5.5}
-          fill="none"
-          stroke={embossLight}
-          strokeWidth={1.3}
-          opacity={0.7}
-        />
-        <circle
-          cx={cx}
-          cy={cy}
-          r={r - 6.8}
-          fill="none"
-          stroke={embossDark}
-          strokeWidth={0.8}
-          opacity={0.5}
-        />
-
-        {isShell && <circle cx={cx} cy={cy} r={r - 2} fill={`url(#${id}-iri)`} />}
-
-        {/* specular highlight (raked light, upper-left) */}
-        <ellipse
-          cx={cx - 11}
-          cy={cy - 14}
-          rx={12}
-          ry={7}
-          fill="#ffffff"
-          opacity={isMetal ? 0.42 : 0.24}
-          transform={`rotate(${rot - 24} ${cx - 11} ${cy - 14})`}
-        />
-
-        {/* holes, shank, or tack stud */}
-        {holeType === "tack" ? (
-          <>
-            {/* concentric struck rings of a tack / jeans button */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={r - 11}
-              fill="none"
-              stroke={embossDark}
-              strokeWidth={1.6}
-              opacity={0.7}
-            />
-            <circle
-              cx={cx}
-              cy={cy}
-              r={r - 12.4}
-              fill="none"
-              stroke={embossLight}
-              strokeWidth={0.9}
-              opacity={0.8}
-            />
-            <circle
-              cx={cx}
-              cy={cy}
-              r={r - 18}
-              fill="none"
-              stroke={embossDark}
-              strokeWidth={1}
-              opacity={0.5}
-            />
-            {/* raised center boss */}
-            <circle cx={cx} cy={cy} r={6} fill={shade(colorHex, 0.16)} />
-            <circle cx={cx} cy={cy} r={6} fill="none" stroke={embossDark} strokeWidth={1} />
-            <circle cx={cx} cy={cy} r={6} fill={`url(#${id}-patina)`} opacity={0.5} />
-            <circle cx={cx - 1.6} cy={cy - 1.6} r={1.5} fill="#ffffff" opacity={0.5} />
-          </>
-        ) : holeType === "shank" || holeType === "toggle" ? (
-          <>
-            {/* domed center over a recessed shank eye */}
-            <circle cx={cx} cy={cy} r={9} fill={shade(colorHex, 0.12)} opacity={0.5} />
-            <circle cx={cx} cy={cy} r={6.5} fill={embossDark} opacity={0.55} />
-            <circle cx={cx} cy={cy} r={2.6} fill={holeFill} />
-          </>
-        ) : (
-          holes.map(([hx, hy], i) => (
-            <g key={i}>
-              {/* drilled, slightly dished sew holes */}
-              <circle cx={hx} cy={hy} r={holeR + 1.4} fill={embossDark} opacity={0.55} />
-              <circle cx={hx} cy={hy} r={holeR + 0.6} fill={embossLight} opacity={0.5} />
-              <circle cx={hx} cy={hy} r={holeR} fill={holeFill} />
-            </g>
-          ))
-        )}
-      </g>
+          <path
+            d={`M ${cx - 10.5} ${cy} A 10.5 10.5 0 0 0 ${cx + 10.5} ${cy}`}
+            fill="none"
+            stroke={ridge}
+            strokeOpacity="0.5"
+            strokeWidth={1}
+          />
+        </>
+      ) : eff === "stamped" ? (
+        <>
+          {/* relief medallion (suggests an engraved maker's stamp) */}
+          <Ring r={30} w={1.1} op={0.6} />
+          <circle cx={cx} cy={cy} r={16} fill={shade(colorHex, -0.05)} />
+          <Ring r={16} w={1.3} op={0.85} />
+          <Ring r={11} w={0.9} op={0.55} />
+          {/* small raised center pip with a top highlight */}
+          <circle cx={cx} cy={cy} r={3} fill={ridge} />
+          <circle cx={cx} cy={cy} r={3} fill="none" stroke={groove} strokeWidth={0.8} opacity={0.7} />
+          <circle cx={cx - 0.8} cy={cy - 0.8} r={0.9} fill="#ffffff" opacity={0.4} />
+        </>
+      ) : eff === "domed" ? (
+        <>
+          {/* jumper-coat: clean domed face, subtle stamped center, no front hole */}
+          <Ring r={30} w={1} op={0.5} />
+          <Ring r={12} w={1} op={0.6} />
+          <circle cx={cx} cy={cy} r={2.4} fill={groove} opacity={0.6} />
+          <ellipse cx={cx - 9} cy={cy - 11} rx={9} ry={5.5} fill="#ffffff" opacity={isMetal ? 0.22 : 0.12} />
+        </>
+      ) : eff === "holes" ? (
+        sewHoles.map(([hx, hy], i) => (
+          <g key={i}>
+            <circle cx={hx} cy={hy} r={4.6} fill={groove} opacity={0.6} />
+            <circle cx={hx} cy={hy} r={3.4} fill={holeDark} />
+            <circle cx={hx} cy={hy - 0.6} r={3.4} fill="none" stroke={ridge} strokeWidth={0.5} opacity={0.5} />
+          </g>
+        ))
+      ) : (
+        <>
+          {/* flat struck tack face: clean border ring + faint center */}
+          <Ring r={30} w={1.2} op={0.65} />
+          <Ring r={26} w={0.7} op={0.4} />
+          <circle cx={cx} cy={cy} r={3.4} fill="none" stroke={groove} strokeWidth={0.9} opacity={0.55} />
+          <circle cx={cx} cy={cy} r={1.2} fill={groove} opacity={0.5} />
+        </>
+      )}
     </svg>
   );
 }

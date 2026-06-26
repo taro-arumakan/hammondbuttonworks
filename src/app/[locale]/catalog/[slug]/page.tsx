@@ -90,6 +90,7 @@ export default async function ProductPage({
               colorHex={product.variants[0].colorHex}
               holeType={product.holeType}
               material={product.material}
+              face={product.face}
               size={240}
               label={product.name}
             />
@@ -105,6 +106,7 @@ export default async function ProductPage({
                   colorHex={v.colorHex}
                   holeType={product.holeType}
                   material={product.material}
+                  face={product.face}
                   size={48}
                 />
                 <span className="mt-1 text-[11px] text-stone-500">{v.sizeLigne}L</span>

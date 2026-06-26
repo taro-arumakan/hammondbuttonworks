@@ -6,6 +6,7 @@
   "longDescription": "A heritage jumper-coat button with a one-piece cast 'rigid eye' shank that won't pull loose under heavy use. The flat, lightly domed face suits stamped branding or a plain workwear look. Sewn rather than tacked, so it works on jackets, chore coats, and coveralls where a tack press isn't used. A faithful reproduction of early-1900s work-garment hardware.",
   "material": "metal",
   "holeType": "shank",
+  "face": "domed",
   "application": [
     "coat",
     "workwear"

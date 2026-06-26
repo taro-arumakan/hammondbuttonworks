@@ -108,6 +108,10 @@ export const ProductSchema = z.object({
   longDescription: z.string().min(1),
   material: MaterialSchema,
   holeType: HoleTypeSchema,
+  // Face treatment for the SVG render (independent of attachment):
+  //  flat = plain struck tack face · stamped = relief medallion ·
+  //  open = open-center "doughnut" · domed = convex jumper-coat face.
+  face: z.enum(["flat", "stamped", "open", "domed"]).optional(),
   application: z.array(z.string()).default([]),
   careNotes: z.string().optional().default(""),
   countryOfOrigin: z.string().optional(),

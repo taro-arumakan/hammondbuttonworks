@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ButtonSwatch } from "./ButtonSwatch";
+import { ButtonSwatch, type ButtonFace } from "./ButtonSwatch";
 import type { HoleType, Material } from "@/lib/schema";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
@@ -30,6 +30,7 @@ type Props = {
   moq: number;
   material: Material;
   holeType: HoleType;
+  face?: ButtonFace;
   variants: VariantView[];
   productUrl: string;
   snipcartEnabled: boolean;
@@ -56,6 +57,7 @@ export function TradeOrderPanel({
   moq,
   material,
   holeType,
+  face,
   variants,
   productUrl,
   snipcartEnabled,
@@ -117,6 +119,7 @@ export function TradeOrderPanel({
                   colorHex={v.colorHex}
                   holeType={holeType}
                   material={material}
+                  face={face}
                   size={28}
                 />
                 <span>

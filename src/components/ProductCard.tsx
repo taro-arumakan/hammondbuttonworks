@@ -44,6 +44,7 @@ export function ProductCard({
           colorHex={hero.colorHex}
           holeType={product.holeType}
           material={product.material}
+          face={product.face}
           size={150}
           label={product.name}
           className="transition-transform duration-300 ease-out group-hover:scale-105"

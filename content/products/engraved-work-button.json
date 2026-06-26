@@ -6,6 +6,7 @@
   "longDescription": "A premium tack button with a deeply die-struck, relief-engraved face — the kind of stamped branding that turns a work garment into a signature. Supplied blank for our stock motif or tooled to your logo for production runs (one-time die setup). Hammer-set like a standard jeans button. The crisp relief holds detail far better than printed or laser-etched marks.",
   "material": "metal",
   "holeType": "tack",
+  "face": "stamped",
   "application": [
     "denim",
     "workwear",

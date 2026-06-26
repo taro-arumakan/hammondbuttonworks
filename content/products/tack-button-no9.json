@@ -6,6 +6,7 @@
   "longDescription": "Our workhorse jeans button: a one-piece tack (rivet-set) button struck from solid metal and hammered onto the waistband with a tack pin. The domed, lightly stamped face wears in rather than out, developing a honest patina over years of use. Backed by a burr or pin to suit your setting press. Custom face stamping available on production runs.",
   "material": "metal",
   "holeType": "tack",
+  "face": "flat",
   "application": [
     "denim",
     "workwear"
