@@ -1,16 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 /**
- * Hammond Button Works logo, rebuilt as crisp inline SVG (scales to any size,
- * inherits `currentColor`).
+ * Hammond Button Works logo.
  *
- * NOTE: the "hammond" wordmark in the supplied artwork is a *custom* rounded
- * geometric typeface. This recreates its character with a geometric font stack
- * plus the brand's dot-in-`o` accent and the serif "BUTTON WORKS" lockup — a
- * faithful approximation, not a pixel trace. For a pixel-perfect mark, drop the
- * original vector (AI/SVG) or font file in and swap the <text>/paths here.
+ * The wordmark is the brand's REAL vector lockup (custom geometric "hammond"
+ * with the sewing-needle through the `a` and the button `o`, over a serif
+ * "BUTTON WORKS"), served from `public/brand/hammond-lockup.svg` — extracted
+ * from the supplied artwork (references/hammond001logo.svg). Scales crisply.
  *
  * Variants:
- *  - "compact": wordmark only (header)
- *  - "full":    framed lockup — wordmark + BUTTON WORKS in the double-line frame
+ *  - "compact": the lockup, sized for the header
+ *  - "full":    the lockup, sized for the hero
  *  - "stamp":   circular "·BUTTON WORKS· MADE IN JAPAN" maker's mark (footer)
  */
 
@@ -27,83 +26,16 @@ export function Logo({
   className?: string;
 }) {
   if (variant === "stamp") return <Stamp className={className} />;
-  if (variant === "full") return <Full className={className} />;
-  return <Wordmark className={className} />;
-}
-
-/** The "hammond" wordmark with a filled brass dot inside the `o`. */
-function Wordmark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 252 52"
+    <img
+      src="/brand/hammond-lockup.svg"
+      alt="Hammond Button Works"
       className={className}
-      role="img"
-      aria-label="hammond"
-      fill="none"
-    >
-      <text
-        x="0"
-        y="40"
-        fontSize="46"
-        fill="currentColor"
-        style={{
-          fontFamily: GEOMETRIC,
-          fontWeight: 500,
-          letterSpacing: "-0.015em",
-        }}
-      >
-        hammond
-      </text>
-      {/* dot-in-o brand accent (sits over the 'o' of hammond) */}
-      <circle cx="178" cy="27" r="5.2" fill="var(--color-accent, #8a6d3b)" />
-    </svg>
+    />
   );
 }
 
-/** Framed lockup for the home hero. */
-function Full({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 300 150"
-      className={className}
-      role="img"
-      aria-label="Hammond Button Works"
-      fill="none"
-    >
-      {/* double-line frame */}
-      <rect x="6" y="6" width="288" height="138" stroke="currentColor" strokeWidth="1.6" />
-      <rect x="11" y="11" width="278" height="128" stroke="currentColor" strokeWidth="0.8" />
-
-      <text
-        x="150"
-        y="78"
-        textAnchor="middle"
-        fontSize="50"
-        fill="currentColor"
-        style={{ fontFamily: GEOMETRIC, fontWeight: 500, letterSpacing: "-0.015em" }}
-      >
-        hammond
-      </text>
-      <circle cx="196" cy="62" r="5.6" fill="var(--color-accent, #8a6d3b)" />
-
-      <text
-        x="150"
-        y="112"
-        textAnchor="middle"
-        fontSize="26"
-        fill="currentColor"
-        style={{
-          fontFamily: 'var(--font-display, ui-serif, Georgia, serif)',
-          letterSpacing: "0.18em",
-        }}
-      >
-        BUTTON WORKS
-      </text>
-    </svg>
-  );
-}
-
-/** Circular maker's stamp echoing the Instagram badge. */
+/** Circular maker's stamp echoing the "Made in Japan" identity. */
 function Stamp({ className }: { className?: string }) {
   return (
     <svg
