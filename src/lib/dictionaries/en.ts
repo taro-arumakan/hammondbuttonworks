@@ -8,11 +8,23 @@ const en = {
 
   nav: {
     catalog: "Catalog",
+    about: "About",
     quote: "Request a quote",
     login: "Trade login",
     cartPrefix: "Cart",
     signout: "Sign out",
     home: "Home",
+  },
+
+  about: {
+    eyebrow: "Since 2008",
+    lead: "Designing and making original buttons since 2008.",
+    paragraphs: [
+      "Built around handcraft, we design distinctive buttons that bring out the textures only handwork can produce, and the individual character of each material.",
+      "Working with clients in Japan, New York, and beyond, we pursue products that draw on each partner's techniques and heritage. From material selection through processing and finishing, we obsess over every detail to create pieces that are loved for years.",
+      "Over the years we've handled collaborations with many brands and developed bespoke buttons, proposing designs for fashion and a wide range of other fields.",
+      "With original design and craft that can only be made here, we'll keep delivering products of every kind.",
+    ],
   },
 
   home: {

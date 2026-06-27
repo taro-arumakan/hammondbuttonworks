@@ -84,6 +84,9 @@ export default async function LocaleLayout({
               <Link href={`${home}/catalog`} className="hover:text-accent">
                 {dict.nav.catalog}
               </Link>
+              <Link href={`${home}/about`} className="hover:text-accent">
+                {dict.nav.about}
+              </Link>
               <Link href={`${home}/quote`} className="hover:text-accent">
                 {dict.nav.quote}
               </Link>
