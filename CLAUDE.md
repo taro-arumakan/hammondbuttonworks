@@ -1,9 +1,16 @@
 # Hammond Button Works — Project Guide (for Claude Code)
 
 A from-scratch **B2B pilot storefront** for **Hammond Button Works** — a maker of
-**heritage workwear buttons** (tack / jeans, rigid-eye jumper-coat, doughnut overall,
-engraved work buttons; "made in Japan" identity). The pilot showcases 4 products and
+**handcrafted natural buttons** in **buffalo horn, wood, and metal** (uncoated, natural
+finish, made to order). Production is handcrafted in **Nepal/KTM** for a **Tokyo, Japan**
+handicraft company; trade contact **info@alvana.jp**. The pilot showcases 6 products and
 validates three B2B fundamentals before a full build.
+
+> **History note:** the pilot was first built around a *fictional* "heritage metal
+> workwear button" range (tack/jeans, jumper-coat, doughnut, engraved). When the owner
+> supplied the real brand assets (`references/`), the catalog was **pivoted** to the real
+> buffalo/wood/metal handcraft line with real photos, the real vector logo, and the
+> sample-card layout — keeping the B2B login + tiered pricing + bilingual EN/JA.
 
 ## Lineage (read this first)
 - Originally built generically as "Atelier Buttons", then **rebranded to Hammond Button
@@ -72,14 +79,19 @@ when no Resend key is set:
 | Pages (under `/[locale]`) | `src/app/[locale]/{page,catalog,catalog/[slug],quote,login}` |
 | Root vs locale layout | `src/app/layout.tsx` (pass-through) · `src/app/[locale]/layout.tsx` (chrome) |
 | APIs (NOT locale-prefixed) | `src/app/api/{price,quote,auth/verify,auth/logout}/route.ts` + `app/[locale]/login/actions.ts` |
-| 4 products | `content/products/*.json` |
-| AI hero prompts | `content/image-prompts.md` |
+| 6 products | `content/products/*.json` |
+| Product photos | `public/images/products/*.jpg` (cropped from `references/`) |
+| Real vector logo | `public/brand/hammond-lockup.svg` → `src/components/Logo.tsx` |
+| Brand source assets (gitignored) | `references/` — AI/SVG logo + supplier catalog PDFs |
 
-**Data model:** product = a button *style*; variants = size (ligne) × finish. Tiers:
+**Data model:** product = a button *style*; variants = size (mm/ligne) × finish. Tiers:
 `tier_standard` / `tier_volume` / `tier_partner`, each with ascending quantity breaks.
-`unit` is `gross` (144). `holeType` includes `tack` for rivet-set jeans/work buttons.
-Each product JSON may carry an optional `translations.ja` block (name, descriptions,
-careNotes, per-finish names, seo); `localizeProduct()` applies it and falls back to EN.
+`material` includes `buffalo` (horn), `wood`, `metal`; sizes display in **mm**; `unit` is
+`piece` for the handcraft line. Optional `face` (`flat`/`stamped`/`open`/`domed`) drives
+the SVG fallback render; optional **`image`** (path under `/public`) shows a real photo
+instead of the SVG. Each product JSON may carry an optional `translations.ja` block (name,
+descriptions, careNotes, per-finish names, seo); `localizeProduct()` applies it, falls
+back to EN. **`references/` is gitignored** (repo is public; don't publish supplier PDFs).
 
 **i18n (bilingual EN/JA):** all pages live under `/[locale]` (`en` | `ja`); the root
 layout is a pass-through and `[locale]/layout.tsx` renders `<html lang>` + chrome.
