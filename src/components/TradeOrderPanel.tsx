@@ -31,6 +31,7 @@ type Props = {
   material: Material;
   holeType: HoleType;
   face?: ButtonFace;
+  image?: string;
   variants: VariantView[];
   productUrl: string;
   snipcartEnabled: boolean;
@@ -58,6 +59,7 @@ export function TradeOrderPanel({
   material,
   holeType,
   face,
+  image,
   variants,
   productUrl,
   snipcartEnabled,
@@ -115,15 +117,20 @@ export function TradeOrderPanel({
                     : "border-stone-200 hover:border-stone-300"
                 }`}
               >
-                <ButtonSwatch
-                  colorHex={v.colorHex}
-                  holeType={holeType}
-                  material={material}
-                  face={face}
-                  size={28}
-                />
+                {image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={image} alt="" className="h-7 w-7 rounded object-cover" />
+                ) : (
+                  <ButtonSwatch
+                    colorHex={v.colorHex}
+                    holeType={holeType}
+                    material={material}
+                    face={face}
+                    size={28}
+                  />
+                )}
                 <span>
-                  {v.sizeLigne}L · {v.finish}
+                  {v.sizeMm}mm · {v.finish}
                 </span>
               </button>
             );
@@ -199,7 +206,7 @@ export function TradeOrderPanel({
           className="snipcart-add-item mt-5 w-full rounded-md bg-accent px-4 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50"
           disabled={loading}
           data-item-id={selected.variantSku}
-          data-item-name={`${productName} — ${selected.sizeLigne}L ${selected.finish}`}
+          data-item-name={`${productName} — ${selected.sizeMm}mm ${selected.finish}`}
           data-item-price={quote.unitPrice.toFixed(2)}
           data-item-url={productUrl}
           data-item-quantity={String(qty)}

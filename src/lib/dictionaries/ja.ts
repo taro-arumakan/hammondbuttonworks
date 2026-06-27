@@ -18,18 +18,18 @@ const ja = {
     // Display captions are kept in English (brand/display voice); the body copy,
     // CTAs, and details below stay Japanese. Auto-translated marketing headlines
     // read awkwardly, so headlines/section titles use the English original.
-    eyebrow: "Heritage workwear buttons · Made in Japan",
-    title: "Buttons built for hard wear, supplied for the trade.",
+    eyebrow: "Handcrafted natural buttons · Buffalo · Wood · Metal",
+    title: "Buttons of horn, wood & metal — handcrafted, made to order.",
     subtitle:
-      "アパレルメーカー様向けのタック・ジャンパーコート・オーバーオール・刻印ワークボタン。卸売の段階別価格、小ロット対応、名入れ刻印に対応します。",
+      "アパレルメーカー様向けの、天然水牛ホーン・広葉樹・無垢金属のボタン。手仕上げ・無塗装で、小ロット・サイズ別注に対応します。",
     browse: "カタログを見る",
     requestQuote: "見積もりを依頼",
     props: [
-      { t: "Trade pricing", d: "数量に応じた段階別の卸売価格。ログインで料金を表示します。" },
-      { t: "Low minimums", d: "サンプル用の小ロットから量産ロットまで対応します。" },
-      { t: "Made to spec", d: "名入れ刻印・ロゴ金型・ニッケルセーフの認証仕上げ。" },
+      { t: "Natural materials", d: "水牛ホーン・広葉樹・無垢金属。無塗装で素材本来の表情を活かします。" },
+      { t: "Handcrafted", d: "一つひとつ手作業で削り・仕上げ。同じものはひとつとしてありません。" },
+      { t: "Made to order", d: "サイズ・仕上げ・刻印まで別注対応。小ロットから承ります。" },
     ],
-    rangeTitle: "The pilot range",
+    rangeTitle: "The range",
     viewAll: "すべて見る →",
     guestNote: "価格は承認済みの取引先アカウントに表示されます。",
     guestLogin: "取引先ログイン",
@@ -39,8 +39,9 @@ const ja = {
 
   catalog: {
     title: "ボタンカタログ",
-    subtitleTrade: "ヘリテージ・ワークウェアボタンのパイロットラインナップ。お客様の取引価格を表示しています。",
-    subtitleGuest: "ヘリテージ・ワークウェアボタンのパイロットラインナップ。卸売価格とご注文にはログインが必要です。",
+    intro: "小ロットの手仕事、無塗装の自然な仕上げ。サイズ・仕様は別注対応いたします。",
+    subtitleTrade: "手仕事による天然ボタンのラインナップ — 水牛ホーン・木・金属。お客様の取引価格を表示しています。",
+    subtitleGuest: "手仕事による天然ボタンのラインナップ — 水牛ホーン・木・金属。卸売価格とご注文にはログインが必要です。",
     guestBanner: "ゲストとして閲覧中です — 価格は非表示です。",
     guestBannerLogin: "取引先ログイン",
     guestBannerSuffix: "で価格を表示。",
@@ -61,7 +62,7 @@ const ja = {
     origin: "原産国",
     certifications: "認証",
     careLabel: "お手入れ:",
-    mockupNote: "画像はイメージです。実物サンプルはご請求いただけます。",
+    mockupNote: "実物サンプルの写真です。色・杢目は個体ごとに異なります。",
   },
 
   priceBlock: {
@@ -129,8 +130,10 @@ const ja = {
 
   footer: {
     brand: "Hammond Button Works",
-    copy: "© Hammond Button Works — B2B卸売供給（パイロット版）。",
-    disclaimer: "製品画像はイメージです。実物サンプルはご請求いただけます。",
+    handcraft: "ネパールの手仕事 ・ 東京（日本）",
+    contact: "info@alvana.jp",
+    copy: "© Hammond Button Works — ハンドクラフトボタン供給（パイロット版）。",
+    disclaimer: "天然素材のため、色・杢目は個体ごとに異なります。サンプルご請求いただけます。",
   },
 
   labels: {
@@ -138,6 +141,7 @@ const ja = {
       metal: "金属",
       shell: "貝",
       horn: "水牛角",
+      buffalo: "水牛ホーン",
       corozo: "コロゾ（タグア）",
       polyester: "ポリエステル",
       wood: "木",

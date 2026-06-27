@@ -36,6 +36,7 @@ export default async function CatalogPage({
       <p className="mt-2 max-w-2xl text-stone-600">
         {tier ? dict.catalog.subtitleTrade : dict.catalog.subtitleGuest}
       </p>
+      <p className="mt-1 max-w-2xl text-sm text-stone-500">{dict.catalog.intro}</p>
 
       {!tier && (
         <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -47,10 +48,12 @@ export default async function CatalogPage({
         </div>
       )}
 
-      <div className="mt-8 grid grid-cols-2 border-t border-l border-line lg:grid-cols-3">
-        {products.map((p) => (
-          <ProductCard key={p.slug} product={p} tier={tier} locale={locale} dict={dict} />
-        ))}
+      <div className="frame-double mt-8 bg-surface p-2">
+        <div className="grid grid-cols-2 border-t border-l border-line lg:grid-cols-3">
+          {products.map((p) => (
+            <ProductCard key={p.slug} product={p} tier={tier} locale={locale} dict={dict} />
+          ))}
+        </div>
       </div>
     </div>
   );

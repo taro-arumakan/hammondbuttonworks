@@ -1,0 +1,166 @@
+{
+  "sku": "RM-012BR",
+  "slug": "concho-metal-button",
+  "name": "Concho Metal Button",
+  "shortDescription": "Hand-chased concho shank button — scalloped brass with coral-and-turquoise inlay.",
+  "longDescription": "A decorative concho-style shank button, hand-chased in brass with a scalloped edge and a set turquoise stone flanked by coral inlay. A statement closure for outerwear, western and workwear-inspired pieces, and accessories. Each is finished by hand, so tone and patina vary. Made to order; nickel-free plating available.",
+  "material": "metal",
+  "holeType": "shank",
+  "face": "domed",
+  "image": "/images/products/metal-rm-012.jpg",
+  "application": [
+    "outerwear",
+    "uniform"
+  ],
+  "careNotes": "Solid metal with natural inlay. Wipe with a dry cloth; avoid abrasive polishes, which dull the antique finish and stones.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [
+    "Nickel-free plating on request"
+  ],
+  "leadTimeDays": 50,
+  "moq": 50,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RM-012BR-18",
+      "sizeLigne": 28,
+      "sizeMm": 18,
+      "finish": "Antique brass / turquoise",
+      "colorHex": "#9a8654",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 3.8,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 3.42,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 3.04,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 3.27,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 2.94,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 2.61,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 2.85,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 2.57,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 2.28,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RM-012BR-25",
+      "sizeLigne": 39,
+      "sizeMm": 25,
+      "finish": "Antique brass / turquoise",
+      "colorHex": "#9a8654",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 4.48,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 4.04,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 3.59,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 3.86,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 3.47,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 3.08,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 3.36,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 3.03,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 2.69,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Concho Metal Button — Brass & Turquoise Inlay Wholesale",
+    "description": "Hand-chased brass concho shank buttons with turquoise and coral inlay, made to order. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "コンチョメタルボタン",
+      "shortDescription": "スキャロップのブラスにターコイズとコーラルを象嵌した、手彫りのコンチョ足付きボタン。",
+      "longDescription": "装飾性の高いコンチョ型の足付きボタン。スキャロップの縁取りを施したブラスに、ターコイズの石とコーラルの象嵌をあしらい、一点ずつ手彫りで仕上げています。アウターやウエスタン／ワーク調のアイテム、アクセサリーの主役となる留め具です。色味やパティナは個体差があります。別注対応・ニッケルフリーめっき可。",
+      "careNotes": "無垢の金属に天然石の象嵌です。乾いた布で拭き、研磨剤は避けてください（アンティーク仕上げや石を傷めます）。",
+      "finishes": {
+        "Antique brass / turquoise": "アンティークブラス／ターコイズ"
+      },
+      "seo": {
+        "title": "コンチョメタルボタン — ブラス×ターコイズ象嵌 卸売",
+        "description": "ターコイズとコーラルを象嵌した手彫りブラスのコンチョ足付きボタン。別注対応。取引価格。"
+      }
+    }
+  }
+}

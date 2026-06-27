@@ -1,0 +1,227 @@
+{
+  "sku": "RM-013BR",
+  "slug": "dome-metal-button",
+  "name": "Dome Metal Button",
+  "shortDescription": "Clean half-ball brass shank button — a quiet, rounded metal closure.",
+  "longDescription": "A smooth half-ball shank button in solid brass, with a softly domed face and a quiet, even finish. Understated and versatile for outerwear, coats, and blazers. Develops a gentle patina with wear. Made to order; nickel-free plating available.",
+  "material": "metal",
+  "holeType": "shank",
+  "face": "domed",
+  "image": "/images/products/metal-rm-013.jpg",
+  "application": [
+    "outerwear",
+    "coat"
+  ],
+  "careNotes": "Solid brass; uncoated examples patina with wear. Wipe with a dry cloth; avoid abrasive polishes on antique finishes.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [
+    "Nickel-free plating on request"
+  ],
+  "leadTimeDays": 45,
+  "moq": 50,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RM-013BR-15",
+      "sizeLigne": 24,
+      "sizeMm": 15,
+      "finish": "Brass",
+      "colorHex": "#8c7a4e",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.6,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.44,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.28,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.38,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.24,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.1,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.2,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.08,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.96,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RM-013BR-18",
+      "sizeLigne": 28,
+      "sizeMm": 18,
+      "finish": "Brass",
+      "colorHex": "#8c7a4e",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.89,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.51,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.62,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.46,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.3,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.42,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.27,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.13,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RM-013BR-23",
+      "sizeLigne": 36,
+      "sizeMm": 23,
+      "finish": "Brass",
+      "colorHex": "#8c7a4e",
+      "inStockSample": false,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 2.18,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.96,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.74,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.87,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.68,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.5,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.63,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.47,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.31,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Dome Metal Button — Half-Ball Brass Shank Wholesale",
+    "description": "Smooth half-ball brass shank buttons, made to order in any size. Nickel-free options. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "ドームメタルボタン",
+      "shortDescription": "なめらかなハーフボールの真鍮足付きボタン。控えめで丸みのある金属の留め具。",
+      "longDescription": "無垢の真鍮によるなめらかなハーフボール（半球）の足付きボタン。やわらかなドーム面と均一で落ち着いた仕上げ。アウター・コート・ブレザーに合わせやすい控えめな表情で、使い込むほどに自然なパティナが育ちます。別注対応・ニッケルフリーめっき可。",
+      "careNotes": "無垢の真鍮です。無塗装は使用とともにパティナが出ます。乾いた布で拭き、アンティーク仕上げには研磨剤を避けてください。",
+      "finishes": {
+        "Brass": "真鍮"
+      },
+      "seo": {
+        "title": "ドームメタルボタン — ハーフボール真鍮 足付き 卸売",
+        "description": "なめらかなハーフボールの真鍮足付きボタン。サイズ別注・ニッケルフリー可。取引価格。"
+      }
+    }
+  }
+}

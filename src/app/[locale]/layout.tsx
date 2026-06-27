@@ -34,12 +34,12 @@ export async function generateMetadata({
       ? {
           title: "Hammond Button Works — 取引先向けボタン卸売",
           description:
-            "アパレルメーカー様向けの日本製ヘリテージ・ワークウェアボタン。タック・ジャンパーコート・オーバーオール・刻印ワークボタン。卸売の段階別価格と別注対応。",
+            "アパレルメーカー様向けの、手仕事による天然ボタン。水牛ホーン・広葉樹・無垢金属。無塗装の自然な仕上げで、小ロット・サイズ別注に対応します。",
         }
       : {
           title: "Hammond Button Works — Trade Button Supply",
           description:
-            "Heritage workwear buttons for apparel makers — tack, jumper-coat, overall, and engraved work buttons. Made in Japan. Wholesale trade pricing and custom production.",
+            "Handcrafted natural buttons for apparel makers — buffalo horn, hardwood, and solid metal. Uncoated, made to order in any size. Wholesale trade pricing.",
         };
   return {
     title: { default: meta.title, template: "%s · Hammond Button Works" },
@@ -127,7 +127,16 @@ export default async function LocaleLayout({
               <Logo variant="stamp" className="h-14 w-14 text-foreground shrink-0" />
               <div>
                 <p className="font-serif text-base text-foreground">{dict.footer.brand}</p>
+                <p className="mt-0.5 text-xs uppercase tracking-wide text-stone-400">
+                  {dict.footer.handcraft}
+                </p>
                 <p className="mt-1">{dict.footer.copy}</p>
+                <a
+                  href={`mailto:${dict.footer.contact}`}
+                  className="mt-1 inline-block underline hover:text-accent"
+                >
+                  {dict.footer.contact}
+                </a>
               </div>
             </div>
             <span className="max-w-xs sm:text-right">{dict.footer.disclaimer}</span>

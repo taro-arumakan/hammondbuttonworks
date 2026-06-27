@@ -1,0 +1,225 @@
+{
+  "sku": "RBW-01",
+  "slug": "buffalo-horn-button",
+  "name": "Buffalo Horn Button",
+  "shortDescription": "Hand-finished natural buffalo-horn button with a deep, lived-in grain — no two alike.",
+  "longDescription": "Cut and finished by hand from natural buffalo horn, then left uncoated so the material's depth and grain show through. Each piece carries its own marbling and tone, from warm amber to near-black. A substantial, tactile button for coats, knitwear, and tailoring. Any size or finish made to order.",
+  "material": "buffalo",
+  "holeType": "2-hole",
+  "face": "flat",
+  "image": "/images/products/buffalo-rbw-01.jpg",
+  "application": [
+    "coat",
+    "knitwear"
+  ],
+  "careNotes": "Natural, uncoated horn — keep dry and avoid prolonged soaking; an occasional wipe with a dry cloth keeps the luster. Color and grain vary by piece.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [],
+  "leadTimeDays": 45,
+  "moq": 100,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RBW-01-20",
+      "sizeLigne": 31,
+      "sizeMm": 20,
+      "finish": "Natural dark horn",
+      "colorHex": "#4a3a2c",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.4,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.26,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.12,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.2,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.08,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.96,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.05,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.94,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.84,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RBW-01-25",
+      "sizeLigne": 39,
+      "sizeMm": 25,
+      "finish": "Natural dark horn",
+      "colorHex": "#4a3a2c",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.65,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.49,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.32,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.42,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.28,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.14,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.24,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.12,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.99,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RBW-01-30",
+      "sizeLigne": 47,
+      "sizeMm": 30,
+      "finish": "Natural dark horn",
+      "colorHex": "#4a3a2c",
+      "inStockSample": false,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.9,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.71,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.52,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.64,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.47,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.31,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.43,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.29,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.14,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Buffalo Horn Button — Natural Handcraft Wholesale",
+    "description": "Hand-finished natural buffalo-horn buttons, uncoated, made to order in any size. Handcrafted. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "水牛ホーンボタン",
+      "shortDescription": "天然水牛ホーンを手仕上げした、深い杢目のボタン。一つとして同じものはありません。",
+      "longDescription": "天然の水牛ホーンから一つひとつ手作業で削り出し、無塗装で仕上げることで素材本来の深みと杢目を活かしています。琥珀色から漆黒に近い色まで、マーブル模様や色合いは個体ごとに異なります。コート・ニット・テーラリングに映える、重厚で手触りのよいボタンです。サイズ・仕上げは別注対応。",
+      "careNotes": "無塗装の天然ホーンです。長時間の水濡れを避け、乾いた布で拭いてください。色・杢目には個体差があります。",
+      "finishes": {
+        "Natural dark horn": "ナチュラルダークホーン"
+      },
+      "seo": {
+        "title": "水牛ホーンボタン — 天然ハンドクラフト卸売",
+        "description": "無塗装の天然水牛ホーンボタン。サイズ別注対応・手仕事。取引価格。"
+      }
+    }
+  }
+}

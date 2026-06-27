@@ -28,7 +28,7 @@ export function ProductCard({
 }) {
   const hero = product.variants[0];
   const priced = tier ? resolvePrice(hero, tier, product.moq) : null;
-  const minLigne = Math.min(...product.variants.map((v) => v.sizeLigne));
+  const minMm = Math.min(...product.variants.map((v) => v.sizeMm));
 
   const materialLabel = dict.labels.material[product.material] ?? product.material;
   const holeLabel = dict.labels.holeType[product.holeType] ?? product.holeType;
@@ -39,23 +39,37 @@ export function ProductCard({
       href={`/${locale}/catalog/${product.slug}`}
       className="group flex flex-col border-r border-b border-line bg-surface transition-colors hover:bg-background"
     >
-      <div className="flex aspect-square items-center justify-center overflow-hidden p-6">
-        <ButtonSwatch
-          colorHex={hero.colorHex}
-          holeType={product.holeType}
-          material={product.material}
-          face={product.face}
-          size={150}
-          label={product.name}
-          className="transition-transform duration-300 ease-out group-hover:scale-105"
-        />
+      <div className="aspect-square overflow-hidden">
+        {product.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center p-6">
+            <ButtonSwatch
+              colorHex={hero.colorHex}
+              holeType={product.holeType}
+              material={product.material}
+              face={product.face}
+              size={150}
+              label={product.name}
+              className="transition-transform duration-300 ease-out group-hover:scale-105"
+            />
+          </div>
+        )}
       </div>
       <div className="border-t border-line px-4 py-3">
         <h3 className="font-serif text-lg leading-tight text-foreground">
           {product.name}
         </h3>
+        <p className="mt-0.5 text-[11px] uppercase tracking-wider text-stone-400">
+          {product.sku}
+        </p>
         <p className="mt-1 text-xs uppercase tracking-wide text-stone-500">
-          {materialLabel} · {holeLabel} · {dict.catalog.fromLigne} {minLigne}L
+          {materialLabel} · {holeLabel} · {dict.catalog.fromLigne} {minMm}mm
         </p>
         <div className="mt-2 text-sm">
           {priced ? (

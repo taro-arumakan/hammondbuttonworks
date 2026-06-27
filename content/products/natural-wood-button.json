@@ -1,0 +1,226 @@
+{
+  "sku": "RW-01WD",
+  "slug": "natural-wood-button",
+  "name": "Natural Wood Button",
+  "shortDescription": "Light, warm hardwood with an uncoated matte finish — a clean two-hole everyday button.",
+  "longDescription": "Turned from light hardwood and left with a natural, uncoated matte surface that shows the grain. Warm and lightweight, it suits knitwear, shirting, and unstructured tailoring. A simple, honest two-hole button that wears in beautifully. Any size made to order.",
+  "material": "wood",
+  "holeType": "2-hole",
+  "face": "flat",
+  "image": "/images/products/wood-rw-01.jpg",
+  "application": [
+    "knitwear",
+    "coat",
+    "uniform"
+  ],
+  "careNotes": "Natural, uncoated wood. Keep dry and avoid soaking; wipe clean. Grain and tone vary by piece.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [],
+  "leadTimeDays": 40,
+  "moq": 100,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RW-01WD-15",
+      "sizeLigne": 24,
+      "sizeMm": 15,
+      "finish": "Natural maple",
+      "colorHex": "#d8b483",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.85,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.77,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.68,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.73,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.66,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.58,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.64,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.57,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.51,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RW-01WD-18",
+      "sizeLigne": 28,
+      "sizeMm": 18,
+      "finish": "Natural maple",
+      "colorHex": "#d8b483",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.9,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.8,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.86,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.78,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.69,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.75,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.68,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.6,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RW-01WD-23",
+      "sizeLigne": 36,
+      "sizeMm": 23,
+      "finish": "Natural maple",
+      "colorHex": "#d8b483",
+      "inStockSample": false,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.16,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.04,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.92,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.99,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.89,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.8,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.87,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.78,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.69,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Natural Wood Button — Uncoated Hardwood Wholesale",
+    "description": "Light hardwood 2-hole buttons, natural uncoated finish, made to order. Handcrafted. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "ナチュラルウッドボタン",
+      "shortDescription": "明るく温かみのある広葉樹を無塗装マットで仕上げた、シンプルな2つ穴の定番ボタン。",
+      "longDescription": "明るい広葉樹から削り出し、木目を活かした無塗装マット仕上げ。軽く温かみのある表情で、ニット・シャツ・アンストラクチャードなテーラリングによく合います。使い込むほどに味わいの増す、素直な2つ穴ボタンです。サイズは別注対応。",
+      "careNotes": "無塗装の天然木です。水濡れを避け、拭き取ってください。木目・色味は個体差があります。",
+      "finishes": {
+        "Natural maple": "ナチュラルメープル"
+      },
+      "seo": {
+        "title": "ナチュラルウッドボタン — 無塗装 広葉樹 卸売",
+        "description": "明るい広葉樹の無塗装2つ穴ボタン。別注対応・手仕事。取引価格。"
+      }
+    }
+  }
+}

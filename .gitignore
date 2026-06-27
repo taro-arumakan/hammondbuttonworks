@@ -28,3 +28,6 @@ yarn-error.log*
 next-env.d.ts
 .vercel
 .env*
+
+# brand source assets / supplier catalogs — keep local, not in the public repo
+/references

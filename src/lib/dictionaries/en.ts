@@ -16,18 +16,18 @@ const en = {
   },
 
   home: {
-    eyebrow: "Heritage workwear buttons · Made in Japan",
-    title: "Buttons built for hard wear, supplied for the trade.",
+    eyebrow: "Handcrafted natural buttons · Buffalo · Wood · Metal",
+    title: "Buttons of horn, wood & metal — handcrafted, made to order.",
     subtitle:
-      "Tack, jumper-coat, overall, and engraved work buttons for apparel makers. Wholesale tiered pricing, low minimums, and custom face stamping.",
+      "Natural buffalo-horn, hardwood, and solid-metal buttons for apparel makers. Hand-finished and uncoated, in small quantities and any size to order.",
     browse: "Browse the catalog",
     requestQuote: "Request a quote",
     props: [
-      { t: "Trade pricing", d: "Tiered wholesale pricing with volume breaks. Sign in to see your rates." },
-      { t: "Low minimums", d: "Start from small gross quantities for sampling, scale to production lots." },
-      { t: "Made to spec", d: "Custom face stamping, logo tooling, and certified, nickel-safe finishes." },
+      { t: "Natural materials", d: "Buffalo horn, hardwood, and solid metal — uncoated, so the material shows." },
+      { t: "Handcrafted", d: "Cut and finished by hand; no two pieces are exactly alike." },
+      { t: "Made to order", d: "Any size, finish, or engraving — from small quantities up." },
     ],
-    rangeTitle: "The pilot range",
+    rangeTitle: "The range",
     viewAll: "View all →",
     guestNote: "Prices are visible to approved trade accounts.",
     guestLogin: "Trade login",
@@ -37,8 +37,9 @@ const en = {
 
   catalog: {
     title: "Button catalog",
-    subtitleTrade: "Our pilot range of heritage workwear buttons. Showing your trade pricing.",
-    subtitleGuest: "Our pilot range of heritage workwear buttons. Sign in for wholesale pricing and ordering.",
+    intro: "Handcrafted in small quantities with a natural, uncoated finish. Any size or spec made to order.",
+    subtitleTrade: "Our range of handcrafted natural buttons — buffalo horn, wood, and metal. Showing your trade pricing.",
+    subtitleGuest: "Our range of handcrafted natural buttons — buffalo horn, wood, and metal. Sign in for wholesale pricing and ordering.",
     guestBanner: "You're browsing as a guest — prices are hidden.",
     guestBannerLogin: "Trade login",
     guestBannerSuffix: "to see pricing.",
@@ -59,7 +60,7 @@ const en = {
     origin: "Origin",
     certifications: "Certifications",
     careLabel: "Care:",
-    mockupNote: "Visuals are representative mockups; physical samples available on request.",
+    mockupNote: "Photographed samples — natural colour and grain vary piece to piece.",
   },
 
   priceBlock: {
@@ -127,8 +128,10 @@ const en = {
 
   footer: {
     brand: "Hammond Button Works",
-    copy: "© Hammond Button Works — B2B trade supply (pilot).",
-    disclaimer: "Product visuals are representative mockups; physical samples available on request.",
+    handcraft: "Handcrafted in Nepal · Tokyo, Japan",
+    contact: "info@alvana.jp",
+    copy: "© Hammond Button Works — handcraft button supply (pilot).",
+    disclaimer: "Natural materials; colour and grain vary piece to piece. Samples available on request.",
   },
 
   labels: {
@@ -136,6 +139,7 @@ const en = {
       metal: "Metal",
       shell: "Shell",
       horn: "Horn",
+      buffalo: "Buffalo horn",
       corozo: "Corozo",
       polyester: "Polyester",
       wood: "Wood",

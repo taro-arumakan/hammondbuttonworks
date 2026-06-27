@@ -58,7 +58,7 @@ export default async function ProductPage({
   const tier = session?.user.tier ?? null;
   const productUrl = `${await baseUrl()}/${locale}/catalog/${product.slug}`;
 
-  const sizes = [...new Set(product.variants.map((v) => v.sizeLigne))].sort(
+  const sizes = [...new Set(product.variants.map((v) => v.sizeMm))].sort(
     (a, b) => a - b,
   );
 
@@ -68,9 +68,10 @@ export default async function ProductPage({
   const applications = product.application
     .map((a) => dict.labels.application[a] ?? a)
     .join(locale === "ja" ? "・" : ", ");
+  const originJa: Record<string, string> = { Japan: "日本", Nepal: "ネパール" };
   const origin =
-    locale === "ja" && product.countryOfOrigin === "Japan"
-      ? "日本"
+    locale === "ja" && product.countryOfOrigin
+      ? (originJa[product.countryOfOrigin] ?? product.countryOfOrigin)
       : product.countryOfOrigin;
 
   return (
@@ -85,31 +86,51 @@ export default async function ProductPage({
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         {/* Gallery + specs */}
         <div>
-          <div className="flex items-center justify-center rounded-2xl bg-stone-50 py-12">
-            <ButtonSwatch
-              colorHex={product.variants[0].colorHex}
-              holeType={product.holeType}
-              material={product.material}
-              face={product.face}
-              size={240}
-              label={product.name}
-            />
+          <div className="overflow-hidden rounded-2xl bg-stone-50">
+            {product.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={product.image}
+                alt={product.name}
+                className="aspect-square w-full object-cover"
+              />
+            ) : (
+              <div className="flex items-center justify-center py-12">
+                <ButtonSwatch
+                  colorHex={product.variants[0].colorHex}
+                  holeType={product.holeType}
+                  material={product.material}
+                  face={product.face}
+                  size={240}
+                  label={product.name}
+                />
+              </div>
+            )}
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
             {product.variants.map((v) => (
               <div
                 key={v.variantSku}
                 className="flex flex-col items-center rounded-lg border border-stone-200 p-2"
-                title={`${v.sizeLigne}L · ${v.finish}`}
+                title={`${v.sizeMm}mm · ${v.finish}`}
               >
-                <ButtonSwatch
-                  colorHex={v.colorHex}
-                  holeType={product.holeType}
-                  material={product.material}
-                  face={product.face}
-                  size={48}
-                />
-                <span className="mt-1 text-[11px] text-stone-500">{v.sizeLigne}L</span>
+                {product.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-12 w-12 rounded object-cover"
+                  />
+                ) : (
+                  <ButtonSwatch
+                    colorHex={v.colorHex}
+                    holeType={product.holeType}
+                    material={product.material}
+                    face={product.face}
+                    size={48}
+                  />
+                )}
+                <span className="mt-1 text-[11px] text-stone-500">{v.sizeMm}mm</span>
               </div>
             ))}
           </div>
@@ -118,7 +139,7 @@ export default async function ProductPage({
           <dl className="mt-2">
             <Spec label={dict.product.material} value={materialLabel} />
             <Spec label={dict.product.attachment} value={holeLabel} />
-            <Spec label={dict.product.sizes} value={sizes.map((s) => `${s}L`).join(", ")} />
+            <Spec label={dict.product.sizes} value={sizes.map((s) => `${s}mm`).join(", ")} />
             <Spec label={dict.product.applications} value={applications || "—"} />
             <Spec label={dict.product.moq} value={`${product.moq} ${unitLabel}`} />
             <Spec

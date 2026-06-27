@@ -18,7 +18,7 @@ export const HoleTypeSchema = z.enum(HOLE_TYPES);
 export type HoleType = (typeof HOLE_TYPES)[number];
 
 // --- Materials ---------------------------------------------------------------
-export const MATERIALS = ["metal", "shell", "horn", "corozo", "polyester", "wood"] as const;
+export const MATERIALS = ["metal", "shell", "horn", "buffalo", "corozo", "polyester", "wood"] as const;
 export const MaterialSchema = z.enum(MATERIALS);
 export type Material = (typeof MATERIALS)[number];
 
@@ -108,10 +108,13 @@ export const ProductSchema = z.object({
   longDescription: z.string().min(1),
   material: MaterialSchema,
   holeType: HoleTypeSchema,
-  // Face treatment for the SVG render (independent of attachment):
-  //  flat = plain struck tack face · stamped = relief medallion ·
-  //  open = open-center "doughnut" · domed = convex jumper-coat face.
+  // Face treatment for the SVG fallback render (independent of attachment):
+  //  flat = plain struck face · stamped = relief medallion ·
+  //  open = open-center "doughnut" · domed = convex face.
   face: z.enum(["flat", "stamped", "open", "domed"]).optional(),
+  // Optional product photo (path under /public). When present it is shown
+  // instead of the SVG ButtonSwatch.
+  image: z.string().optional(),
   application: z.array(z.string()).default([]),
   careNotes: z.string().optional().default(""),
   countryOfOrigin: z.string().optional(),

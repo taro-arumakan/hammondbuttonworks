@@ -1,0 +1,225 @@
+{
+  "sku": "RBC-01B",
+  "slug": "marbled-horn-button",
+  "name": "Marbled Horn Button",
+  "shortDescription": "Translucent honey-and-amber buffalo horn with a dark rim — a warm, variegated 4-hole.",
+  "longDescription": "A four-hole horn button selected for its translucent, marbled centre — honey and amber pooling against a darker rim. Cut from natural buffalo horn and hand-finished uncoated. The figure runs right through the material, so every button is one of a kind. Suited to knitwear, coats, and shirting where a warmer tone is wanted.",
+  "material": "buffalo",
+  "holeType": "4-hole",
+  "face": "flat",
+  "image": "/images/products/buffalo-rbc-01.jpg",
+  "application": [
+    "coat",
+    "knitwear"
+  ],
+  "careNotes": "Natural, uncoated horn. Keep dry; wipe with a dry cloth. Color, translucency, and grain vary by piece.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [],
+  "leadTimeDays": 45,
+  "moq": 100,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RBC-01B-15",
+      "sizeLigne": 24,
+      "sizeMm": 15,
+      "finish": "Honey marble",
+      "colorHex": "#6b4a2f",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.25,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.13,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.08,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.97,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.86,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.94,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.84,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.75,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RBC-01B-18",
+      "sizeLigne": 28,
+      "sizeMm": 18,
+      "finish": "Honey marble",
+      "colorHex": "#6b4a2f",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.48,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.33,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.18,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.27,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.14,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.01,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.11,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.89,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RBC-01B-23",
+      "sizeLigne": 36,
+      "sizeMm": 23,
+      "finish": "Honey marble",
+      "colorHex": "#6b4a2f",
+      "inStockSample": false,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.7,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.53,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.36,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.46,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.32,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.17,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.27,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 1.15,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 1.02,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Marbled Horn Button — Honey Buffalo Horn Wholesale",
+    "description": "Translucent honey-marble buffalo-horn 4-hole buttons, hand-finished and made to order. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "マーブルホーンボタン",
+      "shortDescription": "透明感のあるハニー〜アンバーの水牛ホーンに濃色のリム。温かみのある杢目の4つ穴ボタン。",
+      "longDescription": "中央の透明感あるマーブル模様で選別した4つ穴ホーンボタン。濃色のリムにハニーやアンバーの色が溶け合います。天然水牛ホーンから削り出し、無塗装で手仕上げ。模様は素材を貫いており、一つとして同じものはありません。ニット・コート・シャツなど、温かみのある色を求める装いに。",
+      "careNotes": "無塗装の天然ホーンです。乾いた布で拭き、水濡れを避けてください。色・透明感・杢目は個体差があります。",
+      "finishes": {
+        "Honey marble": "ハニーマーブル"
+      },
+      "seo": {
+        "title": "マーブルホーンボタン — ハニー水牛ホーン卸売",
+        "description": "透明感のあるハニーマーブルの水牛ホーン4つ穴ボタン。手仕上げ・別注対応。取引価格。"
+      }
+    }
+  }
+}

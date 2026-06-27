@@ -66,6 +66,7 @@ export function PriceBlock({
       material={product.material}
       holeType={product.holeType}
       face={product.face}
+      image={product.image}
       productUrl={productUrl}
       snipcartEnabled={snipcartEnabled}
       locale={locale}

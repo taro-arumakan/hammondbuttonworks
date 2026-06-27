@@ -1,0 +1,225 @@
+{
+  "sku": "RW-03WD",
+  "slug": "rimmed-wood-button",
+  "name": "Rimmed Wood Button",
+  "shortDescription": "Compact four-hole hardwood with a raised rim — a tidy, classic shirt-and-knit button.",
+  "longDescription": "A smaller four-hole wood button with a turned, raised rim that frames the stitch. Natural, uncoated hardwood with a soft matte finish. Neat and classic for shirting, knitwear, and uniforms. Made to order in any size.",
+  "material": "wood",
+  "holeType": "4-hole",
+  "face": "flat",
+  "image": "/images/products/wood-rw-03.jpg",
+  "application": [
+    "knitwear",
+    "uniform"
+  ],
+  "careNotes": "Natural, uncoated wood. Keep dry; wipe clean. Grain and tone vary by piece.",
+  "countryOfOrigin": "Nepal",
+  "certifications": [],
+  "leadTimeDays": 40,
+  "moq": 100,
+  "unit": "piece",
+  "variants": [
+    {
+      "variantSku": "RW-03WD-13",
+      "sizeLigne": 20,
+      "sizeMm": 13,
+      "finish": "Natural maple",
+      "colorHex": "#d2a86e",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.8,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.72,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.64,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.69,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.62,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.55,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.6,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.54,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.48,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RW-03WD-15",
+      "sizeLigne": 24,
+      "sizeMm": 15,
+      "finish": "Natural maple",
+      "colorHex": "#d2a86e",
+      "inStockSample": true,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.94,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.85,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.76,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.81,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.73,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.65,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.71,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.64,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.57,
+            "currency": "USD"
+          }
+        ]
+      }
+    },
+    {
+      "variantSku": "RW-03WD-18",
+      "sizeLigne": 28,
+      "sizeMm": 18,
+      "finish": "Natural maple",
+      "colorHex": "#d2a86e",
+      "inStockSample": false,
+      "priceByTier": {
+        "tier_standard": [
+          {
+            "minQty": 100,
+            "unitPrice": 1.09,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.98,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.87,
+            "currency": "USD"
+          }
+        ],
+        "tier_volume": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.94,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.84,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.75,
+            "currency": "USD"
+          }
+        ],
+        "tier_partner": [
+          {
+            "minQty": 100,
+            "unitPrice": 0.82,
+            "currency": "USD"
+          },
+          {
+            "minQty": 300,
+            "unitPrice": 0.73,
+            "currency": "USD"
+          },
+          {
+            "minQty": 1000,
+            "unitPrice": 0.65,
+            "currency": "USD"
+          }
+        ]
+      }
+    }
+  ],
+  "seo": {
+    "title": "Rimmed Wood Button — Four-Hole Hardwood Wholesale",
+    "description": "Raised-rim 4-hole hardwood buttons, natural uncoated finish, made to order. Trade pricing."
+  },
+  "translations": {
+    "ja": {
+      "name": "リムドウッドボタン",
+      "shortDescription": "立ち上がったリムが縫い糸を引き締める、コンパクトな4つ穴の広葉樹ボタン。",
+      "longDescription": "立ち上がったリムが特徴の、やや小ぶりな4つ穴ウッドボタン。無塗装の広葉樹をソフトなマットに仕上げています。シャツ・ニット・ユニフォームにすっきり収まる、端正で定番の表情。サイズは別注対応。",
+      "careNotes": "無塗装の天然木です。水濡れを避け、拭き取ってください。木目・色味は個体差があります。",
+      "finishes": {
+        "Natural maple": "ナチュラルメープル"
+      },
+      "seo": {
+        "title": "リムドウッドボタン — 4つ穴 広葉樹 卸売",
+        "description": "立ち上がりリムの4つ穴広葉樹ボタン。無塗装・別注対応。取引価格。"
+      }
+    }
+  }
+}
