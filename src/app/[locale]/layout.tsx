@@ -8,6 +8,7 @@ import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { MobileNav } from "@/components/MobileNav";
 import "../globals.css";
 
 const SNIPCART_VERSION = "3.7.3";
@@ -76,48 +77,57 @@ export default async function LocaleLayout({
       )}
       <body className="min-h-screen flex flex-col">
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
-          <nav className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
+          <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
             <Link href={home} aria-label="Hammond Button Works — home">
               <Logo variant="compact" className="h-7 w-auto text-foreground" />
             </Link>
-            <div className="flex items-center gap-5 text-sm">
-              <Link href={`${home}/catalog`} className="hover:text-accent">
-                {dict.nav.catalog}
-              </Link>
-              <Link href={`${home}/about`} className="hover:text-accent">
-                {dict.nav.about}
-              </Link>
-              <Link href={`${home}/quote`} className="hover:text-accent">
-                {dict.nav.quote}
-              </Link>
-              {snipcartKey && account && (
-                <button className="snipcart-checkout hover:text-accent">
-                  {dict.nav.cartPrefix} (<span className="snipcart-items-count">0</span>)
-                </button>
-              )}
-              {account ? (
-                <span className="flex items-center gap-2 text-stone-500">
-                  <span className="hidden sm:inline">
-                    {account.companyName ?? account.email}
-                  </span>
-                  <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
-                    {account.tier?.replace("tier_", "") ?? "trade"}
-                  </span>
-                  <form action="/api/auth/logout" method="post">
-                    <button type="submit" className="text-xs underline hover:text-accent">
-                      {dict.nav.signout}
-                    </button>
-                  </form>
-                </span>
-              ) : (
-                <Link
-                  href={`${home}/login`}
-                  className="rounded-md bg-foreground px-3 py-1.5 text-background hover:bg-accent"
-                >
-                  {dict.nav.login}
+            <div className="flex items-center gap-4 sm:gap-5">
+              {/* Desktop inline nav */}
+              <div className="hidden items-center gap-5 text-sm sm:flex">
+                <Link href={`${home}/catalog`} className="hover:text-accent">
+                  {dict.nav.catalog}
                 </Link>
-              )}
+                <Link href={`${home}/about`} className="hover:text-accent">
+                  {dict.nav.about}
+                </Link>
+                <Link href={`${home}/quote`} className="hover:text-accent">
+                  {dict.nav.quote}
+                </Link>
+                {snipcartKey && account && (
+                  <button className="snipcart-checkout hover:text-accent">
+                    {dict.nav.cartPrefix} (<span className="snipcart-items-count">0</span>)
+                  </button>
+                )}
+                {account ? (
+                  <span className="flex items-center gap-2 text-stone-500">
+                    <span>{account.companyName ?? account.email}</span>
+                    <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
+                      {account.tier?.replace("tier_", "") ?? "trade"}
+                    </span>
+                    <form action="/api/auth/logout" method="post">
+                      <button type="submit" className="text-xs underline hover:text-accent">
+                        {dict.nav.signout}
+                      </button>
+                    </form>
+                  </span>
+                ) : (
+                  <Link
+                    href={`${home}/login`}
+                    className="rounded-md bg-foreground px-3 py-1.5 text-background hover:bg-accent"
+                  >
+                    {dict.nav.login}
+                  </Link>
+                )}
+              </div>
+
+              {/* Always-visible language switcher + mobile hamburger */}
               <LanguageSwitcher current={locale} />
+              <MobileNav
+                home={home}
+                dict={dict}
+                account={account}
+                cartEnabled={Boolean(snipcartKey)}
+              />
             </div>
           </nav>
         </header>
