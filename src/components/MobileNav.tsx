@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 
 type Account = { email: string; tier?: string; companyName?: string };
 
+const DURATION = 200; // ms — keep in sync with the `duration-200` classes below
+
 /**
  * Mobile-only nav: a hamburger that opens a stacked panel below the header bar.
  * Shown under `sm`; the desktop inline nav lives in the layout and is hidden on
- * mobile. The language switcher stays in the bar (handled by the layout).
+ * mobile. The panel mounts, then animates (slide-down + fade) in and out; the
+ * language switcher stays in the bar (handled by the layout).
  */
 export function MobileNav({
   home,
@@ -22,8 +25,22 @@ export function MobileNav({
   account?: Account;
   cartEnabled: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const close = () => setOpen(false);
+  const [mounted, setMounted] = useState(false); // in the DOM?
+  const [visible, setVisible] = useState(false); // animated-in state
+
+  // Mount first, then flip to visible on the next frame so the transition runs.
+  useEffect(() => {
+    if (!mounted) return;
+    const id = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(id);
+  }, [mounted]);
+
+  const open = () => setMounted(true);
+  const close = () => {
+    setVisible(false);
+    setTimeout(() => setMounted(false), DURATION);
+  };
+  const toggle = () => (mounted ? close() : open());
 
   const linkClass =
     "block py-3 text-base text-foreground hover:text-accent border-b border-line/70";
@@ -32,13 +49,13 @@ export function MobileNav({
     <div className="sm:hidden">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Close menu" : "Open menu"}
-        aria-expanded={open}
+        onClick={toggle}
+        aria-label={mounted ? "Close menu" : "Open menu"}
+        aria-expanded={mounted}
         className="flex h-9 w-9 items-center justify-center text-foreground"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
-          {open ? (
+          {mounted ? (
             <>
               <line x1="5" y1="5" x2="19" y2="19" />
               <line x1="19" y1="5" x2="5" y2="19" />
@@ -53,7 +70,7 @@ export function MobileNav({
         </svg>
       </button>
 
-      {open && (
+      {mounted && (
         <>
           {/* click-away backdrop */}
           <button
@@ -61,9 +78,15 @@ export function MobileNav({
             aria-hidden
             tabIndex={-1}
             onClick={close}
-            className="fixed inset-0 top-16 z-10 cursor-default bg-foreground/10"
+            className={`fixed inset-0 top-16 z-10 cursor-default bg-foreground/10 transition-opacity duration-200 ease-out ${
+              visible ? "opacity-100" : "opacity-0"
+            }`}
           />
-          <nav className="absolute left-0 right-0 top-full z-20 border-b border-line bg-surface px-4 pb-4 shadow-sm">
+          <nav
+            className={`absolute left-0 right-0 top-full z-20 border-b border-line bg-surface px-4 pb-4 shadow-sm transition duration-200 ease-out ${
+              visible ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+            }`}
+          >
             <Link href={`${home}/catalog`} onClick={close} className={linkClass}>
               {dict.nav.catalog}
             </Link>
