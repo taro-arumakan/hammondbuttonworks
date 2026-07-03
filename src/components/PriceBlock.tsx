@@ -1,30 +1,29 @@
 import Link from "next/link";
-import type { Product, Tier } from "@/lib/schema";
+import type { Product } from "@/lib/products";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
+import type { CustomerClass } from "@/lib/customer";
 import { TradeOrderPanel } from "./TradeOrderPanel";
 
 /**
- * Server component that decides what a viewer may see:
- *  - Guest  → a "sign in for trade pricing" CTA. No prices reach the payload.
- *  - Trade  → the interactive ordering panel (prices fetched server-side).
+ * Decides what a viewer may see:
+ *  - Guest → a "sign in for trade pricing" CTA. No prices reach the payload.
+ *  - Trade → the interactive ordering panel (prices fetched server-side).
  */
 export function PriceBlock({
   product,
-  tier,
+  customerClass,
   productUrl,
   locale,
   dict,
 }: {
   product: Product;
-  tier: Tier | null;
+  customerClass: CustomerClass | null;
   productUrl: string;
   locale: Locale;
   dict: Dictionary;
 }) {
-  const unitLabel = dict.labels.unit[product.unit] ?? product.unit;
-
-  if (!tier) {
+  if (!customerClass) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 p-6">
         <h2 className="text-lg font-semibold">{dict.priceBlock.heading}</h2>
@@ -37,47 +36,34 @@ export function PriceBlock({
             {dict.priceBlock.login}
           </Link>
           <Link
-            href={`/${locale}/quote?sku=${encodeURIComponent(product.variants[0].variantSku)}`}
+            href={`/${locale}/quote?sku=${encodeURIComponent(product.variants[0]?.sku ?? product.slug)}`}
             className="rounded-md border border-stone-300 px-4 py-2 text-sm font-medium hover:border-accent"
           >
             {dict.priceBlock.requestAccess}
           </Link>
         </div>
         <p className="mt-4 text-xs text-stone-500">
-          {fmt(dict.priceBlock.moqLine, {
-            moq: product.moq,
-            unit: unitLabel,
-            days: product.leadTimeDays,
-          })}
+          {fmt(dict.priceBlock.moqLine, { days: product.leadTimeDays })}
         </p>
       </div>
     );
   }
 
-  const snipcartEnabled = Boolean(process.env.NEXT_PUBLIC_SNIPCART_KEY);
-
   return (
     <TradeOrderPanel
       productName={product.name}
       slug={product.slug}
-      unit={product.unit}
-      unitLabel={unitLabel}
-      moq={product.moq}
-      material={product.material}
-      holeType={product.holeType}
-      face={product.face}
-      image={product.image}
+      leadTimeDays={product.leadTimeDays}
+      colors={product.colors}
+      sizesMm={product.sizesMm}
       productUrl={productUrl}
-      snipcartEnabled={snipcartEnabled}
       locale={locale}
       dict={dict}
       variants={product.variants.map((v) => ({
-        variantSku: v.variantSku,
-        sizeLigne: v.sizeLigne,
+        sku: v.sku,
+        color: v.color,
         sizeMm: v.sizeMm,
-        finish: v.finish,
-        colorHex: v.colorHex,
-        inStockSample: v.inStockSample,
+        inStock: v.inStock,
       }))}
     />
   );

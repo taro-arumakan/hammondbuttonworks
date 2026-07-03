@@ -1,22 +1,21 @@
-import { TIERS, type Tier } from "./schema";
+import { CUSTOMER_CLASSES, type CustomerClass } from "./customer";
 
 /**
- * Approved trade accounts. There is no customer database in the pilot — access
- * is governed by this allowlist: a few seeded demo accounts plus any extras
- * supplied via the TRADE_ALLOWLIST env var ("email|tier|Company", comma-sep).
- * Env entries take precedence over the seeded demos.
+ * Approved trade accounts. No customer database in the storefront — access is
+ * governed by this allowlist (Shopify holds the real customer records). A few
+ * seeded demo accounts plus any extras via TRADE_ALLOWLIST env
+ * ("email|class|Company", comma-separated). Env entries win over the demos.
  */
 
 export type Account = {
   email: string;
-  tier: Tier;
+  customerClass: CustomerClass;
   company: string;
 };
 
 const SEEDED: Account[] = [
-  { email: "buyer@example-standard.com", tier: "tier_standard", company: "Standard Trade Co." },
-  { email: "buyer@example-volume.com", tier: "tier_volume", company: "Volume Apparel Ltd." },
-  { email: "buyer@example-partner.com", tier: "tier_partner", company: "Partner Mills & Co." },
+  { email: "buyer@example-standard.com", customerClass: "standard", company: "Standard Trade Co." },
+  { email: "buyer@example-plus.com", customerClass: "plus", company: "Plus Apparel Ltd." },
 ];
 
 function fromEnv(): Account[] {
@@ -27,15 +26,14 @@ function fromEnv(): Account[] {
     .map((entry) => entry.trim())
     .filter(Boolean)
     .map((entry): Account | null => {
-      const [email, tier, company] = entry.split("|").map((x) => x?.trim() ?? "");
-      if (!email || !(TIERS as readonly string[]).includes(tier)) return null;
-      return { email, tier: tier as Tier, company: company || email };
+      const [email, cls, company] = entry.split("|").map((x) => x?.trim() ?? "");
+      if (!email || !(CUSTOMER_CLASSES as readonly string[]).includes(cls)) return null;
+      return { email, customerClass: cls as CustomerClass, company: company || email };
     })
     .filter((a): a is Account => a !== null);
 }
 
 export function lookupAccount(email: string): Account | undefined {
   const norm = email.trim().toLowerCase();
-  // Env first so an operator can override a seeded demo by email.
   return [...fromEnv(), ...SEEDED].find((a) => a.email.toLowerCase() === norm);
 }

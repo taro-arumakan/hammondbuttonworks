@@ -1,20 +1,14 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { baseUrl } from "@/lib/url";
-import { getAllProducts, getProductBySlug } from "@/lib/products";
+import { getProductBySlug } from "@/lib/products";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
-import { DEFAULT_LOCALE, LOCALES, fmt, isLocale } from "@/lib/i18n-config";
-import { ButtonSwatch } from "@/components/ButtonSwatch";
+import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
 import { PriceBlock } from "@/components/PriceBlock";
-
-export function generateStaticParams() {
-  return LOCALES.flatMap((locale) =>
-    getAllProducts().map((p) => ({ locale, slug: p.slug })),
-  );
-}
 
 export async function generateMetadata({
   params,
@@ -23,20 +17,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const base = getProductBySlug(slug);
+  const base = await getProductBySlug(slug);
   if (!base) return {};
   const product = localizeProduct(base, locale);
-  return {
-    title: product.seo.title ?? product.name,
-    description: product.seo.description ?? product.shortDescription,
-  };
+  const description = locale === "ja" ? product.shortJa : undefined;
+  return { title: product.name, description };
 }
 
 function Spec({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between border-b border-stone-100 py-2 text-sm">
       <dt className="text-stone-500">{label}</dt>
-      <dd className="font-medium text-right">{value}</dd>
+      <dd className="text-right font-medium">{value}</dd>
     </div>
   );
 }
@@ -50,29 +42,17 @@ export default async function ProductPage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  const base = getProductBySlug(slug);
+  const base = await getProductBySlug(slug);
   if (!base) notFound();
   const product = localizeProduct(base, locale);
 
   const session = await auth();
-  const tier = session?.user.tier ?? null;
+  const customerClass = session?.user.customerClass ?? null;
   const productUrl = `${await baseUrl()}/${locale}/catalog/${product.slug}`;
 
-  const sizes = [...new Set(product.variants.map((v) => v.sizeMm))].sort(
-    (a, b) => a - b,
-  );
-
-  const materialLabel = dict.labels.material[product.material] ?? product.material;
-  const holeLabel = dict.labels.holeType[product.holeType] ?? product.holeType;
-  const unitLabel = dict.labels.unit[product.unit] ?? product.unit;
-  const applications = product.application
-    .map((a) => dict.labels.application[a] ?? a)
-    .join(locale === "ja" ? "・" : ", ");
-  const originJa: Record<string, string> = { Japan: "日本", Nepal: "ネパール" };
-  const origin =
-    locale === "ja" && product.countryOfOrigin
-      ? (originJa[product.countryOfOrigin] ?? product.countryOfOrigin)
-      : product.countryOfOrigin;
+  const categoryLabel = dict.labels.category[product.category?.toLowerCase()] ?? product.category;
+  const sizes = product.sizesMm.map((s) => `${s}mm`).join(", ");
+  const colors = product.colors.join(locale === "ja" ? "・" : ", ");
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -88,93 +68,45 @@ export default async function ProductPage({
         <div>
           <div className="overflow-hidden rounded-2xl bg-stone-50">
             {product.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={product.image}
                 alt={product.name}
                 className="aspect-square w-full object-cover"
               />
             ) : (
-              <div className="flex items-center justify-center py-12">
-                <ButtonSwatch
-                  colorHex={product.variants[0].colorHex}
-                  holeType={product.holeType}
-                  material={product.material}
-                  face={product.face}
-                  size={240}
-                  label={product.name}
-                />
-              </div>
+              <div className="aspect-square w-full bg-stone-100" />
             )}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-3">
-            {product.variants.map((v) => (
-              <div
-                key={v.variantSku}
-                className="flex flex-col items-center rounded-lg border border-stone-200 p-2"
-                title={`${v.sizeMm}mm · ${v.finish}`}
-              >
-                {product.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-12 w-12 rounded object-cover"
-                  />
-                ) : (
-                  <ButtonSwatch
-                    colorHex={v.colorHex}
-                    holeType={product.holeType}
-                    material={product.material}
-                    face={product.face}
-                    size={48}
-                  />
-                )}
-                <span className="mt-1 text-[11px] text-stone-500">{v.sizeMm}mm</span>
-              </div>
-            ))}
           </div>
 
           <h2 className="mt-8 text-lg font-semibold">{dict.product.specs}</h2>
           <dl className="mt-2">
-            <Spec label={dict.product.material} value={materialLabel} />
-            <Spec label={dict.product.attachment} value={holeLabel} />
-            <Spec label={dict.product.sizes} value={sizes.map((s) => `${s}mm`).join(", ")} />
-            <Spec label={dict.product.applications} value={applications || "—"} />
-            <Spec label={dict.product.moq} value={`${product.moq} ${unitLabel}`} />
+            <Spec label={dict.product.category} value={categoryLabel} />
+            <Spec label={dict.product.sizes} value={sizes} />
+            <Spec label={dict.product.colors} value={colors} />
             <Spec
               label={dict.product.leadTime}
               value={fmt(dict.product.leadTimeValue, { days: product.leadTimeDays })}
             />
-            {origin && <Spec label={dict.product.origin} value={origin} />}
-            {product.certifications.length > 0 && (
-              <Spec
-                label={dict.product.certifications}
-                value={product.certifications.join(locale === "ja" ? "・" : ", ")}
-              />
-            )}
           </dl>
-          {product.careNotes && (
-            <p className="mt-4 text-sm text-stone-500">
-              <span className="font-medium text-stone-700">{dict.product.careLabel}</span>{" "}
-              {product.careNotes}
-            </p>
-          )}
         </div>
 
         {/* Title, copy, pricing/order */}
         <div>
           <h1 className="font-serif text-4xl tracking-tight">{product.name}</h1>
-          <p className="mt-1 text-sm uppercase tracking-wide text-stone-400">{product.sku}</p>
-          <p className="mt-4 text-stone-600">{product.shortDescription}</p>
-          <p className="mt-3 text-sm leading-relaxed text-stone-600">
-            {product.longDescription}
-          </p>
+
+          {locale === "ja" && product.shortJa ? (
+            <p className="mt-4 leading-relaxed text-stone-600">{product.shortJa}</p>
+          ) : (
+            <div
+              className="mt-4 leading-relaxed text-stone-600 [&_p]:mt-3"
+              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+            />
+          )}
 
           <div className="mt-8">
             <PriceBlock
               product={product}
-              tier={tier}
+              customerClass={customerClass}
               productUrl={productUrl}
               locale={locale}
               dict={dict}

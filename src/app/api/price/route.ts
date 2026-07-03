@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { currentTier } from "@/lib/auth";
+import { currentClass } from "@/lib/auth";
 import { getProductBySlug, getVariantBySku } from "@/lib/products";
 import { resolvePrice } from "@/lib/pricing";
 
 /**
- * Gated price resolution for interactive quantity changes.
+ * Gated price resolution for interactive variant/quantity changes.
  *
- * Middleware already 401s guests before this runs, but we re-check the tier
- * here too (defense in depth) — pricing is NEVER computed without an
- * authenticated tier. The response carries only this account's own price.
+ * Middleware already 401s guests before this runs; we re-check the customer
+ * class here too (defense in depth) — pricing is NEVER computed without an
+ * authenticated class. The response carries only this account's own price.
  */
 const Body = z.object({
   slug: z.string(),
@@ -18,8 +18,8 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const tier = await currentTier();
-  if (!tier) {
+  const customerClass = await currentClass();
+  if (!customerClass) {
     return NextResponse.json({ error: "Trade login required." }, { status: 401 });
   }
 
@@ -29,13 +29,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const { slug, variantSku, qty } = parsed.data;
-  const product = getProductBySlug(slug);
-  const variant = product && getVariantBySku(product, variantSku);
+  const product = await getProductBySlug(slug);
+  const variant = product ? getVariantBySku(product, variantSku) : undefined;
   if (!product || !variant) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
-  const price = resolvePrice(variant, tier, qty);
+  const price = resolvePrice(variant, customerClass, product.currency);
   if (!price) {
     return NextResponse.json({ error: "Trade login required." }, { status: 401 });
   }
@@ -43,8 +43,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   return NextResponse.json({
     unitPrice: price.unitPrice,
     currency: price.currency,
-    appliedMinQty: price.appliedMinQty,
-    lineTotal: Number((price.unitPrice * qty).toFixed(2)),
-    unit: product.unit,
+    lineTotal: price.currency === "JPY"
+      ? Math.round(price.unitPrice * qty)
+      : Number((price.unitPrice * qty).toFixed(2)),
+    inStock: variant.inStock,
   });
 }

@@ -1,88 +1,77 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ButtonSwatch, type ButtonFace } from "./ButtonSwatch";
-import type { HoleType, Material } from "@/lib/schema";
+import { useEffect, useMemo, useState } from "react";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
 
 /**
- * Logged-in ordering panel. Prices are fetched from the gated /api/price
- * endpoint (server-authoritative, tier-aware) on every variant/quantity change,
- * so the client never holds the full price ladder — only the single quote it
- * asked for. The add-to-cart button is wired with the resolved unit price.
+ * Logged-in ordering panel. Prices come from the gated /api/price endpoint
+ * (server-authoritative, class-aware) on every color/size/qty change, so the
+ * client never holds the price ladder — only the single quote it asked for.
+ * (Draft-order checkout is wired in Phase 3; for now it links to a quote.)
  */
 
-type VariantView = {
-  variantSku: string;
-  sizeLigne: number;
-  sizeMm: number;
-  finish: string;
-  colorHex: string;
-  inStockSample: boolean;
-};
+type VariantView = { sku: string; color: string; sizeMm: number; inStock: boolean };
 
 type Props = {
   productName: string;
   slug: string;
-  unit: string;
-  unitLabel: string;
-  moq: number;
-  material: Material;
-  holeType: HoleType;
-  face?: ButtonFace;
-  image?: string;
+  leadTimeDays: number;
+  colors: string[];
+  sizesMm: number[];
   variants: VariantView[];
   productUrl: string;
-  snipcartEnabled: boolean;
   locale: Locale;
   dict: Dictionary;
 };
 
-type Quote = {
-  unitPrice: number;
-  currency: string;
-  appliedMinQty: number;
-  lineTotal: number;
-  unit: string;
-};
+type Quote = { unitPrice: number; currency: string; lineTotal: number; inStock: boolean };
 
 function money(n: number, currency: string) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(n);
+  return new Intl.NumberFormat("ja-JP", {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+    maximumFractionDigits: currency === "JPY" ? 0 : 2,
+  }).format(n);
 }
 
 export function TradeOrderPanel({
   productName,
   slug,
-  unitLabel,
-  moq,
-  material,
-  holeType,
-  face,
-  image,
+  leadTimeDays,
+  colors,
+  sizesMm,
   variants,
-  productUrl,
-  snipcartEnabled,
   locale,
   dict,
 }: Props) {
   const t = dict.order;
-  const [sku, setSku] = useState(variants[0].variantSku);
-  const [qty, setQty] = useState(moq);
+  const [color, setColor] = useState(colors[0] ?? "");
+  const [sizeMm, setSizeMm] = useState(sizesMm[0] ?? 0);
+  const [qty, setQty] = useState(1);
+  const [engraving, setEngraving] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selected = variants.find((v) => v.variantSku === sku)!;
+  const selected = useMemo(
+    () => variants.find((v) => v.color === color && v.sizeMm === sizeMm),
+    [variants, color, sizeMm],
+  );
 
   useEffect(() => {
+    if (!selected) {
+      setQuote(null);
+      return;
+    }
     let active = true;
     setLoading(true);
     setError(null);
     fetch("/api/price", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug, variantSku: sku, qty: Math.max(moq, qty) }),
+      body: JSON.stringify({ slug, variantSku: selected.sku, qty: Math.max(1, qty) }),
     })
       .then(async (r) => {
         if (!r.ok) throw new Error((await r.json()).error ?? t.pricingError);
@@ -94,59 +83,50 @@ export function TradeOrderPanel({
     return () => {
       active = false;
     };
-  }, [slug, sku, qty, moq, t.pricingError]);
+  }, [slug, selected, qty, t.pricingError]);
+
+  const chip = (active: boolean) =>
+    `rounded-lg border px-3 py-2 text-sm transition ${
+      active ? "border-accent ring-1 ring-accent" : "border-stone-200 hover:border-stone-300"
+    }`;
 
   return (
     <div className="rounded-xl border border-stone-200 bg-white p-6">
       <h2 className="text-lg font-semibold">{t.heading}</h2>
 
-      {/* Variant (size × finish) selector */}
+      {/* Color */}
       <fieldset className="mt-4">
-        <legend className="text-sm font-medium text-stone-700">{t.sizeFinish}</legend>
+        <legend className="text-sm font-medium text-stone-700">{t.color}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
-          {variants.map((v) => {
-            const isSel = v.variantSku === sku;
-            return (
-              <button
-                key={v.variantSku}
-                type="button"
-                onClick={() => setSku(v.variantSku)}
-                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${
-                  isSel
-                    ? "border-accent ring-1 ring-accent"
-                    : "border-stone-200 hover:border-stone-300"
-                }`}
-              >
-                {image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={image} alt="" className="h-7 w-7 rounded object-cover" />
-                ) : (
-                  <ButtonSwatch
-                    colorHex={v.colorHex}
-                    holeType={holeType}
-                    material={material}
-                    face={face}
-                    size={28}
-                  />
-                )}
-                <span>
-                  {v.sizeMm}mm · {v.finish}
-                </span>
-              </button>
-            );
-          })}
+          {colors.map((c) => (
+            <button key={c} type="button" onClick={() => setColor(c)} className={chip(c === color)}>
+              {c}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      {/* Size */}
+      <fieldset className="mt-4">
+        <legend className="text-sm font-medium text-stone-700">{t.size}</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {sizesMm.map((s) => (
+            <button key={s} type="button" onClick={() => setSizeMm(s)} className={chip(s === sizeMm)}>
+              {s}mm
+            </button>
+          ))}
         </div>
       </fieldset>
 
       {/* Quantity */}
       <div className="mt-5">
         <label htmlFor="qty" className="text-sm font-medium text-stone-700">
-          {t.quantity} ({unitLabel}) · {t.moq} {moq}
+          {t.quantity}
         </label>
         <div className="mt-2 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setQty((q) => Math.max(moq, q - 1))}
+            onClick={() => setQty((q) => Math.max(1, q - 1))}
             className="h-9 w-9 rounded-md border border-stone-300 text-lg leading-none"
             aria-label={t.decrease}
           >
@@ -155,9 +135,9 @@ export function TradeOrderPanel({
           <input
             id="qty"
             type="number"
-            min={moq}
+            min={1}
             value={qty}
-            onChange={(e) => setQty(Math.max(moq, Number(e.target.value) || moq))}
+            onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
             className="h-9 w-24 rounded-md border border-stone-300 px-2 text-center"
           />
           <button
@@ -171,7 +151,13 @@ export function TradeOrderPanel({
         </div>
       </div>
 
-      {/* Price */}
+      {/* Engraving flag */}
+      <label className="mt-4 flex items-center gap-2 text-sm text-stone-700">
+        <input type="checkbox" checked={engraving} onChange={(e) => setEngraving(e.target.checked)} />
+        {t.engraving}
+      </label>
+
+      {/* Price + expected shipping */}
       <div className="mt-5 rounded-lg bg-stone-50 p-4">
         {error ? (
           <p className="text-sm text-red-600">{error}</p>
@@ -181,55 +167,25 @@ export function TradeOrderPanel({
           <>
             <div className="flex items-baseline justify-between">
               <span className="text-sm text-stone-600">{t.unitPrice}</span>
-              <span className="text-xl font-semibold">
-                {money(quote.unitPrice, quote.currency)}
-                <span className="text-sm font-normal text-stone-400"> / {unitLabel}</span>
-              </span>
+              <span className="text-xl font-semibold">{money(quote.unitPrice, quote.currency)}</span>
             </div>
             <div className="mt-1 flex items-baseline justify-between">
               <span className="text-sm text-stone-600">
-                {t.lineTotal} ({qty} {unitLabel})
+                {t.lineTotal} ({qty})
               </span>
               <span className="font-medium">{money(quote.lineTotal, quote.currency)}</span>
             </div>
-            <p className="mt-2 text-xs text-stone-400">
-              {fmt(t.volumeApplied, { qty: quote.appliedMinQty, unit: unitLabel })}
+            <p className="mt-2 text-xs text-stone-500">
+              {t.shipDate}:{" "}
+              {quote.inStock ? t.inStock : fmt(t.madeToOrder, { days: leadTimeDays })}
             </p>
           </>
         )}
       </div>
 
-      {/* Add to cart (Snipcart) */}
-      {snipcartEnabled && quote ? (
-        <button
-          type="button"
-          className="snipcart-add-item mt-5 w-full rounded-md bg-accent px-4 py-2.5 font-medium text-white hover:opacity-90 disabled:opacity-50"
-          disabled={loading}
-          data-item-id={selected.variantSku}
-          data-item-name={`${productName} — ${selected.sizeMm}mm ${selected.finish}`}
-          data-item-price={quote.unitPrice.toFixed(2)}
-          data-item-url={productUrl}
-          data-item-quantity={String(qty)}
-          data-item-min-quantity={String(moq)}
-          data-item-custom1-name="Unit"
-          data-item-custom1-value={unitLabel}
-        >
-          {t.addToCart}
-        </button>
-      ) : (
-        <button
-          type="button"
-          disabled
-          className="mt-5 w-full rounded-md bg-stone-200 px-4 py-2.5 font-medium text-stone-500"
-          title="Set NEXT_PUBLIC_SNIPCART_KEY to enable checkout"
-        >
-          {snipcartEnabled ? t.addToCart : t.cartDisabled}
-        </button>
-      )}
-
       <a
-        href={`/${locale}/quote?sku=${encodeURIComponent(sku)}&qty=${qty}`}
-        className="mt-3 block text-center text-sm text-stone-600 underline"
+        href={`/${locale}/quote?sku=${encodeURIComponent(selected?.sku ?? slug)}&qty=${qty}${engraving ? "&engraving=1" : ""}`}
+        className="mt-4 block rounded-md bg-accent px-4 py-2.5 text-center font-medium text-white hover:opacity-90"
       >
         {t.customQuote}
       </a>

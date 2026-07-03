@@ -17,8 +17,8 @@ export default async function HomePage({
   const dict = getDictionary(locale);
 
   const session = await auth();
-  const tier = session?.user.tier ?? null;
-  const products = getAllProducts().map((p) => localizeProduct(p, locale));
+  const customerClass = session?.user.customerClass ?? null;
+  const products = (await getAllProducts()).map((p) => localizeProduct(p, locale));
 
   return (
     <div>
@@ -76,10 +76,16 @@ export default async function HomePage({
         </div>
         <div className="mt-6 grid grid-cols-2 border-t border-l border-line lg:grid-cols-4">
           {products.map((p) => (
-            <ProductCard key={p.slug} product={p} tier={tier} locale={locale} dict={dict} />
+            <ProductCard
+              key={p.slug}
+              product={p}
+              customerClass={customerClass}
+              locale={locale}
+              dict={dict}
+            />
           ))}
         </div>
-        {!tier && (
+        {!customerClass && (
           <p className="mt-6 text-sm text-stone-500">
             {dict.home.guestNote}{" "}
             <Link href={`/${locale}/login`} className="underline">

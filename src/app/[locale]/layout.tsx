@@ -102,7 +102,7 @@ export default async function LocaleLayout({
                   <span className="flex items-center gap-2 text-stone-500">
                     <span>{account.companyName ?? account.email}</span>
                     <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
-                      {account.tier?.replace("tier_", "") ?? "trade"}
+                      {account.customerClass ?? "trade"}
                     </span>
                     <form action="/api/auth/logout" method="post">
                       <button type="submit" className="text-xs underline hover:text-accent">

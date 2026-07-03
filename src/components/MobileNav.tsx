@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 
-type Account = { email: string; tier?: string; companyName?: string };
+type Account = { email: string; customerClass?: string; companyName?: string };
 
 const DURATION = 200; // ms — keep in sync with the `duration-200` classes below
 
@@ -108,7 +108,7 @@ export function MobileNav({
                 <span className="flex items-center gap-2 text-sm text-stone-500">
                   <span className="truncate">{account.companyName ?? account.email}</span>
                   <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
-                    {account.tier?.replace("tier_", "") ?? "trade"}
+                    {account.customerClass ?? "trade"}
                   </span>
                 </span>
                 <form action="/api/auth/logout" method="post">

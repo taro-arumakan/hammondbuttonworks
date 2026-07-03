@@ -1,29 +1,12 @@
-import type { Product } from "./schema";
+import type { ShopifyProduct } from "./shopify";
 import type { Locale } from "./i18n-config";
 
 /**
- * Returns a product with its copy localized for `locale`, falling back to the
- * English source for any field a translation doesn't supply. Pure + isomorphic
- * (no server-only deps), so it works in server and client component trees.
+ * Localizes a product's display name for `locale`, falling back to the English
+ * title. JA name/short come from Shopify metafields (hbw.name_ja / short_ja);
+ * pages read `shortJa` directly for the JA short description. Pure + isomorphic.
  */
-export function localizeProduct(product: Product, locale: Locale): Product {
-  if (locale === "en") return product;
-  const tr = product.translations?.ja;
-  if (!tr) return product;
-
-  return {
-    ...product,
-    name: tr.name ?? product.name,
-    shortDescription: tr.shortDescription ?? product.shortDescription,
-    longDescription: tr.longDescription ?? product.longDescription,
-    careNotes: tr.careNotes ?? product.careNotes,
-    seo: {
-      title: tr.seo?.title ?? product.seo.title,
-      description: tr.seo?.description ?? product.seo.description,
-    },
-    variants: product.variants.map((v) => ({
-      ...v,
-      finish: tr.finishes?.[v.finish] ?? v.finish,
-    })),
-  };
+export function localizeProduct(product: ShopifyProduct, locale: Locale): ShopifyProduct {
+  if (locale === "en" || !product.nameJa) return product;
+  return { ...product, name: product.nameJa };
 }

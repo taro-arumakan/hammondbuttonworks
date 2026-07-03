@@ -64,6 +64,8 @@ const ja = {
 
   product: {
     specs: "仕様",
+    category: "カテゴリー",
+    colors: "色",
     material: "素材",
     attachment: "取り付け",
     sizes: "サイズ",
@@ -82,11 +84,17 @@ const ja = {
     body: "卸売価格とご注文は承認済みの取引先アカウントでご利用いただけます。ログインしてこのスタイルの段階別価格をご確認いただくか、アクセスを申請してください。",
     login: "取引先ログイン",
     requestAccess: "取引アクセスを申請",
-    moqLine: "最小ロット {moq} {unit} ・ 納期 約{days}日。",
+    moqLine: "受注生産 ・ 納期 約{days}日。",
   },
 
   order: {
     heading: "取引注文",
+    color: "色",
+    size: "サイズ",
+    engraving: "刻印を追加",
+    inStock: "在庫あり — 短納期で出荷",
+    madeToOrder: "受注生産 ・ 約{days}日",
+    shipDate: "出荷予定",
     sizeFinish: "サイズ・仕上げ",
     quantity: "数量",
     moq: "最小ロット",
@@ -149,6 +157,11 @@ const ja = {
   },
 
   labels: {
+    category: {
+      military: "ミリタリー",
+      classic: "クラシック",
+      work: "ワーク",
+    } as Record<string, string>,
     material: {
       metal: "金属",
       shell: "貝",

@@ -1,4 +1,4 @@
-import type { Tier } from "./schema";
+import type { CustomerClass } from "./customer";
 
 /**
  * Signed magic-link + session tokens, built on Web Crypto HMAC-SHA256 so they
@@ -15,7 +15,7 @@ export type TokenKind = "magic" | "session";
 
 export type TokenPayload = {
   sub: string; // account email
-  tier: Tier;
+  customerClass: CustomerClass;
   company: string;
   typ: TokenKind;
   iat: number; // issued-at (epoch seconds)
@@ -27,13 +27,13 @@ const TTL_SECONDS: Record<TokenKind, number> = {
   session: 30 * 24 * 60 * 60, // 30 days
 };
 
-type TokenInput = { email: string; tier: Tier; company: string };
+type TokenInput = { email: string; customerClass: CustomerClass; company: string };
 
 export async function createToken(kind: TokenKind, input: TokenInput): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const payload: TokenPayload = {
     sub: input.email,
-    tier: input.tier,
+    customerClass: input.customerClass,
     company: input.company,
     typ: kind,
     iat: now,

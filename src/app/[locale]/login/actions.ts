@@ -29,7 +29,7 @@ export async function requestMagicLink(formData: FormData): Promise<void> {
 
   const token = await createToken("magic", {
     email: account.email,
-    tier: account.tier,
+    customerClass: account.customerClass,
     company: account.company,
   });
   const url = `${await baseUrl()}/api/auth/verify?token=${encodeURIComponent(token)}&locale=${locale}`;

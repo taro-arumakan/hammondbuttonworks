@@ -37,9 +37,9 @@ const PRODUCTS = [
     shortJa: "天然広葉樹の丸ボタン。無塗装で木目を活かした仕上げ。",
     leadTimeDays: 45,
     colors: ["Brown (Rosewood)", "Beige (Mango)"],
-    sizes: ["15mm", "20mm", "25mm"],
-    price: (c, s) => ({ "15mm": 300, "20mm": 340, "25mm": 380 }[s]) - (c.startsWith("Beige") ? 20 : 0),
-    inStock: (c, s) => c.startsWith("Brown") && s === "20mm",
+    sizes: ["18mm", "20mm", "25mm"],
+    price: (_c, s) => ({ "18mm": 240, "20mm": 340, "25mm": 480 }[s]),
+    inStock: (_c, s) => s !== "25mm",
   },
   {
     title: "Crest Button", handle: "crest", productType: "Military",
@@ -73,9 +73,13 @@ async function existing(handle) {
 }
 
 async function seedOne(p) {
-  if (await existing(p.handle)) {
-    console.log(`= skip ${p.handle} (exists)`);
-    return;
+  const existingId = await existing(p.handle);
+  if (existingId) {
+    await gql(
+      `mutation($input: ProductDeleteInput!){ productDelete(input:$input){ deletedProductId userErrors{ message } } }`,
+      { input: { id: existingId } },
+    );
+    console.log(`~ replaced ${p.handle}`);
   }
   // 1) product + options + product metafields
   const created = await gql(

@@ -62,6 +62,8 @@ const en = {
 
   product: {
     specs: "Specifications",
+    category: "Category",
+    colors: "Colors",
     material: "Material",
     attachment: "Attachment",
     sizes: "Sizes",
@@ -80,11 +82,17 @@ const en = {
     body: "Wholesale pricing and ordering are available to approved trade accounts. Sign in to see tiered pricing for this style, or request access.",
     login: "Trade login",
     requestAccess: "Request trade access",
-    moqLine: "MOQ {moq} {unit} · lead time ~{days} days.",
+    moqLine: "Made to order · lead time ~{days} days.",
   },
 
   order: {
     heading: "Trade order",
+    color: "Color",
+    size: "Size",
+    engraving: "Add engraving (刻印)",
+    inStock: "In stock — ships promptly",
+    madeToOrder: "Made to order · ~{days} days",
+    shipDate: "Expected shipping",
     sizeFinish: "Size & finish",
     quantity: "Quantity",
     moq: "MOQ",
@@ -147,6 +155,11 @@ const en = {
   },
 
   labels: {
+    category: {
+      military: "Military",
+      classic: "Classic",
+      work: "Work",
+    } as Record<string, string>,
     material: {
       metal: "Metal",
       shell: "Shell",
