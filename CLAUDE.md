@@ -120,6 +120,23 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   product URL, which has no price for guests — production B2B pricing needs Snipcart's
   server-side price-validation webhook, or graduate to Stripe/Medusa.
 
+## Status (2026-07-05) — Shopify headless
+- **Backend is now Shopify** (dev store `hammondbuttonworks.myshopify.com`, Admin GraphQL
+  2025-07; env `SHOPIFY_STORE_DOMAIN/_ADMIN_TOKEN/_API_VERSION`, set on Vercel). Products
+  read server-side via `src/lib/shopify.ts`; `content/products/*.json` is legacy. Two
+  customer classes replace tiers: `standard` ×1.0 / `plus` ×1.1 (`src/lib/customer.ts`);
+  **the ×1.1 is computed in the storefront, never a Shopify discount** — at checkout it's
+  stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`).
+- **Live in production:** Shopify catalog + class pricing + **Sterling-style catalog UX**
+  (`src/lib/catalog.ts`: URL-driven sidebar filters w/ faceted counts, sort, pagination;
+  price sorts are login-only, enforced server-side).
+- **Built, pending one switch:** cart → checkout → **Shopify draft order** (bank transfer,
+  engraving flag, expected ship date). Cart is localStorage selections only
+  (`src/lib/cart-client.ts`); prices via gated `/api/cart/quote`; `/api/checkout` creates
+  the draft order. ⚠️ Requires **`write_draft_orders`** scope on the Shopify custom app
+  (Shopify admin → Develop apps → Configuration) — until granted, checkout 502s gracefully
+  and the cart is preserved.
+
 ## Status (2026-06-26)
 - **Repo:** standalone git repo initialized and pushed to
   **https://github.com/taro-arumakan/hammondbuttonworks** (public). Connected to Vercel,
