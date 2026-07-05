@@ -15,9 +15,13 @@ import { detectLocale, isLocale } from "@/lib/i18n-config";
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  // 1) API routes — no locale handling; gate price resolution.
+  // 1) API routes — no locale handling; gate price-bearing endpoints.
   if (pathname.startsWith("/api")) {
-    if (pathname.startsWith("/api/price")) {
+    if (
+      pathname.startsWith("/api/price") ||
+      pathname.startsWith("/api/cart") ||
+      pathname.startsWith("/api/checkout")
+    ) {
       const token = req.cookies.get(SESSION_COOKIE)?.value;
       const session = await verifyToken(token, "session");
       if (!session) {

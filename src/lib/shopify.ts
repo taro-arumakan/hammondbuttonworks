@@ -39,6 +39,22 @@ export async function shopifyFetch<T>(query: string, variables: Record<string, u
   return json.data as T;
 }
 
+/** Like shopifyFetch, but never cached — for mutations (orders must not replay). */
+export async function shopifyMutate<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
+  const res = await fetch(endpoint(), {
+    method: "POST",
+    headers: { "X-Shopify-Access-Token": TOKEN as string, "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Shopify HTTP ${res.status}`);
+  const json = (await res.json()) as { data?: T; errors?: { message?: string }[] };
+  if (json.errors) {
+    throw new Error("Shopify GraphQL: " + (json.errors[0]?.message ?? JSON.stringify(json.errors)));
+  }
+  return json.data as T;
+}
+
 // --- View model --------------------------------------------------------------
 export type ShopifyVariant = {
   id: string;

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
+import { CartLink } from "@/components/CartLink";
 
 type Account = { email: string; customerClass?: string; companyName?: string };
 
@@ -18,12 +19,10 @@ export function MobileNav({
   home,
   dict,
   account,
-  cartEnabled,
 }: {
   home: string;
   dict: Dictionary;
   account?: Account;
-  cartEnabled: boolean;
 }) {
   const [mounted, setMounted] = useState(false); // in the DOM?
   const [visible, setVisible] = useState(false); // animated-in state
@@ -97,10 +96,13 @@ export function MobileNav({
               {dict.nav.quote}
             </Link>
 
-            {cartEnabled && account && (
-              <button className="snipcart-checkout block w-full py-3 text-left text-base text-foreground hover:text-accent border-b border-line/70">
-                {dict.nav.cartPrefix} (<span className="snipcart-items-count">0</span>)
-              </button>
+            {account && (
+              <CartLink
+                href={`${home}/cart`}
+                label={dict.nav.cartPrefix}
+                variant="mobile"
+                onNavigate={close}
+              />
             )}
 
             {account ? (

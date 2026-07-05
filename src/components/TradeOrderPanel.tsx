@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
+import { addToCart } from "@/lib/cart-client";
 
 /**
  * Logged-in ordering panel. Prices come from the gated /api/price endpoint
  * (server-authoritative, class-aware) on every color/size/qty change, so the
  * client never holds the price ladder — only the single quote it asked for.
- * (Draft-order checkout is wired in Phase 3; for now it links to a quote.)
+ * "Add to cart" stores the selection locally; checkout (cart page) creates a
+ * Shopify draft order, paid by bank transfer.
  */
 
 type VariantView = { sku: string; color: string; sizeMm: number; inStock: boolean };
@@ -54,6 +57,7 @@ export function TradeOrderPanel({
   const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState(false);
 
   const selected = useMemo(
     () => variants.find((v) => v.color === color && v.sizeMm === sizeMm),
@@ -61,6 +65,7 @@ export function TradeOrderPanel({
   );
 
   useEffect(() => {
+    setAdded(false); // selection changed — stale "added" note would mislead
     if (!selected) {
       setQuote(null);
       return;
@@ -183,9 +188,39 @@ export function TradeOrderPanel({
         )}
       </div>
 
+      <button
+        type="button"
+        disabled={!selected || loading || !!error}
+        onClick={() => {
+          if (!selected) return;
+          addToCart({
+            slug,
+            sku: selected.sku,
+            name: productName,
+            color: selected.color,
+            sizeMm: selected.sizeMm,
+            qty,
+            engraving,
+          });
+          setAdded(true);
+        }}
+        className="mt-4 block w-full rounded-md bg-accent px-4 py-2.5 text-center font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {t.addToCart}
+      </button>
+
+      {added && (
+        <p className="mt-2 text-center text-sm text-stone-600" role="status">
+          {t.added}{" "}
+          <Link href={`/${locale}/cart`} className="font-medium text-accent underline">
+            {t.viewCart}
+          </Link>
+        </p>
+      )}
+
       <a
         href={`/${locale}/quote?sku=${encodeURIComponent(selected?.sku ?? slug)}&qty=${qty}${engraving ? "&engraving=1" : ""}`}
-        className="mt-4 block rounded-md bg-accent px-4 py-2.5 text-center font-medium text-white hover:opacity-90"
+        className="mt-3 block text-center text-sm text-stone-500 underline hover:text-accent"
       >
         {t.customQuote}
       </a>

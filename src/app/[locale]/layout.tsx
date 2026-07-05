@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
 import { notFound } from "next/navigation";
 import { EB_Garamond } from "next/font/google";
 import { auth } from "@/lib/auth";
@@ -9,9 +8,8 @@ import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MobileNav } from "@/components/MobileNav";
+import { CartLink } from "@/components/CartLink";
 import "../globals.css";
-
-const SNIPCART_VERSION = "3.7.3";
 
 // Serif close to the logo's "BUTTON WORKS" — used for headings/brand labels.
 const display = EB_Garamond({
@@ -61,20 +59,10 @@ export default async function LocaleLayout({
   const dict = getDictionary(locale);
   const session = await auth();
   const account = session?.user;
-  const snipcartKey = process.env.NEXT_PUBLIC_SNIPCART_KEY;
   const home = `/${locale}`;
 
   return (
     <html lang={locale} className={display.variable}>
-      {snipcartKey && (
-        <head>
-          <link rel="preconnect" href="https://app.snipcart.com" />
-          <link
-            rel="stylesheet"
-            href={`https://cdn.snipcart.com/themes/v${SNIPCART_VERSION}/default/snipcart.css`}
-          />
-        </head>
-      )}
       <body className="min-h-screen flex flex-col">
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
           <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -93,10 +81,8 @@ export default async function LocaleLayout({
                 <Link href={`${home}/quote`} className="hover:text-accent">
                   {dict.nav.quote}
                 </Link>
-                {snipcartKey && account && (
-                  <button className="snipcart-checkout hover:text-accent">
-                    {dict.nav.cartPrefix} (<span className="snipcart-items-count">0</span>)
-                  </button>
+                {account && (
+                  <CartLink href={`${home}/cart`} label={dict.nav.cartPrefix} />
                 )}
                 {account ? (
                   <span className="flex items-center gap-2 text-stone-500">
@@ -122,12 +108,7 @@ export default async function LocaleLayout({
 
               {/* Always-visible language switcher + mobile hamburger */}
               <LanguageSwitcher current={locale} />
-              <MobileNav
-                home={home}
-                dict={dict}
-                account={account}
-                cartEnabled={Boolean(snipcartKey)}
-              />
+              <MobileNav home={home} dict={dict} account={account} />
             </div>
           </nav>
         </header>
@@ -156,15 +137,6 @@ export default async function LocaleLayout({
           </div>
         </footer>
 
-        {snipcartKey && (
-          <>
-            <div hidden id="snipcart" data-api-key={snipcartKey} data-config-modal-style="side" />
-            <Script
-              src={`https://cdn.snipcart.com/themes/v${SNIPCART_VERSION}/default/snipcart.js`}
-              strategy="afterInteractive"
-            />
-          </>
-        )}
       </body>
     </html>
   );
