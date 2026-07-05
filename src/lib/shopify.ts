@@ -56,6 +56,7 @@ export type ShopifyProduct = {
   nameJa?: string;
   shortJa?: string;
   category: string; // productType
+  createdAt: string; // ISO timestamp, for "newest" sorting
   descriptionHtml: string;
   image?: string;
   images: string[];
@@ -82,6 +83,7 @@ const PRODUCT_FIELDS = `
   handle
   title
   productType
+  createdAt
   descriptionHtml
   featuredMedia { preview { image { url } } }
   media(first: 12) { nodes { preview { image { url } } } }
@@ -112,6 +114,7 @@ type RawProduct = {
   handle: string;
   title: string;
   productType: string;
+  createdAt: string;
   descriptionHtml: string;
   featuredMedia: { preview: { image: { url: string } | null } | null } | null;
   media: { nodes: { preview: { image: { url: string } | null } | null }[] };
@@ -152,6 +155,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     nameJa: p.nameJa?.value,
     shortJa: p.shortJa?.value,
     category: p.productType,
+    createdAt: p.createdAt,
     descriptionHtml: p.descriptionHtml,
     image,
     images,
