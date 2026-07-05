@@ -48,14 +48,17 @@ export async function createDraftOrder(opts: {
   expectedShipping: string;
   locale: string;
 }): Promise<DraftOrderResult> {
+  const note =
+    `B2B storefront order — ${opts.company} (${opts.customerClass}).\n` +
+    `Buyer email: ${opts.email}.\n` +
+    `Payment: bank transfer (請求書/invoice to follow; no online payment).\n` +
+    `Expected shipping: ${opts.expectedShipping}.\n` +
+    `Locale: ${opts.locale}.`;
+
   const input = {
     email: opts.email,
     tags: ["storefront", `class:${opts.customerClass}`],
-    note:
-      `B2B storefront order — ${opts.company} (${opts.customerClass}).\n` +
-      `Payment: bank transfer (請求書/invoice to follow; no online payment).\n` +
-      `Expected shipping: ${opts.expectedShipping}.\n` +
-      `Locale: ${opts.locale}.`,
+    note,
     lineItems: opts.lines.map((l) => ({
       variantId: l.variantId,
       quantity: l.quantity,
@@ -68,16 +71,40 @@ export async function createDraftOrder(opts: {
     })),
   };
 
+  let result = await tryCreate(input);
+  if (result.emailRejected) {
+    // Shopify validates email domains (demo/test accounts may use fake ones).
+    // The order matters more than the email field — retry without it; the
+    // buyer email is already in the note for the operator.
+    const { email: _drop, ...withoutEmail } = input;
+    result = await tryCreate(withoutEmail);
+  }
+  if (result.error || !result.draftOrder) {
+    throw new Error("Draft order rejected: " + (result.error ?? "unknown error"));
+  }
+  return result.draftOrder;
+}
+
+async function tryCreate(input: Record<string, unknown>): Promise<{
+  draftOrder: DraftOrderResult | null;
+  error: string | null;
+  emailRejected: boolean;
+}> {
   const d = await shopifyMutate<{
     draftOrderCreate: {
       draftOrder: { id: string; name: string } | null;
       userErrors: { field: string[] | null; message: string }[];
     };
   }>(MUTATION, { input });
-
   const { draftOrder, userErrors } = d.draftOrderCreate;
-  if (userErrors.length || !draftOrder) {
-    throw new Error("Draft order rejected: " + (userErrors[0]?.message ?? "unknown error"));
-  }
-  return draftOrder;
+  const first = userErrors[0];
+  return {
+    draftOrder,
+    error: first?.message ?? null,
+    emailRejected:
+      !draftOrder &&
+      userErrors.some(
+        (e) => e.field?.includes("email") || /email/i.test(e.message),
+      ),
+  };
 }
