@@ -7,21 +7,15 @@ const ja = {
 
   nav: {
     // Menu keeps the English display words for Product/Craft (brand voice),
-    // Japanese for the request/login items — per owner direction.
+    // Japanese for the inquiry/login items — per owner direction. 別注 and
+    // catalog inquiries share one contact form.
     catalog: "Product",
     about: "Craft",
-    custom: "別注について",
-    quote: "カタログ依頼",
+    quote: "別注/カタログ 問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
     home: "ホーム",
-  },
-
-  custom: {
-    title: "別注について",
-    body: "別注ボタンのご案内は現在準備中です。それまでは、カタログ依頼フォームより製作内容をお知らせください。仕様・サンプル・納期をご返信します。",
-    cta: "カタログ依頼 →",
   },
 
   about: {
@@ -175,9 +169,9 @@ const ja = {
   },
 
   quote: {
-    title: "見積もりを依頼",
+    title: "別注/カタログ 問い合わせ",
     subtitle:
-      "製作内容をお知らせください。取引価格・サンプル・納期をご返信し、アカウントをお持ちでない場合は取引先アカウントを開設します。",
+      "オリジナルデザイン、ロゴ・ネーム刻印、カラー別注など、さまざまな別注製作に対応しております。素材・サイズ・仕上げなど、ご希望に合わせて製作いたします。お気軽にお問い合わせください。",
     preferEmail: "メールをご希望ですか？担当者へ直接ご連絡いただければ、適切な担当におつなぎします。",
     company: "会社名",
     name: "お名前",

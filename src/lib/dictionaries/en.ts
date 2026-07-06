@@ -9,18 +9,11 @@ const en = {
   nav: {
     catalog: "Product",
     about: "Craft",
-    custom: "Custom Orders",
-    quote: "Catalog Request",
+    quote: "Custom & Catalog Inquiry",
     login: "Login",
     cartPrefix: "Cart",
     signout: "Sign out",
     home: "Home",
-  },
-
-  custom: {
-    title: "Custom Orders",
-    body: "Details on bespoke and custom-order buttons (別注) are being prepared. In the meantime, tell us what you're making via the catalog request form — we'll reply with options, samples, and lead times.",
-    cta: "Catalog request →",
   },
 
   about: {
@@ -171,9 +164,9 @@ const en = {
   },
 
   quote: {
-    title: "Request a quote",
+    title: "Custom & Catalog Inquiry",
     subtitle:
-      "Tell us what you're making. We'll reply with trade pricing, sample options, and lead times — and set up a trade account if you don't have one yet.",
+      "We take on a wide range of custom work — original designs, logo and name engraving (刻印), and custom colors. Materials, sizes, and finishes are made to your specification. Feel free to get in touch, for custom production or a catalog request.",
     preferEmail: "Prefer email? Reach us directly and we'll route your request to the right person.",
     company: "Company",
     name: "Your name",
