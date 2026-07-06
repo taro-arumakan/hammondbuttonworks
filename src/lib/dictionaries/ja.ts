@@ -217,6 +217,8 @@ const ja = {
       military: "ミリタリー",
       classic: "クラシック",
       work: "ワーク",
+      craft: "クラフト",
+      design: "デザイン",
     } as Record<string, string>,
     color: {
       brown: "ブラウン",
@@ -224,6 +226,7 @@ const ja = {
       "antique brass": "アンティークブラス",
       silver: "シルバー",
       gold: "ゴールド",
+      metal: "メタル",
       black: "ブラック",
       natural: "ナチュラル",
       grey: "グレー",

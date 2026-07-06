@@ -215,6 +215,8 @@ const en = {
       military: "Military",
       classic: "Classic",
       work: "Work",
+      craft: "Craft",
+      design: "Design",
     } as Record<string, string>,
     color: {
       brown: "Brown",
@@ -222,6 +224,7 @@ const en = {
       "antique brass": "Antique Brass",
       silver: "Silver",
       gold: "Gold",
+      metal: "Metal",
       black: "Black",
       natural: "Natural",
       grey: "Grey",
