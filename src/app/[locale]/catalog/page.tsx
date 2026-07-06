@@ -129,25 +129,11 @@ export default async function CatalogPage({
     href: catalogHref(basePath, query, { page: i + 1 }),
   }));
 
+  // Plain listing — no heading/description/guest banner (owner direction,
+  // 2026-07); the per-card "Trade pricing — sign in" tag carries the hint.
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="font-serif text-4xl tracking-tight">{dict.catalog.title}</h1>
-      <p className="mt-2 max-w-2xl text-stone-600">
-        {customerClass ? dict.catalog.subtitleTrade : dict.catalog.subtitleGuest}
-      </p>
-      <p className="mt-1 max-w-2xl text-sm text-stone-500">{dict.catalog.intro}</p>
-
-      {!customerClass && (
-        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {dict.catalog.guestBanner}{" "}
-          <Link href={`/${locale}/login`} className="font-medium underline">
-            {dict.catalog.guestBannerLogin}
-          </Link>{" "}
-          {dict.catalog.guestBannerSuffix}
-        </div>
-      )}
-
-      <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:gap-10">
+      <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
         <CatalogFilters
           groups={groups}
           title={f.title}
