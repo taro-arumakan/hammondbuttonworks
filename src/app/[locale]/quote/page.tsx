@@ -29,6 +29,7 @@ export default async function QuotePage({
     <div className="mx-auto max-w-2xl px-4 py-12">
       <h1 className="font-serif text-4xl tracking-tight">{dict.quote.title}</h1>
       <p className="mt-2 text-stone-600">{dict.quote.subtitle}</p>
+      <p className="mt-3 text-stone-600">{dict.quote.subtitleCatalog}</p>
 
       <div className="mt-8 rounded-xl border border-stone-200 bg-white p-6">
         <QuoteForm dict={dict} defaultSku={sku} defaultQty={qty} />

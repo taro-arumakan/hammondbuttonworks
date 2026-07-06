@@ -166,7 +166,9 @@ const en = {
   quote: {
     title: "Custom & Catalog Inquiry",
     subtitle:
-      "We take on a wide range of custom work — original designs, logo and name engraving (刻印), and custom colors. Materials, sizes, and finishes are made to your specification. Feel free to get in touch, for custom production or a catalog request.",
+      "We take on a wide range of custom work — original designs, logo and name engraving (刻印), and custom colors. Materials, sizes, and finishes are made to your specification. Feel free to get in touch.",
+    subtitleCatalog:
+      "Considering doing business with us? Our product catalog is available on request — send your company name and contact person via this form and we'll follow up with the catalog and trade details.",
     preferEmail: "Prefer email? Reach us directly and we'll route your request to the right person.",
     company: "Company",
     name: "Your name",
