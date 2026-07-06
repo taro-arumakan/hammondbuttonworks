@@ -69,20 +69,29 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     currency = product.currency;
     const price = resolvePrice(variant, customerClass, product.currency)!;
     if (!variant.inStock) mtoDays.push(product.leadTimeDays);
+    // Ship notes on the order are Japanese — processors and 請求書 are JA.
     orderLines.push({
       variantId: variant.id,
       quantity: line.qty,
       unitPrice: price.unitPrice,
       engraving: line.engraving,
       shipNote: variant.inStock
-        ? "In stock — ships promptly"
-        : `Made to order — ~${product.leadTimeDays} days (est. ${shipDate(product.leadTimeDays)})`,
+        ? "在庫あり — 短納期で出荷"
+        : `受注生産 — 約${product.leadTimeDays}日（出荷目安 ${shipDate(product.leadTimeDays)}）`,
     });
   }
 
-  const expectedShipping = mtoDays.length
-    ? `${shipDate(Math.max(...mtoDays))} (~${Math.max(...mtoDays)} days, made-to-order items)`
-    : "in stock — ships promptly";
+  const maxDays = mtoDays.length ? Math.max(...mtoDays) : 0;
+  // JA for the order note; buyer-facing response string follows the UI locale.
+  const shippingJa = maxDays
+    ? `${shipDate(maxDays)}（約${maxDays}日・受注生産品を含む）`
+    : "在庫あり — 短納期で出荷";
+  const shippingForBuyer =
+    parsed.data.locale === "ja"
+      ? shippingJa
+      : maxDays
+        ? `${shipDate(maxDays)} (~${maxDays} days, made-to-order items)`
+        : "in stock — ships promptly";
 
   try {
     const draft = await createDraftOrder({
@@ -91,10 +100,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       customerClass,
       currency,
       lines: orderLines,
-      expectedShipping,
+      expectedShipping: shippingJa,
       locale: parsed.data.locale,
     });
-    return NextResponse.json({ name: draft.name, id: draft.id, expectedShipping });
+    return NextResponse.json({ name: draft.name, id: draft.id, expectedShipping: shippingForBuyer });
   } catch (e) {
     console.error("checkout: draft order failed:", e);
     return NextResponse.json(

@@ -20,19 +20,31 @@ export type DraftOrderLine = {
   quantity: number;
   unitPrice: number; // computed class price, shop currency
   engraving: boolean;
-  /** Human note shown per line in admin/invoice, e.g. "In stock" or "~30 days". */
+  /** Per-line ship note shown in admin/invoice (Japanese — processors are JA). */
   shipNote: string;
 };
 
 export type DraftOrderResult = {
   id: string;
-  name: string; // e.g. "#D12"
+  name: string; // order name (e.g. "#1001") or draft name ("#D12") if completion failed
 };
 
 const MUTATION = `
   mutation CreateDraftOrder($input: DraftOrderInput!) {
     draftOrderCreate(input: $input) {
       draftOrder { id name }
+      userErrors { field message }
+    }
+  }
+`;
+
+// Completing with paymentPending moves the order into the main Orders list
+// (financial status "Payment pending") so staff work one list; it's marked
+// paid in admin when the bank transfer arrives.
+const COMPLETE = `
+  mutation CompleteDraftOrder($id: ID!) {
+    draftOrderComplete(id: $id, paymentPending: true) {
+      draftOrder { id name order { id name } }
       userErrors { field message }
     }
   }
@@ -48,12 +60,14 @@ export async function createDraftOrder(opts: {
   expectedShipping: string;
   locale: string;
 }): Promise<DraftOrderResult> {
+  // Note + line attributes are Japanese-first: the order processors (and the
+  // 請求書 recipients) are Japanese.
   const note =
-    `B2B storefront order — ${opts.company} (${opts.customerClass}).\n` +
-    `Buyer email: ${opts.email}.\n` +
-    `Payment: bank transfer (請求書/invoice to follow; no online payment).\n` +
-    `Expected shipping: ${opts.expectedShipping}.\n` +
-    `Locale: ${opts.locale}.`;
+    `ストアフロントB2B注文 — ${opts.company}（${opts.customerClass}）\n` +
+    `購入者メール: ${opts.email}\n` +
+    `支払い: 銀行振込（請求書を送付。オンライン決済なし）\n` +
+    `出荷予定: ${opts.expectedShipping}\n` +
+    `言語: ${opts.locale}`;
 
   const input = {
     email: opts.email,
@@ -65,8 +79,8 @@ export async function createDraftOrder(opts: {
       // Stamp the class-computed unit price (see module docblock).
       priceOverride: { amount: String(l.unitPrice), currencyCode: opts.currency },
       customAttributes: [
-        { key: "Engraving 刻印", value: l.engraving ? "Yes" : "No" },
-        { key: "Expected shipping", value: l.shipNote },
+        { key: "刻印", value: l.engraving ? "あり" : "なし" },
+        { key: "出荷予定", value: l.shipNote },
       ],
     })),
   };
@@ -82,7 +96,29 @@ export async function createDraftOrder(opts: {
   if (result.error || !result.draftOrder) {
     throw new Error("Draft order rejected: " + (result.error ?? "unknown error"));
   }
-  return result.draftOrder;
+
+  // Complete → real order, "Payment pending". If completion fails the draft
+  // still exists, so don't fail checkout — staff can complete it in admin.
+  try {
+    const c = await shopifyMutate<{
+      draftOrderComplete: {
+        draftOrder: { order: { id: string; name: string } | null } | null;
+        userErrors: { field: string[] | null; message: string }[];
+      };
+    }>(COMPLETE, { id: result.draftOrder.id });
+    const order = c.draftOrderComplete.draftOrder?.order;
+    if (c.draftOrderComplete.userErrors.length || !order) {
+      console.error(
+        "orders: draftOrderComplete failed, order left as draft:",
+        c.draftOrderComplete.userErrors[0]?.message,
+      );
+      return result.draftOrder;
+    }
+    return { id: order.id, name: order.name };
+  } catch (e) {
+    console.error("orders: draftOrderComplete threw, order left as draft:", e);
+    return result.draftOrder;
+  }
 }
 
 async function tryCreate(input: Record<string, unknown>): Promise<{
