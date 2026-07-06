@@ -92,6 +92,9 @@ export function MobileNav({
             <Link href={`${home}/about`} onClick={close} className={linkClass}>
               {dict.nav.about}
             </Link>
+            <Link href={`${home}/custom`} onClick={close} className={linkClass}>
+              {dict.nav.custom}
+            </Link>
             <Link href={`${home}/quote`} onClick={close} className={linkClass}>
               {dict.nav.quote}
             </Link>

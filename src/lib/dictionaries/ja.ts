@@ -6,17 +6,25 @@ const ja = {
   langName: "日本語",
 
   nav: {
-    catalog: "カタログ",
-    about: "ブランドについて",
-    quote: "見積もり依頼",
-    login: "取引先ログイン",
+    // Menu keeps the English display words for Product/Craft (brand voice),
+    // Japanese for the request/login items — per owner direction.
+    catalog: "Product",
+    about: "Craft",
+    custom: "別注について",
+    quote: "カタログ依頼",
+    login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
     home: "ホーム",
   },
 
+  custom: {
+    title: "別注について",
+    body: "別注ボタンのご案内は現在準備中です。それまでは、カタログ依頼フォームより製作内容をお知らせください。仕様・サンプル・納期をご返信します。",
+    cta: "カタログ依頼 →",
+  },
+
   about: {
-    eyebrow: "Since 2008",
     lead: "2008年より、オリジナルボタンのデザイン・製作をスタート。",
     paragraphs: [
       "ハンドクラフトを軸に、手仕事だからこそ生まれる質感や、素材が持つ個性を活かした独自のボタンをデザインしています。",

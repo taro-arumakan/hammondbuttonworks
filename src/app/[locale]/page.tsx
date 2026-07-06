@@ -18,7 +18,11 @@ export default async function HomePage({
 
   const session = await auth();
   const customerClass = session?.user.customerClass ?? null;
-  const products = (await getAllProducts()).map((p) => localizeProduct(p, locale));
+  // Home shows a taster of the range (2 rows of 4) — the full catalog lives
+  // behind "View all". Without the cap this would render all ~200 designs.
+  const products = (await getAllProducts())
+    .slice(0, 8)
+    .map((p) => localizeProduct(p, locale));
 
   return (
     <div>

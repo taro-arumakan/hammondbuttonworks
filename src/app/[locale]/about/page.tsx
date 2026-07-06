@@ -22,18 +22,14 @@ export default async function AboutPage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const { about } = getDictionary(locale);
 
+  // Simple one-pager: no page title — the lead line reads as the first body
+  // paragraph (owner direction, 2026-07).
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24">
       <Logo variant="full" className="w-56" />
 
-      <p className="mt-10 font-serif text-sm uppercase tracking-[0.2em] text-accent">
-        {about.eyebrow}
-      </p>
-      <h1 className="mt-3 font-serif text-3xl leading-snug tracking-tight sm:text-4xl">
-        {about.lead}
-      </h1>
-
-      <div className="mt-8 space-y-5 border-t border-line pt-8 leading-relaxed text-stone-600">
+      <div className="mt-12 space-y-5 leading-relaxed text-stone-700">
+        <p>{about.lead}</p>
         {about.paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}

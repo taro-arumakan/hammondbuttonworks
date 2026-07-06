@@ -7,17 +7,23 @@ const en = {
   langName: "English",
 
   nav: {
-    catalog: "Catalog",
-    about: "About",
-    quote: "Request a quote",
-    login: "Trade login",
+    catalog: "Product",
+    about: "Craft",
+    custom: "Custom Orders",
+    quote: "Catalog Request",
+    login: "Login",
     cartPrefix: "Cart",
     signout: "Sign out",
     home: "Home",
   },
 
+  custom: {
+    title: "Custom Orders",
+    body: "Details on bespoke and custom-order buttons (別注) are being prepared. In the meantime, tell us what you're making via the catalog request form — we'll reply with options, samples, and lead times.",
+    cta: "Catalog request →",
+  },
+
   about: {
-    eyebrow: "Since 2008",
     lead: "Designing and making original buttons since 2008.",
     paragraphs: [
       "Built around handcraft, we design distinctive buttons that bring out the textures only handwork can produce, and the individual character of each material.",
