@@ -30,10 +30,10 @@ const bad = (errs) => errs && errs.length && Object.assign(new Error(JSON.string
 const IMG = "https://hammondbuttonworks.vercel.app/images/products";
 const PRODUCTS = [
   {
-    title: "No.9 Round Button", handle: "round-no9", productType: "Classic",
+    title: "No.9 Round", handle: "round-no9", productType: "Classic",
     descriptionHtml: "<p>Turned round button in natural hardwood, left uncoated so the grain shows. Made to order in any size.</p>",
     image: `${IMG}/wood-rw-01.jpg`,
-    nameJa: "No.9 ラウンドボタン",
+    nameJa: "No.9 ラウンド",
     shortJa: "天然広葉樹の丸ボタン。無塗装で木目を活かした仕上げ。",
     leadTimeDays: 45,
     colors: ["Brown (Rosewood)", "Beige (Mango)"],
@@ -42,10 +42,10 @@ const PRODUCTS = [
     inStock: (_c, s) => s !== "25mm",
   },
   {
-    title: "Crest Button", handle: "crest", productType: "Military",
+    title: "Crest", handle: "crest", productType: "Military",
     descriptionHtml: "<p>Die-struck metal crest button with a relief face. Antique or blackened brass. Nickel-free plating on request.</p>",
     image: `${IMG}/metal-rm-012.jpg`,
-    nameJa: "クレストボタン",
+    nameJa: "クレスト",
     shortJa: "立体的なレリーフ面の打刻メタルボタン。アンティーク／黒染め真鍮。",
     leadTimeDays: 50,
     colors: ["Antique Brass", "Blackened Brass"],
@@ -54,10 +54,10 @@ const PRODUCTS = [
     inStock: () => false,
   },
   {
-    title: "Work 4-Hole Button", handle: "work-4hole", productType: "Work",
+    title: "Work 4-Hole", handle: "work-4hole", productType: "Work",
     descriptionHtml: "<p>Compact four-hole hardwood button with a raised rim. Natural, uncoated. Made to order.</p>",
     image: `${IMG}/wood-rw-03.jpg`,
-    nameJa: "ワーク4つ穴ボタン",
+    nameJa: "ワーク 4つ穴",
     shortJa: "立ち上がったリムのコンパクトな4つ穴ウッドボタン。無塗装。",
     leadTimeDays: 40,
     colors: ["Brown (Rosewood)", "Beige (Mango)"],
