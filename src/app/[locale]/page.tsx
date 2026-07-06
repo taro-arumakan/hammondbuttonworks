@@ -74,7 +74,7 @@ export default async function HomePage({
             {dict.home.viewAll}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 border-t border-l border-line lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-[2px] lg:grid-cols-4">
           {products.map((p) => (
             <ProductCard
               key={p.slug}

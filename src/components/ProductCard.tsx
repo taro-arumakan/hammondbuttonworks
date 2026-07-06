@@ -7,9 +7,11 @@ import type { CustomerClass } from "@/lib/customer";
 import { resolvePrice, formatPrice } from "@/lib/pricing";
 
 /**
- * Flat, gridline-separated catalog cell. Prices show only for a logged-in
- * customer class — guests see a neutral "Trade pricing" tag (no numbers ever
- * enter the guest payload). Card shows "From ¥X" (min variant × class).
+ * Catalog cell, aligned to the niceness.jp thumbnail language: borderless on
+ * white, full-bleed square image, centered serif name (letter-spaced) with a
+ * small tracked uppercase sub-line. Prices show only for a logged-in customer
+ * class — guests see a neutral "Trade pricing" tag (no numbers ever enter the
+ * guest payload). Card shows "From ¥X" (min variant × class).
  */
 export function ProductCard({
   product,
@@ -33,11 +35,8 @@ export function ProductCard({
   const categoryLabel = dict.labels.category[product.category?.toLowerCase()] ?? product.category;
 
   return (
-    <Link
-      href={`/${locale}/catalog/${product.slug}`}
-      className="group flex flex-col border-r border-b border-line bg-surface transition-colors hover:bg-background"
-    >
-      <div className="aspect-square overflow-hidden">
+    <Link href={`/${locale}/catalog/${product.slug}`} className="group flex flex-col">
+      <div className="aspect-square overflow-hidden bg-stone-100">
         {product.image ? (
           <img
             src={product.image}
@@ -48,20 +47,24 @@ export function ProductCard({
           <div className="h-full w-full bg-stone-100" />
         )}
       </div>
-      <div className="border-t border-line px-4 py-3">
-        <h3 className="font-serif text-lg leading-tight text-foreground">{product.name}</h3>
-        <p className="mt-1 text-xs uppercase tracking-wide text-stone-500">
+      {/* niceness.jp text metrics: serif ~17px/1.5px tracking; 12px/1px sub;
+          26px image→title, 10px title→sub; centered, generous bottom air. */}
+      <div className="px-2 pt-[26px] pb-10 text-center">
+        <h3 className="font-serif text-[17px] leading-tight tracking-[0.09em] text-foreground">
+          {product.name}
+        </h3>
+        <p className="mt-[10px] text-[11px] uppercase tracking-[0.08em] text-stone-600">
           {categoryLabel} · {dict.catalog.fromLigne} {minMm}mm
         </p>
-        <div className="mt-2 text-sm">
-          {priced ? (
-            <span className="font-medium text-foreground">
-              {dict.catalog.fromLigne} {formatPrice(priced.unitPrice, priced.currency)}
-            </span>
-          ) : (
-            <span className="text-xs text-stone-500">{dict.catalog.cardTradePricing}</span>
-          )}
-        </div>
+        {priced ? (
+          <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-foreground">
+            {dict.catalog.fromLigne} {formatPrice(priced.unitPrice, priced.currency)}
+          </p>
+        ) : (
+          <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-stone-400">
+            {dict.catalog.cardTradePricing}
+          </p>
+        )}
       </div>
     </Link>
   );

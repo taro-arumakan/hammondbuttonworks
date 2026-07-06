@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f3efe6; /* warm cream */
-  --surface: #faf7f0; /* slightly lighter cell/paper */
+  /* White ground (niceness.jp-inspired refresh, 2026-07): catalog imagery sits
+     on pure white; ink/brass identity retained. Footer stays white too. */
+  --background: #ffffff;
+  --surface: #ffffff;
   --foreground: #1a1714; /* near-black ink */
   --accent: #8a6d3b; /* muted brass */
-  --line: #d8d0c0; /* thin gridline / divider */
+  --line: #e4e1da; /* thin divider on white */
 }
 
 @theme inline {

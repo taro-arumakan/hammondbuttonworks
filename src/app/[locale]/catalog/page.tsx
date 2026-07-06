@@ -176,19 +176,19 @@ export default async function CatalogPage({
             />
           </div>
 
+          {/* niceness.jp-style listing: borderless white grid, hairline gutters,
+              5 columns on desktop for the large catalog */}
           {items.length > 0 ? (
-            <div className="frame-double mt-4 bg-surface p-2">
-              <div className="grid grid-cols-2 border-t border-l border-line lg:grid-cols-3">
-                {items.map((p) => (
-                  <ProductCard
-                    key={p.slug}
-                    product={p}
-                    customerClass={customerClass}
-                    locale={locale}
-                    dict={dict}
-                  />
-                ))}
-              </div>
+            <div className="mt-4 grid grid-cols-2 gap-[2px] sm:grid-cols-3 lg:grid-cols-5">
+              {items.map((p) => (
+                <ProductCard
+                  key={p.slug}
+                  product={p}
+                  customerClass={customerClass}
+                  locale={locale}
+                  dict={dict}
+                />
+              ))}
             </div>
           ) : (
             <div className="frame-double mt-4 bg-surface px-6 py-16 text-center">
