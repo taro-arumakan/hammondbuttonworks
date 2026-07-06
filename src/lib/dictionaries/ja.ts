@@ -11,7 +11,7 @@ const ja = {
     // catalog inquiries share one contact form.
     catalog: "Product",
     about: "Craft",
-    quote: "別注/カタログ 問い合わせ",
+    quote: "別注/カタログ問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
@@ -169,7 +169,7 @@ const ja = {
   },
 
   quote: {
-    title: "別注/カタログ 問い合わせ",
+    title: "別注/カタログ問い合わせ",
     subtitle:
       "オリジナルデザイン、ロゴ・ネーム刻印、カラー別注など、さまざまな別注製作に対応しております。素材・サイズ・仕上げなど、ご希望に合わせて製作いたします。お気軽にお問い合わせください。",
     preferEmail: "メールをご希望ですか？担当者へ直接ご連絡いただければ、適切な担当におつなぎします。",
