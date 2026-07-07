@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EB_Garamond } from "next/font/google";
+import { Marcellus } from "next/font/google";
 import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
@@ -11,8 +11,13 @@ import { MobileNav } from "@/components/MobileNav";
 import { CartLink } from "@/components/CartLink";
 import "../globals.css";
 
-// Serif close to the logo's "BUTTON WORKS" — used for headings/brand labels.
-const display = EB_Garamond({
+// Inscriptional low-contrast Roman serif — chosen to align with niceness.jp's
+// custom "NICENESS Serif" (owner reference, 2026-07): wide open caps, near-
+// monolinear strokes, fine sharp serifs. Marcellus ships a single 400 weight,
+// which matches how the reference uses one weight; no bold serif exists in the
+// UI (verified), so headings/nav/product-names all resolve through --font-display.
+const display = Marcellus({
+  weight: "400",
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",

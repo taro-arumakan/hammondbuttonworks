@@ -103,9 +103,11 @@ check now spans both locales** — `/en/catalog` and `/ja/catalog` must each con
 for guests.
 
 ## Branding / design system
-Heritage-minimal: background cream `#f3efe6`, ink `#1a1714`, brass accent `#8a6d3b`
-(`src/app/globals.css`). Serif = **EB Garamond** via `next/font` (`--font-display`),
-used for headings (`font-serif`). A **double-line frame** motif (`.frame-double`) mirrors
+Heritage-minimal: background **white `#ffffff`** (niceness.jp-aligned), ink `#1a1714`,
+brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`). Serif = **Marcellus**
+via `next/font` (`--font-display`) — a low-contrast inscriptional Roman chosen to match
+niceness.jp's custom "NICENESS Serif" (was EB Garamond); ships one 400 weight (no bold
+serif in the UI), used for headings/nav/product-names (`font-serif`). A **double-line frame** motif (`.frame-double`) mirrors
 the logo. Product listing is a **flat, gridline-separated grid** (FreshService-style):
 container draws top/left edge, each cell draws right/bottom. Footer carries the circular
 **Made-in-Japan stamp**.
