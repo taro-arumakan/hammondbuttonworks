@@ -16,16 +16,28 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-line: var(--line);
-  /* Japanese (--font-jp = Zen Old Mincho) is stacked as the CJK fallback on BOTH
-     families: Latin resolves to the first face, and any 日本語 character — which
-     Marcellus / the Latin sans can't draw — falls through to Zen Old Mincho.
-     Per-glyph fallback, so no unicode-range needed (niceness.jp pairing). */
-  --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif), var(--font-jp), sans-serif;
+  /* --font-serif: Marcellus (Latin) → Zen Old Mincho (日本語). Per-glyph fallback
+     works here because Marcellus and its generic fallbacks carry no CJK glyphs,
+     so every Japanese character falls through to Mincho (niceness.jp pairing).
+     The sans stack CANNOT use the same trick — ui-sans-serif/system-ui DO cover
+     Japanese (system Gothic) and would intercept it — so JA body is handled by
+     the `[lang="ja"]` override below instead. */
+  --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
   --font-serif: var(--font-display, ui-serif, Georgia, "Times New Roman"), var(--font-jp), serif;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Japanese pages: lead the body/sans stack with Zen Old Mincho so 日本語 resolves
+   to Mincho instead of the system Gothic that ui-sans-serif/system-ui supply.
+   Overriding the custom property on the <html lang="ja"> ancestor cascades to
+   `body` and every `font-sans` element. Mincho's own text-weight Latin covers
+   the occasional Latin word/number in JA body. (Headings use --font-serif, which
+   already resolves Marcellus→Mincho, so this only needs to fix sans.) */
+[lang="ja"] {
+  --font-sans: var(--font-jp), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 body {

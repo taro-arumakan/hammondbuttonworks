@@ -108,11 +108,14 @@ brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`). **Type follo
 niceness.jp's pairing: Latin = Marcellus, 日本語 = Zen Old Mincho** — both via `next/font`
 (`--font-display` + `--font-jp`). Marcellus is a low-contrast inscriptional Roman (matches
 their custom "NICENESS Serif"; was EB Garamond; one 400 weight, no bold serif in the UI).
-Zen Old Mincho is stacked as the **CJK fallback on BOTH `--font-serif` and `--font-sans`**
-in globals.css, so every Japanese glyph — which the Latin faces can't draw — falls through
-to Mincho per-glyph (no `unicode-range` needed). Net: EN pages = Marcellus headings/nav +
-sans body; JA pages = Mincho throughout. Menu links use `font-serif` (serif nav, like
-niceness) in both the desktop layout and `MobileNav`. A **double-line frame** motif (`.frame-double`) mirrors
+Zen Old Mincho reaches Japanese two ways: (1) it's the **CJK fallback on `--font-serif`**
+(Marcellus → Mincho per-glyph, since Marcellus & its generic fallbacks carry no CJK — no
+`unicode-range` needed); (2) for **body/`--font-sans` a per-glyph fallback does NOT work**
+— `ui-sans-serif`/`system-ui` themselves cover Japanese (system Gothic) and intercept it —
+so a `[lang="ja"]` rule in globals.css **overrides `--font-sans` to lead with Zen Old
+Mincho** on Japanese pages (cascades to `body` + every `font-sans` element). Net: EN pages
+= Marcellus headings/nav + sans body; JA pages = Mincho throughout (incl. body/About).
+Menu links use `font-serif` (serif nav, like niceness) in the desktop layout and `MobileNav`. A **double-line frame** motif (`.frame-double`) mirrors
 the logo. Product listing is a **flat, gridline-separated grid** (FreshService-style):
 container draws top/left edge, each cell draws right/bottom. Footer carries the circular
 **Made-in-Japan stamp**.
