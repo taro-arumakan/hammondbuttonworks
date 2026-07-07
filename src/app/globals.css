@@ -16,8 +16,12 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-line: var(--line);
-  --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
-  --font-serif: var(--font-display, ui-serif, Georgia, "Times New Roman", serif);
+  /* Japanese (--font-jp = Zen Old Mincho) is stacked as the CJK fallback on BOTH
+     families: Latin resolves to the first face, and any 日本語 character — which
+     Marcellus / the Latin sans can't draw — falls through to Zen Old Mincho.
+     Per-glyph fallback, so no unicode-range needed (niceness.jp pairing). */
+  --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif), var(--font-jp), sans-serif;
+  --font-serif: var(--font-display, ui-serif, Georgia, "Times New Roman"), var(--font-jp), serif;
 }
 
 html {

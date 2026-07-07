@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Marcellus } from "next/font/google";
+import { Marcellus, Zen_Old_Mincho } from "next/font/google";
 import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
@@ -21,6 +21,19 @@ const display = Marcellus({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
+});
+
+// Japanese companion face, matching niceness.jp's pairing (their Latin "NICENESS
+// Serif" + Zen Old Mincho for 日本語). Marcellus has no CJK glyphs, so stacking
+// Zen Old Mincho after it in --font-serif / --font-sans makes every Japanese
+// character fall through to Mincho automatically — no unicode-range needed.
+// preload:false because CJK is large; swap avoids blocking on the download.
+const jp = Zen_Old_Mincho({
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  variable: "--font-jp",
+  display: "swap",
+  preload: false,
 });
 
 export function generateStaticParams() {
@@ -67,7 +80,7 @@ export default async function LocaleLayout({
   const home = `/${locale}`;
 
   return (
-    <html lang={locale} className={display.variable}>
+    <html lang={locale} className={`${display.variable} ${jp.variable}`}>
       <body className="min-h-screen flex flex-col">
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
           <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -75,8 +88,9 @@ export default async function LocaleLayout({
               <Logo variant="compact" className="h-7 w-auto text-foreground" />
             </Link>
             <div className="flex items-center gap-4 sm:gap-5">
-              {/* Desktop inline nav */}
-              <div className="hidden items-center gap-5 text-sm sm:flex">
+              {/* Desktop inline nav — serif menu (Marcellus/Zen Old Mincho),
+                  matching niceness.jp's serif navigation. */}
+              <div className="hidden items-center gap-5 font-serif text-[15px] tracking-[0.02em] sm:flex">
                 <Link href={`${home}/catalog`} className="hover:text-accent">
                   {dict.nav.catalog}
                 </Link>

@@ -41,8 +41,9 @@ export function MobileNav({
   };
   const toggle = () => (mounted ? close() : open());
 
+  // Serif menu (Marcellus/Zen Old Mincho), matching the desktop nav + niceness.jp.
   const linkClass =
-    "block py-3 text-base text-foreground hover:text-accent border-b border-line/70";
+    "block py-3 font-serif text-base tracking-[0.02em] text-foreground hover:text-accent border-b border-line/70";
 
   return (
     <div className="sm:hidden">

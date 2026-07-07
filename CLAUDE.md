@@ -104,10 +104,15 @@ for guests.
 
 ## Branding / design system
 Heritage-minimal: background **white `#ffffff`** (niceness.jp-aligned), ink `#1a1714`,
-brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`). Serif = **Marcellus**
-via `next/font` (`--font-display`) — a low-contrast inscriptional Roman chosen to match
-niceness.jp's custom "NICENESS Serif" (was EB Garamond); ships one 400 weight (no bold
-serif in the UI), used for headings/nav/product-names (`font-serif`). A **double-line frame** motif (`.frame-double`) mirrors
+brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`). **Type follows
+niceness.jp's pairing: Latin = Marcellus, 日本語 = Zen Old Mincho** — both via `next/font`
+(`--font-display` + `--font-jp`). Marcellus is a low-contrast inscriptional Roman (matches
+their custom "NICENESS Serif"; was EB Garamond; one 400 weight, no bold serif in the UI).
+Zen Old Mincho is stacked as the **CJK fallback on BOTH `--font-serif` and `--font-sans`**
+in globals.css, so every Japanese glyph — which the Latin faces can't draw — falls through
+to Mincho per-glyph (no `unicode-range` needed). Net: EN pages = Marcellus headings/nav +
+sans body; JA pages = Mincho throughout. Menu links use `font-serif` (serif nav, like
+niceness) in both the desktop layout and `MobileNav`. A **double-line frame** motif (`.frame-double`) mirrors
 the logo. Product listing is a **flat, gridline-separated grid** (FreshService-style):
 container draws top/left edge, each cell draws right/bottom. Footer carries the circular
 **Made-in-Japan stamp**.
