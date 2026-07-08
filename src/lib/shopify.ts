@@ -1,4 +1,6 @@
 import "server-only";
+import { isCustomerClass } from "./customer";
+import { lookupAccount, type Account } from "./allowlist";
 
 /**
  * Shopify Admin GraphQL client + product reader (headless backend).
@@ -53,6 +55,65 @@ export async function shopifyMutate<T>(query: string, variables: Record<string, 
     throw new Error("Shopify GraphQL: " + (json.errors[0]?.message ?? JSON.stringify(json.errors)));
   }
   return json.data as T;
+}
+
+// --- Trade account resolution (login) ----------------------------------------
+
+type CustomerNode = {
+  email: string | null;
+  displayName: string | null;
+  defaultAddress: { company: string | null } | null;
+  segment: { value: string | null } | null;
+};
+
+const CUSTOMER_BY_EMAIL = `
+  query CustomerByEmail($q: String!) {
+    customers(first: 5, query: $q) {
+      nodes {
+        email
+        displayName
+        defaultAddress { company }
+        segment: metafield(namespace: "hbw", key: "pricing_segment") { value }
+      }
+    }
+  }`;
+
+/**
+ * Resolve a trade account from Shopify by email — the source of truth for real
+ * customers. Access is SEGMENT-GATED: an account is returned only when a matching
+ * customer has `hbw.pricing_segment` set to a valid class (standard | plus).
+ * Missing customer, or missing/invalid segment → null ("not yet onboarded").
+ * Setting the segment in the Shopify admin is the whole onboarding step.
+ *
+ * Shopify's `customers` search tokenises, so we re-check the email exactly. Any
+ * error (network, scope) → null so the caller can fall back to the allowlist.
+ */
+export async function resolveCustomerAccount(email: string): Promise<Account | null> {
+  const norm = email.trim().toLowerCase();
+  if (!norm) return null;
+  let data: { customers: { nodes: CustomerNode[] } };
+  try {
+    // no-store: reflect the current admin state at sign-in, not a cached segment.
+    data = await shopifyMutate(CUSTOMER_BY_EMAIL, { q: `email:${norm}` });
+  } catch {
+    return null;
+  }
+  const node = data.customers.nodes.find((n) => n.email?.trim().toLowerCase() === norm);
+  if (!node) return null;
+  const seg = node.segment?.value ?? null;
+  if (!isCustomerClass(seg)) return null; // segment unset/invalid → no access
+  const company =
+    node.defaultAddress?.company?.trim() || node.displayName?.trim() || node.email || norm;
+  return { email: node.email ?? norm, customerClass: seg, company };
+}
+
+/**
+ * Trade-account gate used by login + magic-link verify. Shopify is authoritative
+ * (segment-gated); the env/seeded allowlist is a fallback for local dev, the
+ * public preview, and emergency grants when Shopify can't be reached.
+ */
+export async function resolveTradeAccount(email: string): Promise<Account | null> {
+  return (await resolveCustomerAccount(email)) ?? lookupAccount(email) ?? null;
 }
 
 // --- View model --------------------------------------------------------------

@@ -1,10 +1,11 @@
 import { CUSTOMER_CLASSES, type CustomerClass } from "./customer";
 
 /**
- * Approved trade accounts. No customer database in the storefront — access is
- * governed by this allowlist (Shopify holds the real customer records). A few
- * seeded demo accounts plus any extras via TRADE_ALLOWLIST env
- * ("email|class|Company", comma-separated). Env entries win over the demos.
+ * Trade-account FALLBACK. Shopify is the source of truth for real customers
+ * (segment-gated — see `resolveTradeAccount` in ./shopify); this allowlist is the
+ * fallback used for local dev, the public preview, and emergency access when
+ * Shopify can't be reached. A few seeded demo accounts plus any extras via
+ * TRADE_ALLOWLIST env ("email|class|Company", comma-separated). Env wins over demos.
  */
 
 export type Account = {

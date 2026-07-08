@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { lookupAccount } from "@/lib/allowlist";
+import { resolveTradeAccount } from "@/lib/shopify";
 import { createToken } from "@/lib/session";
 import { magicLinkEmail, sendEmail } from "@/lib/email";
 import { baseUrl } from "@/lib/url";
@@ -9,8 +9,9 @@ import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
 
 /**
  * Handle a trade-login request.
- * - On the allowlist  → email a magic link, redirect to a "check your inbox" state.
- * - Not on the list    → redirect to a state that points them at the quote form
+ * - Known trade account → email a magic link, redirect to a "check your inbox" state.
+ *   Accounts resolve from Shopify (segment-gated) with an allowlist fallback.
+ * - Unknown           → redirect to a state that points them at the quote form
  *                        (turns a rejected login into a lead).
  *
  * The locale is carried through a hidden form field so redirects + the
@@ -22,7 +23,7 @@ export async function requestMagicLink(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "").trim();
   if (!email) redirect(`/${locale}/login?status=error`);
 
-  const account = lookupAccount(email);
+  const account = await resolveTradeAccount(email);
   if (!account) {
     redirect(`/${locale}/login?status=notfound`);
   }

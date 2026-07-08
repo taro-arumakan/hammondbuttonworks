@@ -137,6 +137,16 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   customer classes replace tiers: `standard` ×1.0 / `plus` ×1.1 (`src/lib/customer.ts`);
   **the ×1.1 is computed in the storefront, never a Shopify discount** — at checkout it's
   stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`).
+- **Onboarding & login = Shopify-driven, passwordless, segment-gated.** A customer's class
+  lives in the **`hbw.pricing_segment`** customer metafield (choices `standard`/`plus`;
+  defined via `scripts/define-metafields.mjs`, pinned dropdown in admin). `resolveTradeAccount`
+  in `src/lib/shopify.ts` looks the customer up by email at login and reads that metafield:
+  **segment set → access at that class; unset/no customer → no access** ("not yet onboarded").
+  So onboarding = add the customer in Shopify admin + pick their segment. Still a magic-link
+  (HMAC) sign-in — **no passwords**. The env `TRADE_ALLOWLIST` + seeded demos remain a
+  **fallback** (local dev / preview / Shopify outage). Both demo customers
+  (`buyer@example-standard.com`, `buyer@example-plus.com`) now exist in Shopify with segments.
+  Magic links still print to logs until **Resend** is wired (needs the domain + DNS first).
 - **Live in production:** Shopify catalog + class pricing + **Sterling-style catalog UX**
   (`src/lib/catalog.ts`: URL-driven sidebar filters w/ faceted counts, sort, pagination;
   price sorts are login-only, enforced server-side).
