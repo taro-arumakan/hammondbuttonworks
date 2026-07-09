@@ -123,9 +123,16 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 ## Decisions made this session
 - **Domain:** chose **`hammondbutton.works`** (the `.works` TLD reads as the brand name).
   Recommended also grabbing `hammondbuttonworks.com` as a redirect.
-- **DNS/host:** keep DNS on **Route 53** (owner already uses it for `sniarti.fi`); deploy on
-  **Vercel**; set `NEXT_PUBLIC_SITE_URL=https://hammondbutton.works`. Did **not** recommend
-  switching to Cloudflare for one domain (Vercel already provides CDN/SSL/DDoS).
+- **Domain registered at Onamae.com** (same account family as `alvana.jp`). **DNS stays at
+  Onamae** (NOT Route 53 as earlier assumed — keep NS at Onamae so the Google MX is
+  authoritative there). Deploy on **Vercel** (apex `A` 76.76.21.21 + `www` CNAME); set
+  `NEXT_PUBLIC_SITE_URL=https://hammondbutton.works`.
+- **Email plan (see `DNS-SETUP.md` for the full record-by-record checklist):** *receiving*
+  = add `hammondbutton.works` as a **domain alias** on the existing **alvana Google
+  Workspace** (free, one inbox; needs Super Admin at admin.google.com). *Sending* (app
+  magic-link/quote) = **Resend** verified on the `send.hammondbutton.works` subdomain
+  (coexists with the Google MX; SPF/DKIM + a `_dmarc` TXT). Wire `RESEND_API_KEY`/
+  `EMAIL_FROM`/`QUOTE_INBOX` on Vercel to flip mail from logs to real inboxes.
 - **Cart:** Snipcart in test mode. NOTE: Snipcart validates cart price by crawling the
   product URL, which has no price for guests — production B2B pricing needs Snipcart's
   server-side price-validation webhook, or graduate to Stripe/Medusa.
