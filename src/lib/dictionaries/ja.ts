@@ -35,11 +35,11 @@ const ja = {
     eyebrow: "Handcrafted natural buttons · Buffalo · Wood · Metal",
     title: "Buttons of horn, wood & metal — handcrafted, made to order.",
     subtitle:
-      "アパレルメーカー様向けの、天然水牛ホーン・広葉樹・無垢金属のボタン。手仕上げ・無塗装で、小ロット・サイズ別注に対応します。",
+      "アパレルメーカー様向けの、天然水牛ホーン・ウッド・メタルボタン。手仕上げ・無塗装で、小ロット・サイズ別注に対応します。",
     browse: "カタログを見る",
     requestQuote: "見積もりを依頼",
     props: [
-      { t: "Natural materials", d: "水牛ホーン・広葉樹・無垢金属。無塗装で素材本来の表情を活かします。" },
+      { t: "Natural materials", d: "水牛ホーン・ウッド・メタル。無塗装で素材本来の表情を活かします。" },
       { t: "Handcrafted", d: "一つひとつ手作業で削り・仕上げ。同じものはひとつとしてありません。" },
       { t: "Made to order", d: "サイズ・仕上げ・刻印まで別注対応。小ロットから承ります。" },
     ],
@@ -54,8 +54,8 @@ const ja = {
   catalog: {
     title: "ボタンカタログ",
     intro: "小ロットの手仕事、無塗装の自然な仕上げ。サイズ・仕様は別注対応いたします。",
-    subtitleTrade: "手仕事による天然ボタンのラインナップ — 水牛ホーン・木・金属。お客様の取引価格を表示しています。",
-    subtitleGuest: "手仕事による天然ボタンのラインナップ — 水牛ホーン・木・金属。卸売価格とご注文にはログインが必要です。",
+    subtitleTrade: "手仕事による天然ボタンのラインナップ — 水牛ホーン・ウッド・メタル。お客様の取引価格を表示しています。",
+    subtitleGuest: "手仕事による天然ボタンのラインナップ — 水牛ホーン・ウッド・メタル。卸売価格とご注文にはログインが必要です。",
     guestBanner: "ゲストとして閲覧中です — 価格は非表示です。",
     guestBannerLogin: "取引先ログイン",
     guestBannerSuffix: "で価格を表示。",

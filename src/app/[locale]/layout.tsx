@@ -51,7 +51,7 @@ export async function generateMetadata({
       ? {
           title: "Hammond Button Works — 取引先向けボタン卸売",
           description:
-            "アパレルメーカー様向けの、手仕事による天然ボタン。水牛ホーン・広葉樹・無垢金属。無塗装の自然な仕上げで、小ロット・サイズ別注に対応します。",
+            "アパレルメーカー様向けの、手仕事による天然ボタン。水牛ホーン・ウッド・メタル。無塗装の自然な仕上げで、小ロット・サイズ別注に対応します。",
         }
       : {
           title: "Hammond Button Works — Trade Button Supply",
