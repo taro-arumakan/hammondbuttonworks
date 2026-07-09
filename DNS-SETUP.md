@@ -72,7 +72,15 @@ Do this as a **Super Admin** at `admin.google.com` (see note at bottom if
 Send from a **subdomain** (`send.hammondbutton.works`) so app mail has its own
 reputation and can't disturb the Workspace inbox.
 
-1. [ ] Resend → **Domains → Add Domain** → `send.hammondbutton.works`.
+1. [ ] Resend → **Domains → Add Domain** → `send.hammondbutton.works`, Region
+       **Tokyo (ap-northeast-1)**. In Advanced options, **uncheck "Enable click
+       tracking"** — the emails are one-time magic-login links and you don't want
+       the token URL rewritten through a tracking redirect (also skips a tracking
+       CNAME). Leave Custom Return-Path = `send`. NB: the verified domain is the
+       subdomain, so the **From address must be `…@send.hammondbutton.works`**
+       (that `send.` is visible to recipients). To send From the bare
+       `…@hammondbutton.works` instead, add the apex domain in Resend — at the cost
+       of sharing sending reputation with the Workspace inbox.
 2. [ ] Resend shows 2–3 records — add each in Onamae under the `send` label
        _(all values from the Resend console; region-dependent)_:
        - `MX`  host **send** → `feedback-smtp.<region>.amazonses.com` priority **10**
@@ -103,7 +111,9 @@ Project → Settings → Environment Variables (Production) → add / update, th
 
 - [ ] `NEXT_PUBLIC_SITE_URL` = `https://hammondbutton.works`
 - [ ] `RESEND_API_KEY` = _(the key from Part C.4)_
-- [ ] `EMAIL_FROM` = `Hammond Button Works <no-reply@hammondbutton.works>`
+- [ ] `EMAIL_FROM` = `Hammond Button Works <no-reply@send.hammondbutton.works>`
+      _(must match the domain verified in Resend — the `send.` subdomain here; use
+      `no-reply@hammondbutton.works` only if you verified the apex instead)_
 - [ ] `QUOTE_INBOX` = `info@alvana.jp` _(or `info@hammondbutton.works` once the
       alias is live)_
 
