@@ -31,9 +31,11 @@ app's outbound magic-link / quote email.
 
 1. [ ] Vercel → Project → **Settings → Domains → Add** → `hammondbutton.works`
        (and add `www.hammondbutton.works`, set to redirect to the apex).
-2. [ ] In Onamae DNS, add what Vercel asks for (current Vercel values):
-       - `A`  host **blank/@**  → `76.76.21.21`
-       - `CNAME` host **www** → `cname.vercel-dns.com`
+2. [ ] In Onamae DNS, add what Vercel asks for (use the value Vercel's Domains
+       page shows — as of 2026-07 it's the new IP-range address; the older
+       `76.76.21.21` / `cname.vercel-dns.com` still work but are being phased out):
+       - `A`  host **blank/@**  → `216.198.79.1`  _(Vercel-recommended; 76.76.21.21 also works)_
+       - `CNAME` host **www** → `cname.vercel-dns.com`  _(only needed if you add `www` as a domain in the Vercel project)_
 3. [ ] Wait for Vercel to show the domain **Valid / SSL issued** (auto certificate).
 4. [ ] Confirm `https://hammondbutton.works` loads the site.
 
@@ -126,7 +128,7 @@ instead of emailing (see `src/lib/email.ts`).
 
 | Type  | Host (Onamae label)        | Value                                   | Source        |
 |-------|----------------------------|-----------------------------------------|---------------|
-| A     | _(blank/@)_                | `76.76.21.21`                           | Vercel        |
+| A     | _(blank/@)_                | `216.198.79.1` _(76.76.21.21 also works)_ | Vercel      |
 | CNAME | `www`                      | `cname.vercel-dns.com`                  | Vercel        |
 | TXT   | _(blank/@)_                | `google-site-verification=…`            | Google _(console)_ |
 | MX    | _(blank/@)_                | `smtp.google.com` (prio 1)              | Google _(console)_ |
