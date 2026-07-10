@@ -50,12 +50,23 @@ served only on its own hostname. Order matters:
        public host.
 2. [ ] Vercel → Settings → Domains → **Add `admin.hammondbutton.works`**. Vercel then
        shows the exact record it wants — use that value verbatim.
-3. [ ] Onamae DNS: `CNAME` host **admin** → `cname.vercel-dns.com` _(legacy but still
-       valid; Vercel may hand you a newer target from the 2026 IP-range expansion)_.
-       No `MX` on this subdomain — no mail lives there, and the Workspace alias on the
-       apex is unaffected. A CNAME can't coexist with other records at the same name.
-4. [ ] Verify: `https://admin.hammondbutton.works/admin/login` serves; and on the public
+3. [x] Onamae DNS: `CNAME` host **admin** → the per-project target Vercel shows
+       (ours: `e00d81113707ae98.vercel-dns-017.com`). The generic `cname.vercel-dns.com`
+       also resolves, but paste Vercel's value verbatim. No `MX` on this subdomain — no
+       mail lives there, and the Workspace alias on the apex is unaffected. A CNAME can't
+       coexist with other records at the same name.
+4. [x] Verify: `https://admin.hammondbutton.works/admin/login` serves; and on the public
        host `https://hammondbutton.works/admin` returns **404**.
+
+**Done 2026-07-11** — cert issued (Let's Encrypt, expires 2026-10-08). Verified: all of
+`/admin*` + `/api/admin*` 404 on the public host; the admin host redirects anonymous
+requests to `/admin/login` and 401s `/api/admin/*`; the storefront doesn't render on the
+admin host. Two bugs surfaced and were fixed during this verification:
+
+- the staff magic link was built from `NEXT_PUBLIC_SITE_URL`, so it pointed at the public
+  host and 404'd → `adminBaseUrl()` (`src/lib/url.ts`);
+- the middleware `matcher` skips dotted paths, and a token is `base64url.base64url`, so
+  `/admin/signin/<token>` bypassed the host gate → `/admin/:path*` matched explicitly.
 
 ---
 
@@ -159,7 +170,7 @@ instead of emailing (see `src/lib/email.ts`).
 |-------|----------------------------|-----------------------------------------|---------------|
 | A     | _(blank/@)_                | `216.198.79.1` _(76.76.21.21 also works)_ | Vercel      |
 | CNAME | `www`                      | `cname.vercel-dns.com`                  | Vercel        |
-| CNAME | `admin`                    | `cname.vercel-dns.com` _(staff toolset; set `ADMIN_HOST` first)_ | Vercel |
+| CNAME | `admin`                    | `e00d81113707ae98.vercel-dns-017.com` _(staff toolset; set `ADMIN_HOST` first)_ | Vercel _(console)_ |
 | TXT   | _(blank/@)_                | `google-site-verification=…`            | Google _(console)_ |
 | MX    | _(blank/@)_                | `smtp.google.com` (prio 1)              | Google _(console)_ |
 | TXT   | _(blank/@)_                | `v=spf1 include:_spf.google.com ~all`   | Google        |

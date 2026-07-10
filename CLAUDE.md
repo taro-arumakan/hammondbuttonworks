@@ -173,6 +173,13 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   **`src/lib/order-lines.ts` is the single order-line builder** used by BOTH storefront
   checkout and the staff tool — that's what stops the ×1.1 drifting between them. Staff
   orders are tagged `staff` and carry `作成者: <email>` in the note for audit.
+  **Live on `admin.hammondbutton.works` since 2026-07-11.** Two traps, both hit once:
+  (a) the staff magic link must be built with **`adminBaseUrl()`**, not `baseUrl()` — the
+  latter returns `NEXT_PUBLIC_SITE_URL` (the storefront), where `/admin/*` 404s; the
+  *customer* link minted at `/api/admin/signin-link` still uses `baseUrl()` on purpose.
+  (b) `middleware.ts`'s default matcher **excludes any path containing a dot**, and a token
+  is `base64url.base64url` — so `/admin/:path*` and `/api/admin/:path*` are listed in the
+  matcher **explicitly**, or the sign-in landing route escapes the host gate entirely.
 - **Live in production:** Shopify catalog + class pricing + **Sterling-style catalog UX**
   (`src/lib/catalog.ts`: URL-driven sidebar filters w/ faceted counts, sort, pagination;
   price sorts are login-only, enforced server-side).
