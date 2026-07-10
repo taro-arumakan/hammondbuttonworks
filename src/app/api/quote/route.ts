@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { sendEmail, escapeHtml } from "@/lib/email";
+import { sendEmail, quoteAckEmail, quoteNotificationEmail } from "@/lib/email";
+import { isLocale } from "@/lib/i18n-config";
 import { rateLimit } from "@/lib/ratelimit";
 
 /**
@@ -21,6 +22,7 @@ const QuoteSchema = z.object({
   sku: z.string().max(80).optional().or(z.literal("")),
   qty: z.string().max(40).optional().or(z.literal("")),
   message: z.string().min(1).max(4000),
+  locale: z.string().max(8).optional(), // site locale the form was submitted from
   website: z.string().max(0).optional(), // honeypot: must be empty
 });
 
@@ -51,46 +53,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     process.env.EMAIL_FROM ??
     "owner@example.com";
 
-  const rows: [string, string][] = [
-    ["Company", q.company],
-    ["Name", q.name],
-    ["Email", q.email],
-    ["Phone", q.phone || "—"],
-    ["SKU", q.sku || "—"],
-    ["Quantity", q.qty || "—"],
-    ["Message", q.message],
-  ];
-  const html = `
-    <div style="font-family:system-ui,sans-serif">
-      <h2>New quote request</h2>
-      <table style="border-collapse:collapse">
-        ${rows
-          .map(
-            ([k, v]) =>
-              `<tr><td style="padding:4px 12px 4px 0;color:#78716c;vertical-align:top">${k}</td><td style="padding:4px 0">${escapeHtml(v)}</td></tr>`,
-          )
-          .join("")}
-      </table>
-    </div>`;
+  // Requester's language: which site they submitted from; default JA (most
+  // launch customers are Japanese). A prospect has no stored preference yet.
+  const loc = isLocale(q.locale) ? q.locale : "ja";
 
-  // 2. Notify the owner.
+  // 2. Notify the team (staff-facing, Japanese; notes the customer's language).
+  const notify = quoteNotificationEmail(q, loc);
   await sendEmail({
     to: inbox,
-    subject: `Quote request — ${q.company}`,
-    html,
+    subject: notify.subject,
+    html: notify.html,
     replyTo: q.email,
   });
 
-  // 3. Acknowledge the requester (best-effort). reply-to the contact inbox so a
-  //    customer replying to this ack reaches a monitored inbox, not no-reply.
+  // 3. Acknowledge the requester in their language (best-effort). reply-to the
+  //    contact inbox so a customer reply reaches a monitored inbox, not no-reply.
+  const ack = quoteAckEmail(q.name, loc);
   await sendEmail({
     to: q.email,
-    subject: "We received your request — Hammond Button Works",
+    subject: ack.subject,
+    html: ack.html,
     replyTo: inbox,
-    html: `<div style="font-family:system-ui,sans-serif"><p>Hi ${escapeHtml(q.name)},</p>
-      <p>Thanks for reaching out to Hammond Button Works. We've received your request and will
-      reply with pricing and next steps, usually within one business day.</p>
-      <p>— Hammond Button Works</p></div>`,
   }).catch(() => {});
 
   // 4. Optional: append to a Google Sheet.

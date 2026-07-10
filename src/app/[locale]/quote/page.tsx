@@ -32,7 +32,7 @@ export default async function QuotePage({
       <p className="mt-3 text-stone-600">{dict.quote.subtitleCatalog}</p>
 
       <div className="mt-8 rounded-xl border border-stone-200 bg-white p-6">
-        <QuoteForm dict={dict} defaultSku={sku} defaultQty={qty} />
+        <QuoteForm dict={dict} locale={locale} defaultSku={sku} defaultQty={qty} />
       </div>
 
       <p className="mt-6 text-sm text-stone-500">{dict.quote.preferEmail}</p>

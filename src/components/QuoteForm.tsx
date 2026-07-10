@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Dictionary } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n-config";
 
 /**
  * Quote / trade-access request form. Posts JSON to /api/quote, which emails the
@@ -10,10 +11,12 @@ import type { Dictionary } from "@/lib/i18n";
  */
 export function QuoteForm({
   dict,
+  locale,
   defaultSku,
   defaultQty,
 }: {
   dict: Dictionary;
+  locale: Locale;
   defaultSku?: string;
   defaultQty?: string;
 }) {
@@ -56,6 +59,8 @@ export function QuoteForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {/* carries the site locale so the ack email is sent in the right language */}
+      <input type="hidden" name="locale" value={locale} />
       {/* honeypot */}
       <input
         type="text"

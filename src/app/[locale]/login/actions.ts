@@ -35,10 +35,16 @@ export async function requestMagicLink(formData: FormData): Promise<void> {
   });
   const url = `${await baseUrl()}/api/auth/verify?token=${encodeURIComponent(token)}&locale=${locale}`;
 
+  // Email language: the customer's stored preference (Shopify customer.locale)
+  // wins; otherwise the site locale they signed in from. Subject follows suit.
+  const emailLocale = account.locale ?? locale;
   await sendEmail({
     to: account.email,
-    subject: "Your Hammond Button Works trade catalogue link",
-    html: magicLinkEmail(url, account.company),
+    subject:
+      emailLocale === "ja"
+        ? "Hammond Button Works 取引カタログへのログインリンク"
+        : "Your Hammond Button Works trade catalogue link",
+    html: magicLinkEmail(url, account.company, emailLocale),
     // A monitored reply-to (vs pure no-reply) reads as a legitimate sender and
     // lets a stuck customer just reply. Falls back gracefully if unset.
     replyTo: process.env.CONTACT_INBOX ?? process.env.QUOTE_INBOX,

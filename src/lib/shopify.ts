@@ -1,6 +1,7 @@
 import "server-only";
 import { isCustomerClass } from "./customer";
 import { lookupAccount, type Account } from "./allowlist";
+import type { Locale } from "./i18n-config";
 
 /**
  * Shopify Admin GraphQL client + product reader (headless backend).
@@ -62,6 +63,7 @@ export async function shopifyMutate<T>(query: string, variables: Record<string, 
 type CustomerNode = {
   email: string | null;
   displayName: string | null;
+  locale: string | null;
   defaultAddress: { company: string | null } | null;
   segment: { value: string | null } | null;
 };
@@ -72,11 +74,21 @@ const CUSTOMER_BY_EMAIL = `
       nodes {
         email
         displayName
+        locale
         defaultAddress { company }
         segment: metafield(namespace: "hbw", key: "pricing_segment") { value }
       }
     }
   }`;
+
+/** Normalise Shopify's `customer.locale` ("ja", "ja-JP", "en-US", …) to our
+ *  app Locale; undefined for anything unrecognised (caller falls back). */
+function normLocale(v: string | null | undefined): Locale | undefined {
+  const s = v?.toLowerCase() ?? "";
+  if (s.startsWith("ja")) return "ja";
+  if (s.startsWith("en")) return "en";
+  return undefined;
+}
 
 /**
  * Resolve a trade account from Shopify by email — the source of truth for real
@@ -104,7 +116,7 @@ export async function resolveCustomerAccount(email: string): Promise<Account | n
   if (!isCustomerClass(seg)) return null; // segment unset/invalid → no access
   const company =
     node.defaultAddress?.company?.trim() || node.displayName?.trim() || node.email || norm;
-  return { email: node.email ?? norm, customerClass: seg, company };
+  return { email: node.email ?? norm, customerClass: seg, company, locale: normLocale(node.locale) };
 }
 
 /**

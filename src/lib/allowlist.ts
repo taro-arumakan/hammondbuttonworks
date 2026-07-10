@@ -1,4 +1,5 @@
 import { CUSTOMER_CLASSES, type CustomerClass } from "./customer";
+import type { Locale } from "./i18n-config";
 
 /**
  * Trade-account FALLBACK. Shopify is the source of truth for real customers
@@ -12,6 +13,9 @@ export type Account = {
   email: string;
   customerClass: CustomerClass;
   company: string;
+  /** Preferred email language (Shopify `customer.locale`); undefined for
+   *  allowlist/demo accounts → caller falls back to the site locale. */
+  locale?: Locale;
 };
 
 const SEEDED: Account[] = [
