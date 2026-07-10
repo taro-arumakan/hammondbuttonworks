@@ -106,7 +106,15 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Run on page routes + /api/price, but skip Next internals and static files
-  // (anything with a file extension).
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  matcher: [
+    // Page routes + /api/price, skipping Next internals and static files
+    // (anything with a file extension).
+    "/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)",
+    // Admin is matched EXPLICITLY: the pattern above drops any path containing
+    // a dot, and a magic-link token is `base64url.base64url` — so without these
+    // two entries `/admin/signin/<token>` would bypass the middleware and be
+    // served on the public host, outside the ADMIN_HOST 404 gate.
+    "/admin/:path*",
+    "/api/admin/:path*",
+  ],
 };
