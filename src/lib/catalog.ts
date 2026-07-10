@@ -16,8 +16,10 @@ import type { Locale } from "./i18n-config";
  * `parseCatalogQuery` coerces price sorts to the default for them.
  */
 
-// Colourways run ~2× products, so a page holds ~12 designs' worth of tiles.
-export const PAGE_SIZE = 24;
+// Colourways run ~2× products, so a page holds ~20 designs' worth of tiles.
+// 40 fills complete rows on the desktop 5-col grid and the mobile 2-col grid.
+// (The sm breakpoint is 3-col, where 40 leaves one tile on the last row.)
+export const PAGE_SIZE = 40;
 
 export const SORT_KEYS = ["title", "newest", "price-asc", "price-desc"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
