@@ -42,6 +42,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     { email: account.email, customerClass: account.customerClass, company: account.company },
     MANUAL_LINK_TTL,
   );
+  // baseUrl(), not adminBaseUrl() — this is a CUSTOMER link; it must land on the
+  // public storefront even though a staff member minted it from the admin host.
   const url = `${await baseUrl()}/${locale}/signin/${token}`;
   const expiresAt = new Date((Math.floor(Date.now() / 1000) + MANUAL_LINK_TTL) * 1000).toISOString();
 

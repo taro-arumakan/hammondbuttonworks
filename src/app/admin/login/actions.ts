@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createStaffToken } from "@/lib/session";
 import { isStaffEmail } from "@/lib/staff";
 import { sendEmail } from "@/lib/email";
-import { baseUrl } from "@/lib/url";
+import { adminBaseUrl } from "@/lib/url";
 
 /**
  * Staff sign-in. Same passwordless magic-link mechanism as customers, but a
@@ -17,7 +17,8 @@ export async function requestStaffLink(formData: FormData): Promise<void> {
 
   if (isStaffEmail(email)) {
     const token = await createStaffToken("staff-magic", email);
-    const url = `${await baseUrl()}/admin/signin/${token}?next=${encodeURIComponent(next)}`;
+    // adminBaseUrl(), not baseUrl() — /admin/* 404s on the public storefront host.
+    const url = `${await adminBaseUrl()}/admin/signin/${token}?next=${encodeURIComponent(next)}`;
     await sendEmail({
       to: email,
       subject: "HBW スタッフツール ログインリンク",
