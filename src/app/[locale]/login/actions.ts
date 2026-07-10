@@ -37,8 +37,11 @@ export async function requestMagicLink(formData: FormData): Promise<void> {
 
   await sendEmail({
     to: account.email,
-    subject: "Your Hammond Button Works sign-in link",
+    subject: "Your Hammond Button Works trade catalogue link",
     html: magicLinkEmail(url, account.company),
+    // A monitored reply-to (vs pure no-reply) reads as a legitimate sender and
+    // lets a stuck customer just reply. Falls back gracefully if unset.
+    replyTo: process.env.CONTACT_INBOX ?? process.env.QUOTE_INBOX,
   });
 
   redirect(`/${locale}/login?status=sent`);

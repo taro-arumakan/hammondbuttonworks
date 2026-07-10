@@ -61,14 +61,20 @@ export function escapeHtml(input: string): string {
 }
 
 export function magicLinkEmail(url: string, company: string): string {
-  return `<div style="font-family:system-ui,-apple-system,sans-serif;line-height:1.55;color:#1a1714">
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:20px;margin:0 0 16px">Hammond Button Works</p>
+  // Deliverability note: phishing filters (e.g. iCloud/Proofpoint) score
+  // "sign in to your account" + urgency + a raw tokenised URL as a credential-
+  // harvest pattern. So: warmer brand copy, the button as the only visible link
+  // (no raw token URL in the body), and an identifiable-sender footer.
+  return `<div style="font-family:system-ui,-apple-system,sans-serif;line-height:1.6;color:#1a1714;max-width:480px">
+    <p style="font-family:Georgia,'Times New Roman',serif;font-size:20px;margin:0 0 20px">Hammond Button Works</p>
     <p>Hi ${escapeHtml(company)},</p>
-    <p>Use the secure link below to sign in to your trade account. It expires in 15&nbsp;minutes and can be used once.</p>
-    <p style="margin:24px 0">
-      <a href="${url}" style="display:inline-block;background:#8a6d3b;color:#ffffff;padding:11px 20px;border-radius:6px;text-decoration:none;font-weight:600">Sign in to your account</a>
+    <p>Here's your link to the Hammond Button Works trade catalogue — tap below to view your wholesale pricing and place orders.</p>
+    <p style="margin:26px 0">
+      <a href="${url}" style="display:inline-block;background:#8a6d3b;color:#ffffff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:600">View the trade catalogue</a>
     </p>
-    <p style="color:#78716c;font-size:13px">If the button doesn't work, paste this URL into your browser:<br>${escapeHtml(url)}</p>
-    <p style="color:#78716c;font-size:13px">If you didn't request this, you can safely ignore it.</p>
+    <p style="color:#78716c;font-size:13px">The link works for 15&nbsp;minutes and can be used once. If it has expired, request a new one at hammondbutton.works.</p>
+    <p style="color:#78716c;font-size:13px">You're receiving this because this address was entered at hammondbutton.works. If that wasn't you, you can ignore this message.</p>
+    <hr style="border:none;border-top:1px solid #e4e1da;margin:24px 0" />
+    <p style="color:#78716c;font-size:12px;margin:0">Hammond Button Works · Handcrafted natural buttons — buffalo horn, wood &amp; metal<br>Questions? <a href="mailto:contact@hammondbutton.works" style="color:#8a6d3b">contact@hammondbutton.works</a></p>
   </div>`;
 }
