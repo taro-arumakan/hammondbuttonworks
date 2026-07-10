@@ -136,6 +136,8 @@ export type ShopifyVariant = {
   sizeMm: number;
   basePrice: number; // shop currency (JPY), before customer-class multiplier
   inStock: boolean;
+  /** Native Shopify variant image — one photo per colour, shared by its sizes. */
+  image?: string;
 };
 
 export type ShopifyProduct = {
@@ -185,6 +187,7 @@ const PRODUCT_FIELDS = `
       id
       sku
       price
+      image { url }
       selectedOptions { name value }
       inStock: metafield(namespace: "hbw", key: "in_stock") { value }
     }
@@ -195,6 +198,7 @@ type RawVariant = {
   id: string;
   sku: string | null;
   price: string;
+  image: { url: string } | null;
   selectedOptions: { name: string; value: string }[];
   inStock: { value: string } | null;
 };
@@ -234,6 +238,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
       sizeMm: sizeToMm(size),
       basePrice: Number(v.price),
       inStock: v.inStock?.value === "true",
+      image: v.image?.url,
     };
   });
 

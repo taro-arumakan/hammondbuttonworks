@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getAllProducts } from "@/lib/products";
-import { fromUnitPrice } from "@/lib/pricing";
+import { fromUnitPriceOf } from "@/lib/pricing";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
@@ -13,7 +13,8 @@ import {
   facetCounts,
   hasActiveFilters,
   parseCatalogQuery,
-  sortProducts,
+  sortColorways,
+  toColorways,
   toggled,
   type SortKey,
 } from "@/lib/catalog";
@@ -49,10 +50,13 @@ export default async function CatalogPage({
   // Guests may not sort by price — ordering alone would leak relative prices.
   const query = parseCatalogQuery(sp, !!customerClass);
 
-  const all = (await getAllProducts()).map((p) => localizeProduct(p, locale));
+  const products = (await getAllProducts()).map((p) => localizeProduct(p, locale));
+  // The grid's unit is the colourway (product × colour) — each tile carries that
+  // colour's own photo, so filtering by colour always shows a true image.
+  const all = toColorways(products);
 
   const filtered = applyFilters(all, query);
-  const sorted = sortProducts(filtered, query.sort, locale);
+  const sorted = sortColorways(filtered, query.sort, locale);
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   const page = Math.min(query.page, totalPages);
   const items = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -169,9 +173,12 @@ export default async function CatalogPage({
             <div className="mt-4 grid grid-cols-2 gap-[2px] sm:grid-cols-3 lg:grid-cols-5">
               {items.map((p) => (
                 <ProductCard
-                  key={p.slug}
-                  product={p}
-                  price={fromUnitPrice(p, customerClass)}
+                  key={p.key}
+                  product={p.product}
+                  color={p.color}
+                  image={p.image}
+                  sizesMm={p.variants.map((v) => v.sizeMm)}
+                  price={fromUnitPriceOf(p.variants, p.product.currency, customerClass)}
                   locale={locale}
                   dict={dict}
                 />

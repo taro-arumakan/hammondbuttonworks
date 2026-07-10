@@ -62,7 +62,7 @@ const ja = {
     fromLigne: "最小",
     cardTradePricing: "取引価格 — ログイン",
     perUnit: "/",
-    results: "{count}件のスタイル",
+    results: "{count}件",
     filters: {
       title: "絞り込み",
       category: "カテゴリー",

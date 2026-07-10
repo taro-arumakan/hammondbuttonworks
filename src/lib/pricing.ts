@@ -1,6 +1,5 @@
 import "server-only";
 import type { ShopifyVariant } from "./shopify";
-import type { Product } from "./products";
 import { CLASS_MULTIPLIER, type CustomerClass } from "./customer";
 
 /**
@@ -29,19 +28,23 @@ export function resolvePrice(
 }
 
 /**
- * "From" unit price for a product (cheapest variant × class), or null for guests.
+ * "From" unit price across a set of variants (cheapest × class), or null for
+ * guests. Pass a colourway's variants so a tile shows the from-price for THAT
+ * colour, not the cheapest across all colours.
+ *
  * Resolving here — and having callers pass the returned NUMBER to the card rather
  * than the customer's class — keeps the tier name (`standard`/`plus`) out of the
  * client RSC payload. (Any prop handed to a component in the tree is serialized;
  * a bare price is fine to expose to the logged-in buyer, the class name is not.)
  */
-export function fromUnitPrice(product: Product, customerClass: CustomerClass | null): number | null {
-  if (!customerClass || !product.variants.length) return null;
-  const cheapest = product.variants.reduce(
-    (a, b) => (b.basePrice < a.basePrice ? b : a),
-    product.variants[0],
-  );
-  return resolvePrice(cheapest, customerClass, product.currency)?.unitPrice ?? null;
+export function fromUnitPriceOf(
+  variants: ShopifyVariant[],
+  currency: string,
+  customerClass: CustomerClass | null,
+): number | null {
+  if (!customerClass || !variants.length) return null;
+  const cheapest = variants.reduce((a, b) => (b.basePrice < a.basePrice ? b : a), variants[0]);
+  return resolvePrice(cheapest, customerClass, currency)?.unitPrice ?? null;
 }
 
 export function formatPrice(amount: number, currency: string): string {

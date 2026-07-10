@@ -21,6 +21,8 @@ type Props = {
   slug: string;
   leadTimeDays: number;
   colors: string[];
+  /** Preselected colour, from the catalog tile's `?color=` link. */
+  initialColor?: string;
   sizesMm: number[];
   variants: VariantView[];
   productUrl: string;
@@ -44,13 +46,16 @@ export function TradeOrderPanel({
   slug,
   leadTimeDays,
   colors,
+  initialColor,
   sizesMm,
   variants,
   locale,
   dict,
 }: Props) {
   const t = dict.order;
-  const [color, setColor] = useState(colors[0] ?? "");
+  const [color, setColor] = useState(
+    initialColor && colors.includes(initialColor) ? initialColor : (colors[0] ?? ""),
+  );
   const [sizeMm, setSizeMm] = useState(sizesMm[0] ?? 0);
   const [qty, setQty] = useState(1);
   const [engraving, setEngraving] = useState(false);

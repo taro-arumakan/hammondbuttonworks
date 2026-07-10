@@ -35,12 +35,17 @@ function Spec({ label, value }: { label: string; value: string }) {
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ color?: string }>;
 }) {
   const { locale: raw, slug } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
+  // Catalog colourway tiles link here with ?color=… so the panel opens on the
+  // colour the buyer clicked.
+  const { color: initialColor } = await searchParams;
 
   const base = await getProductBySlug(slug);
   if (!base) notFound();
@@ -107,6 +112,7 @@ export default async function ProductPage({
             <PriceBlock
               product={product}
               signedIn={!!customerClass}
+              initialColor={initialColor}
               productUrl={productUrl}
               locale={locale}
               dict={dict}

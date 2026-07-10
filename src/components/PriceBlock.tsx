@@ -14,12 +14,14 @@ import { TradeOrderPanel } from "./TradeOrderPanel";
 export function PriceBlock({
   product,
   signedIn,
+  initialColor,
   productUrl,
   locale,
   dict,
 }: {
   product: Product;
   signedIn: boolean;
+  initialColor?: string; // from the catalog tile's `?color=` link
   productUrl: string;
   locale: Locale;
   dict: Dictionary;
@@ -56,6 +58,7 @@ export function PriceBlock({
       slug={product.slug}
       leadTimeDays={product.leadTimeDays}
       colors={product.colors}
+      initialColor={initialColor}
       sizesMm={product.sizesMm}
       productUrl={productUrl}
       locale={locale}

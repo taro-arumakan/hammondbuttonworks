@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getAllProducts } from "@/lib/products";
-import { fromUnitPrice } from "@/lib/pricing";
+import { fromUnitPriceOf } from "@/lib/pricing";
+import { toColorways } from "@/lib/catalog";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
@@ -21,9 +22,14 @@ export default async function HomePage({
   const customerClass = session?.user.customerClass ?? null;
   // Home shows a taster of the range (2 rows of 4) — the full catalog lives
   // behind "View all". Without the cap this would render all ~200 designs.
+  // One tile per design here (its first colourway), not per colourway, so the
+  // teaser shows breadth rather than colour repeats.
   const products = (await getAllProducts())
     .slice(0, 8)
     .map((p) => localizeProduct(p, locale));
+  const tiles = products
+    .map((p) => toColorways([p])[0])
+    .filter((cw): cw is NonNullable<typeof cw> => !!cw);
 
   return (
     <div>
@@ -80,11 +86,14 @@ export default async function HomePage({
           </Link>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-[2px] lg:grid-cols-4">
-          {products.map((p) => (
+          {tiles.map((cw) => (
             <ProductCard
-              key={p.slug}
-              product={p}
-              price={fromUnitPrice(p, customerClass)}
+              key={cw.key}
+              product={cw.product}
+              color={cw.color}
+              image={cw.image}
+              sizesMm={cw.variants.map((v) => v.sizeMm)}
+              price={fromUnitPriceOf(cw.variants, cw.product.currency, customerClass)}
               locale={locale}
               dict={dict}
             />

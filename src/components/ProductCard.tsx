@@ -6,33 +6,46 @@ import type { Locale } from "@/lib/i18n-config";
 import { formatPrice } from "@/lib/pricing";
 
 /**
- * Catalog cell, aligned to the niceness.jp thumbnail language: borderless on
- * white, full-bleed square image, centered serif name (letter-spaced) with a
- * small tracked uppercase sub-line. `price` is resolved server-side by the caller
- * (null for guests → a neutral "Trade pricing" tag) — the customer's CLASS name
- * is never passed here, so it can't leak into the client payload. Shows "From ¥X".
+ * Catalog cell — one COLOURWAY (product × colour), aligned to the niceness.jp
+ * thumbnail language: borderless on white, full-bleed square image, centered
+ * serif name (letter-spaced) with a small tracked uppercase sub-line.
+ *
+ * `image` is that colour's variant photo (falls back to the product's featured
+ * shot), `price` is the from-price for THIS colour, resolved server-side by the
+ * caller (null for guests → a neutral "Trade pricing" tag). The customer's CLASS
+ * name is never passed here, so it can't leak into the client payload.
  */
 export function ProductCard({
   product,
+  color,
+  image,
+  sizesMm,
   price,
   locale,
   dict,
 }: {
   product: Product;
+  color: string;
+  image?: string;
+  sizesMm: number[]; // sizes available in THIS colour
   price: number | null;
   locale: Locale;
   dict: Dictionary;
 }) {
-  const minMm = product.variants.length ? Math.min(...product.variants.map((v) => v.sizeMm)) : 0;
+  const minMm = sizesMm.length ? Math.min(...sizesMm) : 0;
   const categoryLabel = dict.labels.category[product.category?.toLowerCase()] ?? product.category;
+  const colorLabel = dict.labels.color[color.toLowerCase()] ?? color;
+  const href = color
+    ? `/${locale}/catalog/${product.slug}?color=${encodeURIComponent(color)}`
+    : `/${locale}/catalog/${product.slug}`;
 
   return (
-    <Link href={`/${locale}/catalog/${product.slug}`} className="group flex flex-col">
+    <Link href={href} className="group flex flex-col">
       <div className="aspect-square overflow-hidden bg-stone-100">
-        {product.image ? (
+        {image ? (
           <img
-            src={product.image}
-            alt={product.name}
+            src={image}
+            alt={color ? `${product.name} — ${color}` : product.name}
             className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
         ) : (
@@ -45,7 +58,9 @@ export function ProductCard({
         <h3 className="font-serif text-[17px] leading-tight tracking-[0.09em] text-foreground">
           {product.name}
         </h3>
+        {/* Colour leads the meta line — it's what distinguishes sibling tiles. */}
         <p className="mt-[10px] text-[11px] uppercase tracking-[0.08em] text-stone-600">
+          {color ? `${colorLabel} · ` : ""}
           {categoryLabel} · {dict.catalog.fromLigne} {minMm}mm
         </p>
         {price != null ? (

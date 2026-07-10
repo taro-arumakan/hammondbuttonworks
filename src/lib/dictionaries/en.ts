@@ -57,7 +57,7 @@ const en = {
     fromLigne: "from",
     cardTradePricing: "Trade pricing — sign in",
     perUnit: "/",
-    results: "{count} styles",
+    results: "{count} items",
     filters: {
       title: "Refine",
       category: "Category",
