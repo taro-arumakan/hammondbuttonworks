@@ -39,6 +39,24 @@ app's outbound magic-link / quote email.
 3. [ ] Wait for Vercel to show the domain **Valid / SSL issued** (auto certificate).
 4. [ ] Confirm `https://hammondbutton.works` loads the site.
 
+### A2. Staff admin host (`admin.hammondbutton.works`)
+
+The admin toolset is the **same app + deploy** (so the pricing/order code can't fork),
+served only on its own hostname. Order matters:
+
+1. [ ] Vercel env: set **`ADMIN_HOST=admin.hammondbutton.works`** and `STAFF_EMAILS`,
+       then redeploy. Do this FIRST — until the CNAME exists this makes `/admin` 404
+       everywhere (fail-closed), and it stops the admin surface being served on the
+       public host.
+2. [ ] Vercel → Settings → Domains → **Add `admin.hammondbutton.works`**. Vercel then
+       shows the exact record it wants — use that value verbatim.
+3. [ ] Onamae DNS: `CNAME` host **admin** → `cname.vercel-dns.com` _(legacy but still
+       valid; Vercel may hand you a newer target from the 2026 IP-range expansion)_.
+       No `MX` on this subdomain — no mail lives there, and the Workspace alias on the
+       apex is unaffected. A CNAME can't coexist with other records at the same name.
+4. [ ] Verify: `https://admin.hammondbutton.works/admin/login` serves; and on the public
+       host `https://hammondbutton.works/admin` returns **404**.
+
 ---
 
 ## B. Receiving mail — Google Workspace domain alias
@@ -141,6 +159,7 @@ instead of emailing (see `src/lib/email.ts`).
 |-------|----------------------------|-----------------------------------------|---------------|
 | A     | _(blank/@)_                | `216.198.79.1` _(76.76.21.21 also works)_ | Vercel      |
 | CNAME | `www`                      | `cname.vercel-dns.com`                  | Vercel        |
+| CNAME | `admin`                    | `cname.vercel-dns.com` _(staff toolset; set `ADMIN_HOST` first)_ | Vercel |
 | TXT   | _(blank/@)_                | `google-site-verification=…`            | Google _(console)_ |
 | MX    | _(blank/@)_                | `smtp.google.com` (prio 1)              | Google _(console)_ |
 | TXT   | _(blank/@)_                | `v=spf1 include:_spf.google.com ~all`   | Google        |
