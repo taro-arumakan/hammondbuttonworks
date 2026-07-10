@@ -3,7 +3,7 @@ import { AdminLinkForm } from "@/components/AdminLinkForm";
 
 /**
  * Staff-only page to mint a customer sign-in link (for LINE/manual relay when
- * email bounces). Protection is the ADMIN_SECRET the form sends to the API —
+ * email bounces). Protection is the STAFF_LINK_SECRET the form sends to the API —
  * the page itself is harmless (just a form) but kept out of search indexes and
  * unlinked from the site nav. Share the URL + secret with staff privately.
  */

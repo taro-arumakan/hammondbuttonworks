@@ -11,19 +11,19 @@ import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
  * is channel-agnostic: signed, single-use, and now valid 24h so a human has time
  * to pass it along.
  *
- *   GET /api/admin/signin-link?email=<customer>&secret=<ADMIN_SECRET>[&locale=ja]
+ *   GET /api/admin/signin-link?email=<customer>&secret=<STAFF_LINK_SECRET>[&locale=ja]
  *   → { url, email, company, expiresAt }
  *
- * Guarded by ADMIN_SECRET. It only mints for customers `resolveTradeAccount`
+ * Guarded by STAFF_LINK_SECRET. It only mints for customers `resolveTradeAccount`
  * already accepts (segment-gated) — so a leaked secret can RE-ISSUE access to an
  * onboarded customer, never CREATE access for a new one.
  */
 const MANUAL_LINK_TTL = 24 * 60 * 60; // 24 hours
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const secret = process.env.ADMIN_SECRET;
+  const secret = process.env.STAFF_LINK_SECRET;
   if (!secret) {
-    return NextResponse.json({ error: "ADMIN_SECRET not configured." }, { status: 503 });
+    return NextResponse.json({ error: "STAFF_LINK_SECRET not configured." }, { status: 503 });
   }
   const provided =
     req.headers.get("x-admin-secret") ?? req.nextUrl.searchParams.get("secret") ?? "";

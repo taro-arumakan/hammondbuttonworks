@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 /**
  * Staff tool (non-technical): generate a customer sign-in link to relay by hand
  * (LINE / メール等) when their email bounces. Calls GET /api/admin/signin-link
- * with the ADMIN_SECRET as a header. The secret can be remembered on this device
+ * with the STAFF_LINK_SECRET as a header. The secret can be remembered on this device
  * (localStorage) so staff only type the customer's email after the first time.
  *
  * No customer data beyond the link is shown, and the class/tier is never exposed.
@@ -82,7 +82,7 @@ export function AdminLinkForm() {
     <form onSubmit={onSubmit} className="space-y-5">
       <div>
         <label htmlFor="secret" className="block text-sm font-medium text-stone-700">
-          管理キー（ADMIN_SECRET）
+          スタッフ用キー（STAFF_LINK_SECRET）
         </label>
         <input
           id="secret"
