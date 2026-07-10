@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 import { CartLink } from "@/components/CartLink";
 
-type Account = { email: string; customerClass?: string; companyName?: string };
+// Display fields only — the pricing class is never sent to the client.
+type Account = { email: string; companyName?: string };
 
 const DURATION = 200; // ms — keep in sync with the `duration-200` classes below
 
@@ -110,9 +111,6 @@ export function MobileNav({
               <div className="flex items-center justify-between pt-4">
                 <span className="flex items-center gap-2 text-sm text-stone-500">
                   <span className="truncate">{account.companyName ?? account.email}</span>
-                  <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
-                    {account.customerClass ?? "trade"}
-                  </span>
                 </span>
                 <form action="/api/auth/logout" method="post">
                   <button type="submit" className="text-sm underline hover:text-accent">

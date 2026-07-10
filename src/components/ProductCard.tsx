@@ -3,35 +3,27 @@ import Link from "next/link";
 import type { Product } from "@/lib/products";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n-config";
-import type { CustomerClass } from "@/lib/customer";
-import { resolvePrice, formatPrice } from "@/lib/pricing";
+import { formatPrice } from "@/lib/pricing";
 
 /**
  * Catalog cell, aligned to the niceness.jp thumbnail language: borderless on
  * white, full-bleed square image, centered serif name (letter-spaced) with a
- * small tracked uppercase sub-line. Prices show only for a logged-in customer
- * class — guests see a neutral "Trade pricing" tag (no numbers ever enter the
- * guest payload). Card shows "From ¥X" (min variant × class).
+ * small tracked uppercase sub-line. `price` is resolved server-side by the caller
+ * (null for guests → a neutral "Trade pricing" tag) — the customer's CLASS name
+ * is never passed here, so it can't leak into the client payload. Shows "From ¥X".
  */
 export function ProductCard({
   product,
-  customerClass,
+  price,
   locale,
   dict,
 }: {
   product: Product;
-  customerClass: CustomerClass | null;
+  price: number | null;
   locale: Locale;
   dict: Dictionary;
 }) {
   const minMm = product.variants.length ? Math.min(...product.variants.map((v) => v.sizeMm)) : 0;
-  const cheapest = product.variants.reduce(
-    (a, b) => (b.basePrice < a.basePrice ? b : a),
-    product.variants[0],
-  );
-  const priced = customerClass && cheapest
-    ? resolvePrice(cheapest, customerClass, product.currency)
-    : null;
   const categoryLabel = dict.labels.category[product.category?.toLowerCase()] ?? product.category;
 
   return (
@@ -56,9 +48,9 @@ export function ProductCard({
         <p className="mt-[10px] text-[11px] uppercase tracking-[0.08em] text-stone-600">
           {categoryLabel} · {dict.catalog.fromLigne} {minMm}mm
         </p>
-        {priced ? (
+        {price != null ? (
           <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-foreground">
-            {dict.catalog.fromLigne} {formatPrice(priced.unitPrice, priced.currency)}
+            {dict.catalog.fromLigne} {formatPrice(price, product.currency)}
           </p>
         ) : (
           <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-stone-400">

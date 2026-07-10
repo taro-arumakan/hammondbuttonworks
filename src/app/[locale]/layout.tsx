@@ -104,11 +104,11 @@ export default async function LocaleLayout({
                   <CartLink href={`${home}/cart`} label={dict.nav.cartPrefix} />
                 )}
                 {account ? (
+                  // No pricing-class badge — customers must not be able to tell
+                  // their tier (standard/plus). Prices reflect the class, but the
+                  // class name is never shown or sent to the client.
                   <span className="flex items-center gap-2 text-stone-500">
                     <span>{account.companyName ?? account.email}</span>
-                    <span className="rounded bg-stone-200/60 px-2 py-0.5 text-xs uppercase tracking-wide">
-                      {account.customerClass ?? "trade"}
-                    </span>
                     <form action="/api/auth/logout" method="post">
                       <button type="submit" className="text-xs underline hover:text-accent">
                         {dict.nav.signout}
@@ -127,7 +127,12 @@ export default async function LocaleLayout({
 
               {/* Always-visible language switcher + mobile hamburger */}
               <LanguageSwitcher current={locale} />
-              <MobileNav home={home} dict={dict} account={account} />
+              {/* Pass only display fields to the client nav — never customerClass. */}
+              <MobileNav
+                home={home}
+                dict={dict}
+                account={account && { email: account.email, companyName: account.companyName }}
+              />
             </div>
           </nav>
         </header>

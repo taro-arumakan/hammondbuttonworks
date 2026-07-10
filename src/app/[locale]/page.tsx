@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getAllProducts } from "@/lib/products";
+import { fromUnitPrice } from "@/lib/pricing";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
@@ -83,7 +84,7 @@ export default async function HomePage({
             <ProductCard
               key={p.slug}
               product={p}
-              customerClass={customerClass}
+              price={fromUnitPrice(p, customerClass)}
               locale={locale}
               dict={dict}
             />

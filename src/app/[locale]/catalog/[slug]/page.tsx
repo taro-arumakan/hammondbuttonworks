@@ -106,7 +106,7 @@ export default async function ProductPage({
           <div className="mt-8">
             <PriceBlock
               product={product}
-              customerClass={customerClass}
+              signedIn={!!customerClass}
               productUrl={productUrl}
               locale={locale}
               dict={dict}

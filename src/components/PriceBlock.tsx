@@ -2,28 +2,29 @@ import Link from "next/link";
 import type { Product } from "@/lib/products";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
-import type { CustomerClass } from "@/lib/customer";
 import { TradeOrderPanel } from "./TradeOrderPanel";
 
 /**
  * Decides what a viewer may see:
  *  - Guest → a "sign in for trade pricing" CTA. No prices reach the payload.
  *  - Trade → the interactive ordering panel (prices fetched server-side).
+ * Takes a bare `signedIn` boolean, never the class name — so the tier can't leak
+ * into the client payload. (The panel fetches prices from the gated API.)
  */
 export function PriceBlock({
   product,
-  customerClass,
+  signedIn,
   productUrl,
   locale,
   dict,
 }: {
   product: Product;
-  customerClass: CustomerClass | null;
+  signedIn: boolean;
   productUrl: string;
   locale: Locale;
   dict: Dictionary;
 }) {
-  if (!customerClass) {
+  if (!signedIn) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 p-6">
         <h2 className="text-lg font-semibold">{dict.priceBlock.heading}</h2>
