@@ -149,11 +149,16 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   defined via `scripts/define-metafields.mjs`, pinned dropdown in admin). `resolveTradeAccount`
   in `src/lib/shopify.ts` looks the customer up by email at login and reads that metafield:
   **segment set → access at that class; unset/no customer → no access** ("not yet onboarded").
-  So onboarding = add the customer in Shopify admin + pick their segment. Still a magic-link
-  (HMAC) sign-in — **no passwords**. The env `TRADE_ALLOWLIST` + seeded demos remain a
-  **fallback** (local dev / preview / Shopify outage). Both demo customers
+  So onboarding = add the customer in Shopify admin + pick their segment + set their
+  **Language** (the native `customer.locale` field — drives email language). Still a
+  magic-link (HMAC) sign-in — **no passwords**. The env `TRADE_ALLOWLIST` + seeded demos
+  remain a **fallback** (local dev / preview / Shopify outage). Both demo customers
   (`buyer@example-standard.com`, `buyer@example-plus.com`) now exist in Shopify with segments.
-  Magic links still print to logs until **Resend** is wired (needs the domain + DNS first).
+- **Email is live via Resend** (verified on `send.hammondbutton.works`; `RESEND_API_KEY`/
+  `EMAIL_FROM`/`CONTACT_INBOX` set on Vercel; end-to-end delivery confirmed). Templates are
+  **bilingual EN/JA** (`src/lib/email.ts`): the magic-link language follows
+  `customer.locale` → else the site locale; the contact-form ack follows the site locale the
+  form was submitted from; staff notifications are Japanese; **default JA** when no signal.
 - **Live in production:** Shopify catalog + class pricing + **Sterling-style catalog UX**
   (`src/lib/catalog.ts`: URL-driven sidebar filters w/ faceted counts, sort, pagination;
   price sorts are login-only, enforced server-side).
