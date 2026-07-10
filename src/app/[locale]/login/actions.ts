@@ -33,7 +33,10 @@ export async function requestMagicLink(formData: FormData): Promise<void> {
     customerClass: account.customerClass,
     company: account.company,
   });
-  const url = `${await baseUrl()}/api/auth/verify?token=${encodeURIComponent(token)}&locale=${locale}`;
+  // Clean sign-in URL (/{locale}/signin/{token}) — reads less like a phishing
+  // link than /api/auth/verify?token=… on a new domain. Token is URL-safe
+  // (base64url + dots), so it needs no encoding as a path segment.
+  const url = `${await baseUrl()}/${locale}/signin/${token}`;
 
   // Email language: the customer's stored preference (Shopify customer.locale)
   // wins; otherwise the site locale they signed in from. Subject follows suit.
