@@ -67,7 +67,7 @@ payloads contain no price numbers — there is no client-side gate to bypass.
 All env vars are documented in `.env.local.example`. Summary:
 
 - `AUTH_SECRET` *(required)* — signs tokens.
-- `RESEND_API_KEY`, `EMAIL_FROM`, `QUOTE_INBOX` — real email (else console fallback).
+- `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_INBOX` — real email (else console fallback).
 - `TRADE_ALLOWLIST` — add approved accounts without code changes: `email|tier|Company`.
 - `NEXT_PUBLIC_SNIPCART_KEY`, `NEXT_PUBLIC_CART_PROVIDER` — enable the cart.
 - `QUOTE_SHEET_WEBHOOK_URL` — append quotes to a Google Sheet (see below).

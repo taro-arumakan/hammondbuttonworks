@@ -114,8 +114,9 @@ Project → Settings → Environment Variables (Production) → add / update, th
 - [ ] `EMAIL_FROM` = `Hammond Button Works <no-reply@send.hammondbutton.works>`
       _(must match the domain verified in Resend — the `send.` subdomain here; use
       `no-reply@hammondbutton.works` only if you verified the apex instead)_
-- [ ] `QUOTE_INBOX` = `info@alvana.jp` _(or `info@hammondbutton.works` once the
-      alias is live)_
+- [ ] `CONTACT_INBOX` = `contact@hammondbutton.works` _(a Google Group fanning out
+      to info@alvana + your own inbox; the general inbound-business address —
+      quote/contact-form mail and, later, order notifications)_
 
 Until `RESEND_API_KEY` is set, magic links print to the Vercel function logs
 instead of emailing (see `src/lib/email.ts`).

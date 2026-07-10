@@ -132,7 +132,7 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   Workspace** (free, one inbox; needs Super Admin at admin.google.com). *Sending* (app
   magic-link/quote) = **Resend** verified on the `send.hammondbutton.works` subdomain
   (coexists with the Google MX; SPF/DKIM + a `_dmarc` TXT). Wire `RESEND_API_KEY`/
-  `EMAIL_FROM`/`QUOTE_INBOX` on Vercel to flip mail from logs to real inboxes.
+  `EMAIL_FROM`/`CONTACT_INBOX` on Vercel to flip mail from logs to real inboxes.
 - **Cart:** Snipcart in test mode. NOTE: Snipcart validates cart price by crawling the
   product URL, which has no price for guests — production B2B pricing needs Snipcart's
   server-side price-validation webhook, or graduate to Stripe/Medusa.
@@ -196,7 +196,7 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 
 ## Env vars (see `.env.local.example`)
 `AUTH_SECRET` (required) · `NEXT_PUBLIC_SITE_URL` · `RESEND_API_KEY` / `EMAIL_FROM` /
-`QUOTE_INBOX` · `TRADE_ALLOWLIST` (`email|tier|Company`) · `NEXT_PUBLIC_SNIPCART_KEY` /
+`CONTACT_INBOX` (legacy `QUOTE_INBOX` still read as fallback) · `TRADE_ALLOWLIST` (`email|tier|Company`) · `NEXT_PUBLIC_SNIPCART_KEY` /
 `NEXT_PUBLIC_CART_PROVIDER` · `QUOTE_SHEET_WEBHOOK_URL`.
 
 ## Post-pilot roadmap

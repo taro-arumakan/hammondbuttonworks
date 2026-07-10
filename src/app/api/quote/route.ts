@@ -6,7 +6,7 @@ import { rateLimit } from "@/lib/ratelimit";
 /**
  * Quote / trade-access request handler.
  *  1. Honeypot + rate limit (anti-spam).
- *  2. Email the owner (QUOTE_INBOX) with the details, reply-to the requester.
+ *  2. Email the owner (CONTACT_INBOX) with the details, reply-to the requester.
  *  3. Auto-acknowledge the requester.
  *  4. Optionally append a row to a Google Sheet via QUOTE_SHEET_WEBHOOK_URL
  *     (a Google Apps Script web app — see README).
@@ -42,7 +42,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const q = parsed.data;
-  const inbox = process.env.QUOTE_INBOX ?? process.env.EMAIL_FROM ?? "owner@example.com";
+  // CONTACT_INBOX is the general inbound-business inbox (a Google Group,
+  // e.g. contact@hammondbutton.works). QUOTE_INBOX kept as a legacy fallback
+  // for the env-rename transition — remove once CONTACT_INBOX is set on all envs.
+  const inbox =
+    process.env.CONTACT_INBOX ??
+    process.env.QUOTE_INBOX ??
+    process.env.EMAIL_FROM ??
+    "owner@example.com";
 
   const rows: [string, string][] = [
     ["Company", q.company],
@@ -74,10 +81,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     replyTo: q.email,
   });
 
-  // 3. Acknowledge the requester (best-effort).
+  // 3. Acknowledge the requester (best-effort). reply-to the contact inbox so a
+  //    customer replying to this ack reaches a monitored inbox, not no-reply.
   await sendEmail({
     to: q.email,
     subject: "We received your request — Hammond Button Works",
+    replyTo: inbox,
     html: `<div style="font-family:system-ui,sans-serif"><p>Hi ${escapeHtml(q.name)},</p>
       <p>Thanks for reaching out to Hammond Button Works. We've received your request and will
       reply with pricing and next steps, usually within one business day.</p>
