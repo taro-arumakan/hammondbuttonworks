@@ -143,7 +143,11 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   read server-side via `src/lib/shopify.ts`; `content/products/*.json` is legacy. Two
   customer classes replace tiers: `standard` ×1.0 / `plus` ×1.1 (`src/lib/customer.ts`);
   **the ×1.1 is computed in the storefront, never a Shopify discount** — at checkout it's
-  stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`).
+  stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`). NB `priceOverride`
+  is the only lever that can RAISE a unit price — `appliedDiscount` (the sole price control
+  the Shopify admin UI exposes on draft orders) can only reduce. So a **manually created
+  draft order in the admin will NOT apply the +10%**, and staff cannot add it to a variant
+  line; the workaround is a custom line item at the ×1.1 price, or create it via the API.
 - **Onboarding & login = Shopify-driven, passwordless, segment-gated.** A customer's class
   lives in the **`hbw.pricing_segment`** customer metafield (choices `standard`/`plus`;
   defined via `scripts/define-metafields.mjs`, pinned dropdown in admin). `resolveTradeAccount`
