@@ -200,7 +200,8 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 - Optional `DEPLOY.md` (Route 53 + Vercel records) — offered, not yet written.
 
 ## Env vars (see `.env.local.example`)
-`AUTH_SECRET` (required) · `NEXT_PUBLIC_SITE_URL` · `RESEND_API_KEY` / `EMAIL_FROM` /
+`AUTH_SECRET` (required) · `ADMIN_SECRET` (guards `/api/admin/signin-link`, the staff
+link-minter for LINE/manual relay) · `NEXT_PUBLIC_SITE_URL` · `RESEND_API_KEY` / `EMAIL_FROM` /
 `CONTACT_INBOX` (legacy `QUOTE_INBOX` still read as fallback) · `TRADE_ALLOWLIST` (`email|tier|Company`) · `NEXT_PUBLIC_SNIPCART_KEY` /
 `NEXT_PUBLIC_CART_PROVIDER` · `QUOTE_SHEET_WEBHOOK_URL`.
 

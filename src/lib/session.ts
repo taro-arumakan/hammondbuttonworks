@@ -29,7 +29,11 @@ const TTL_SECONDS: Record<TokenKind, number> = {
 
 type TokenInput = { email: string; customerClass: CustomerClass; company: string };
 
-export async function createToken(kind: TokenKind, input: TokenInput): Promise<string> {
+export async function createToken(
+  kind: TokenKind,
+  input: TokenInput,
+  ttlSeconds?: number, // override the default TTL (e.g. a 24h manually-relayed link)
+): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const payload: TokenPayload = {
     sub: input.email,
@@ -37,7 +41,7 @@ export async function createToken(kind: TokenKind, input: TokenInput): Promise<s
     company: input.company,
     typ: kind,
     iat: now,
-    exp: now + TTL_SECONDS[kind],
+    exp: now + (ttlSeconds ?? TTL_SECONDS[kind]),
   };
   const body = b64uEncode(JSON.stringify(payload));
   const sig = await sign(body);
