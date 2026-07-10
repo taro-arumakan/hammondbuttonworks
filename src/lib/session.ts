@@ -48,31 +48,68 @@ export async function createToken(
   return `${body}.${sig}`;
 }
 
-export async function verifyToken(
-  token: string | null | undefined,
-  kind: TokenKind,
-): Promise<TokenPayload | null> {
+/** Signature + expiry check. Callers still must check `typ`. */
+async function parseVerified(token: string | null | undefined): Promise<{ typ: string; exp: number } | null> {
   if (!token) return null;
   const dot = token.indexOf(".");
   if (dot < 1) return null;
   const body = token.slice(0, dot);
   const sig = token.slice(dot + 1);
 
-  const expected = await sign(body);
-  if (!timingSafeEqual(sig, expected)) return null;
+  if (!timingSafeEqual(sig, await sign(body))) return null;
 
-  let payload: TokenPayload;
+  let payload: { typ: string; exp: number };
   try {
     payload = JSON.parse(b64uDecode(body));
   } catch {
     return null;
   }
-
-  if (payload.typ !== kind) return null;
   if (typeof payload.exp !== "number" || payload.exp < Math.floor(Date.now() / 1000)) {
     return null;
   }
   return payload;
+}
+
+export async function verifyToken(
+  token: string | null | undefined,
+  kind: TokenKind,
+): Promise<TokenPayload | null> {
+  const payload = await parseVerified(token);
+  if (!payload || payload.typ !== kind) return null;
+  return payload as unknown as TokenPayload;
+}
+
+// --- Staff tokens ---------------------------------------------------------------
+// Separate payload + cookie from customer sessions: staff have no customer class,
+// and a staff session must never be mistaken for a buyer session (or vice-versa).
+
+export type StaffTokenKind = "staff-magic" | "staff";
+export type StaffTokenPayload = { sub: string; typ: StaffTokenKind; iat: number; exp: number };
+
+const STAFF_TTL: Record<StaffTokenKind, number> = {
+  "staff-magic": 15 * 60, // emailed sign-in link
+  staff: 12 * 60 * 60, // working day
+};
+
+export async function createStaffToken(kind: StaffTokenKind, email: string): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  const payload: StaffTokenPayload = {
+    sub: email,
+    typ: kind,
+    iat: now,
+    exp: now + STAFF_TTL[kind],
+  };
+  const body = b64uEncode(JSON.stringify(payload));
+  return `${body}.${await sign(body)}`;
+}
+
+export async function verifyStaffToken(
+  token: string | null | undefined,
+  kind: StaffTokenKind,
+): Promise<StaffTokenPayload | null> {
+  const payload = await parseVerified(token);
+  if (!payload || payload.typ !== kind) return null;
+  return payload as StaffTokenPayload;
 }
 
 // --- HMAC ---------------------------------------------------------------------

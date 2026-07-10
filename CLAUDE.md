@@ -163,6 +163,16 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   **bilingual EN/JA** (`src/lib/email.ts`): the magic-link language follows
   `customer.locale` → else the site locale; the contact-form ack follows the site locale the
   form was submitted from; staff notifications are Japanese; **default JA** when no signal.
+- **Admin (staff) toolset** — same app + deploy (so the pricing/order code can never fork),
+  but served **only on `ADMIN_HOST`** (e.g. `admin.hammondbutton.works`); on the public host
+  `/admin` and `/api/admin` **404**. Auth is a **staff magic-link session** (`hbw_staff`
+  cookie, separate token kind) gated on the `STAFF_EMAILS` allowlist (exact addresses and/or
+  `@domain`), re-checked on every request so removing someone revokes them instantly.
+  Tools: `/admin/orders/new` (create an order on a customer's behalf) and
+  `/admin/signin-link` (mint a 24h login link to relay by LINE).
+  **`src/lib/order-lines.ts` is the single order-line builder** used by BOTH storefront
+  checkout and the staff tool — that's what stops the ×1.1 drifting between them. Staff
+  orders are tagged `staff` and carry `作成者: <email>` in the note for audit.
 - **Live in production:** Shopify catalog + class pricing + **Sterling-style catalog UX**
   (`src/lib/catalog.ts`: URL-driven sidebar filters w/ faceted counts, sort, pagination;
   price sorts are login-only, enforced server-side).
@@ -214,8 +224,9 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 - Optional `DEPLOY.md` (Route 53 + Vercel records) — offered, not yet written.
 
 ## Env vars (see `.env.local.example`)
-`AUTH_SECRET` (required) · `STAFF_LINK_SECRET` (guards `/api/admin/signin-link`, the staff
-link-minter for LINE/manual relay — distinct from AUTH_SECRET) · `NEXT_PUBLIC_SITE_URL` · `RESEND_API_KEY` / `EMAIL_FROM` /
+`AUTH_SECRET` (required) · `STAFF_EMAILS` (who may sign in to `/admin`; exact addresses
+and/or `@domain` entries) · `ADMIN_HOST` (the host that serves `/admin`; elsewhere it 404s)
+· `NEXT_PUBLIC_SITE_URL` · `RESEND_API_KEY` / `EMAIL_FROM` /
 `CONTACT_INBOX` (legacy `QUOTE_INBOX` still read as fallback) · `TRADE_ALLOWLIST` (`email|tier|Company`) · `NEXT_PUBLIC_SNIPCART_KEY` /
 `NEXT_PUBLIC_CART_PROVIDER` · `QUOTE_SHEET_WEBHOOK_URL`.
 

@@ -1,35 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
- * Staff tool (non-technical): generate a customer sign-in link to relay by hand
- * (LINE / メール等) when their email bounces. Calls GET /api/admin/signin-link
- * with the STAFF_LINK_SECRET as a header. The secret can be remembered on this device
- * (localStorage) so staff only type the customer's email after the first time.
- *
- * No customer data beyond the link is shown, and the class/tier is never exposed.
+ * Staff tool: generate a customer sign-in link to relay by hand (LINE / メール等)
+ * when their email bounces. Auth is the staff session cookie — the middleware
+ * gates /api/admin/*, so no secret is entered here.
  */
 type Result = { url: string; email: string; company: string; expiresAt: string };
 
-const SECRET_KEY = "hbw_admin_secret";
-
 export function AdminLinkForm() {
-  const [secret, setSecret] = useState("");
-  const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<"link" | "message" | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(SECRET_KEY);
-    if (saved) {
-      setSecret(saved);
-      setRemember(true);
-    }
-  }, []);
 
   const message = result
     ? `Hammond Button Works のログインリンクをお送りします（24時間有効・1回限り）。\n${result.url}`
@@ -42,22 +27,18 @@ export function AdminLinkForm() {
     setResult(null);
     setCopied(null);
     try {
-      const res = await fetch(`/api/admin/signin-link?email=${encodeURIComponent(email.trim())}`, {
-        headers: { "x-admin-secret": secret },
-      });
+      const res = await fetch(`/api/admin/signin-link?email=${encodeURIComponent(email.trim())}`);
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
         throw new Error(
           res.status === 401
-            ? "管理キーが正しくありません。"
+            ? "ログインの有効期限が切れました。再度ログインしてください。"
             : res.status === 404
-              ? "このメールアドレスの取引先が見つかりません（Shopify で pricing_segment を設定してください）。"
+              ? "このメールアドレスの取引先が見つかりません（Shopify で価格区分を設定してください）。"
               : (body.error ?? `エラーが発生しました（${res.status}）。`),
         );
       }
       setResult(body as Result);
-      if (remember) localStorage.setItem(SECRET_KEY, secret);
-      else localStorage.removeItem(SECRET_KEY);
     } catch (err) {
       setError(err instanceof Error ? err.message : "エラーが発生しました。");
     } finally {
@@ -75,30 +56,8 @@ export function AdminLinkForm() {
     }
   }
 
-  const inputCls =
-    "mt-1 w-full rounded-md border border-stone-300 px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
-
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <label htmlFor="secret" className="block text-sm font-medium text-stone-700">
-          スタッフ用キー（STAFF_LINK_SECRET）
-        </label>
-        <input
-          id="secret"
-          type="password"
-          value={secret}
-          onChange={(e) => setSecret(e.target.value)}
-          required
-          autoComplete="off"
-          className={inputCls}
-        />
-        <label className="mt-2 flex items-center gap-2 text-sm text-stone-500">
-          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-          この端末に管理キーを記憶する
-        </label>
-      </div>
-
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-stone-700">
           お客様のメールアドレス
@@ -110,7 +69,7 @@ export function AdminLinkForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           placeholder="customer@example.com"
-          className={inputCls}
+          className="mt-1 w-full rounded-md border border-stone-300 px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         />
       </div>
 

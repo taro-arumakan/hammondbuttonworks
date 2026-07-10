@@ -59,19 +59,23 @@ export async function createDraftOrder(opts: {
   /** Order-level expected-shipping summary, e.g. "2026-08-04 (~30 days)". */
   expectedShipping: string;
   locale: string;
+  /** Staff email when created from the admin tool — recorded for audit. */
+  createdBy?: string;
 }): Promise<DraftOrderResult> {
   // Note + line attributes are Japanese-first: the order processors (and the
   // 請求書 recipients) are Japanese.
+  const origin = opts.createdBy ? "スタッフ代理入力" : "ストアフロントB2B注文";
   const note =
-    `ストアフロントB2B注文 — ${opts.company}（${opts.customerClass}）\n` +
+    `${origin} — ${opts.company}（${opts.customerClass}）\n` +
     `購入者メール: ${opts.email}\n` +
     `支払い: 銀行振込（請求書を送付。オンライン決済なし）\n` +
     `出荷予定: ${opts.expectedShipping}\n` +
-    `言語: ${opts.locale}`;
+    `言語: ${opts.locale}` +
+    (opts.createdBy ? `\n作成者: ${opts.createdBy}` : "");
 
   const input = {
     email: opts.email,
-    tags: ["storefront", `class:${opts.customerClass}`],
+    tags: [opts.createdBy ? "staff" : "storefront", `class:${opts.customerClass}`],
     note,
     lineItems: opts.lines.map((l) => ({
       variantId: l.variantId,

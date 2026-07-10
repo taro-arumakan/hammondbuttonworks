@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE, verifyToken } from "@/lib/session";
+import { SESSION_COOKIE, verifyToken, verifyStaffToken } from "@/lib/session";
+import { STAFF_COOKIE, adminHost } from "@/lib/staff";
 import { detectLocale, isLocale } from "@/lib/i18n-config";
 
 /**
  * Server-side gate + locale routing, run on the Edge before pages render.
  *
+ *  0. The ADMIN surface (`/admin`, `/api/admin`) is served ONLY on ADMIN_HOST
+ *     (e.g. admin.hammondbutton.works) and requires a staff session. On the
+ *     public host it 404s — the surface isn't even confirmed to exist. Same app
+ *     and deploy, so the pricing/order logic can never fork; just a separate
+ *     hostname. With ADMIN_HOST unset (local dev) admin is reachable anywhere.
  *  1. APIs: never locale-prefixed. The price-bearing API is gated here — guests
  *     get 401; there is no client payload to "unlock". (Catalog/product pages
  *     stay PUBLIC for SEO and simply contain no prices for guests.)
@@ -12,8 +18,51 @@ import { detectLocale, isLocale } from "@/lib/i18n-config";
  *     paths to the visitor's detected language.
  *  3. A reserved `/{locale}/account` area is gated for future use.
  */
+
+/** Reachable without a staff session (otherwise you could never sign in).
+ *  NB the trailing slash on `/admin/signin/` — without it this would also match
+ *  `/admin/signin-link`, exposing the link-minter page to anonymous visitors. */
+function isOpenAdminPath(pathname: string): boolean {
+  return (
+    pathname === "/admin/login" ||
+    pathname.startsWith("/admin/signin/") ||
+    pathname.startsWith("/api/admin/auth/")
+  );
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+
+  // 0) Admin surface — host-scoped + staff-gated.
+  const host = (req.headers.get("host") ?? "").toLowerCase();
+  const ADMIN_HOST = adminHost();
+  const onAdminHost = !ADMIN_HOST || host === ADMIN_HOST;
+  const isAdminPath = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
+
+  if (isAdminPath) {
+    // Wrong host → pretend it doesn't exist.
+    if (!onAdminHost) return new NextResponse("Not found", { status: 404 });
+
+    if (!isOpenAdminPath(pathname)) {
+      const staff = await verifyStaffToken(req.cookies.get(STAFF_COOKIE)?.value, "staff");
+      if (!staff) {
+        if (pathname.startsWith("/api/")) {
+          return NextResponse.json({ error: "Staff login required." }, { status: 401 });
+        }
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin/login";
+        url.search = "";
+        url.searchParams.set("next", pathname + search);
+        return NextResponse.redirect(url);
+      }
+    }
+    return NextResponse.next(); // admin is never locale-prefixed
+  }
+
+  // The admin host serves the admin surface only — never the storefront.
+  if (ADMIN_HOST && onAdminHost) {
+    return NextResponse.redirect(new URL("/admin", req.url));
+  }
 
   // 1) API routes — no locale handling; gate price-bearing endpoints.
   if (pathname.startsWith("/api")) {
