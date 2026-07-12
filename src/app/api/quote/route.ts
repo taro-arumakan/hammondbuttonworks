@@ -3,10 +3,11 @@ import { z } from "zod";
 import { sendEmail, quoteAckEmail, quoteNotificationEmail } from "@/lib/email";
 import { isLocale } from "@/lib/i18n-config";
 import { rateLimit } from "@/lib/ratelimit";
+import { checkFormToken } from "@/lib/form-guard";
 
 /**
  * Quote / trade-access request handler.
- *  1. Honeypot + rate limit (anti-spam).
+ *  1. Anti-spam: rate limit + honeypot + signed time-trap token.
  *  2. Email the owner (CONTACT_INBOX) with the details, reply-to the requester.
  *  3. Auto-acknowledge the requester.
  *  4. Optionally append a row to a Google Sheet via QUOTE_SHEET_WEBHOOK_URL
@@ -24,6 +25,7 @@ const QuoteSchema = z.object({
   message: z.string().min(1).max(4000),
   locale: z.string().max(8).optional(), // site locale the form was submitted from
   website: z.string().max(0).optional(), // honeypot: must be empty
+  formToken: z.string().max(500).optional(), // signed time-trap (see form-guard.ts)
 });
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -44,6 +46,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const q = parsed.data;
+
+  // Time-trap: reject submissions with no/forged token or an implausibly fast
+  // fill time (a bot POSTing instantly, or straight to the API). Fail quietly.
+  const guard = await checkFormToken(q.formToken);
+  if (guard !== "ok") {
+    console.info(`quote: rejected submission (${guard}) from ${ip}`);
+    return NextResponse.json({ error: "Invalid submission." }, { status: 400 });
+  }
   // CONTACT_INBOX is the general inbound-business inbox (a Google Group,
   // e.g. contact@hammondbutton.works). QUOTE_INBOX kept as a legacy fallback
   // for the env-rename transition — remove once CONTACT_INBOX is set on all envs.

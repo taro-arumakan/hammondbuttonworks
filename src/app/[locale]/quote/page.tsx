@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { QuoteForm } from "@/components/QuoteForm";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
+import { issueFormToken } from "@/lib/form-guard";
+
+// A fresh anti-spam token must be minted per load, so never statically cache.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -24,6 +28,7 @@ export default async function QuotePage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
   const { sku, qty } = await searchParams;
+  const formToken = await issueFormToken();
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
@@ -32,7 +37,7 @@ export default async function QuotePage({
       <p className="mt-3 text-stone-600">{dict.quote.subtitleCatalog}</p>
 
       <div className="mt-8 rounded-xl border border-stone-200 bg-white p-6">
-        <QuoteForm dict={dict} locale={locale} defaultSku={sku} defaultQty={qty} />
+        <QuoteForm dict={dict} locale={locale} defaultSku={sku} defaultQty={qty} formToken={formToken} />
       </div>
 
       <p className="mt-6 text-sm text-stone-500">{dict.quote.preferEmail}</p>

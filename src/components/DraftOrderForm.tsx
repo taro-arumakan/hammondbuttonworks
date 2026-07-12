@@ -92,7 +92,7 @@ export function DraftOrderForm() {
                 <input
                   value={l.sku}
                   onChange={(e) => update(i, { sku: e.target.value })}
-                  placeholder="HBW-PEB-BLK-18"
+                  placeholder="round-no9-BrownRosewood-18mm"
                   className={field}
                 />
               </div>

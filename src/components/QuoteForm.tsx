@@ -6,19 +6,24 @@ import type { Locale } from "@/lib/i18n-config";
 
 /**
  * Quote / trade-access request form. Posts JSON to /api/quote, which emails the
- * owner (and the requester), and optionally appends to a Google Sheet. Includes
- * a hidden honeypot field ("website") — bots fill it, humans don't.
+ * owner (and the requester), and optionally appends to a Google Sheet.
+ *
+ * Anti-spam: a hidden honeypot field ("website") bots fill but humans don't,
+ * plus a server-signed "formToken" stamped at render time — the handler rejects
+ * submissions that arrive too fast or without a valid token (see form-guard.ts).
  */
 export function QuoteForm({
   dict,
   locale,
   defaultSku,
   defaultQty,
+  formToken,
 }: {
   dict: Dictionary;
   locale: Locale;
   defaultSku?: string;
   defaultQty?: string;
+  formToken: string;
 }) {
   const t = dict.quote;
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
@@ -61,6 +66,8 @@ export function QuoteForm({
     <form onSubmit={onSubmit} className="space-y-4">
       {/* carries the site locale so the ack email is sent in the right language */}
       <input type="hidden" name="locale" value={locale} />
+      {/* anti-spam time-trap token (server-signed, stamped at render) */}
+      <input type="hidden" name="formToken" value={formToken} />
       {/* honeypot */}
       <input
         type="text"
