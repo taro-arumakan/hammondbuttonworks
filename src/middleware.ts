@@ -33,22 +33,10 @@ function isOpenAdminPath(pathname: string): boolean {
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
+  // 0) Admin surface — host-scoped + staff-gated.
+  //    (Canonical www / *.vercel.app → apex redirects live in Vercel's Domains
+  //    config as edge 308s, so they never reach this function.)
   const host = (req.headers.get("host") ?? "").toLowerCase();
-
-  // 0) Canonical host: send the `www` alias and the production *.vercel.app URL
-  //    to the bare apex, so there is one address (one cookie scope, one set of
-  //    SEO signals). Only these exact hosts are rewritten — preview deployments
-  //    (hammondbuttonworks-<hash>.vercel.app), localhost, and the admin host are
-  //    intentionally left alone.
-  if (host === "www.hammondbutton.works" || host === "hammondbuttonworks.vercel.app") {
-    const url = req.nextUrl.clone();
-    url.protocol = "https:";
-    url.hostname = "hammondbutton.works";
-    url.port = "";
-    return NextResponse.redirect(url, 308);
-  }
-
-  // 1) Admin surface — host-scoped + staff-gated.
   const ADMIN_HOST = adminHost();
   const onAdminHost = !ADMIN_HOST || host === ADMIN_HOST;
   const isAdminPath = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
@@ -78,7 +66,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/admin", req.url));
   }
 
-  // 2) API routes — no locale handling; gate price-bearing endpoints.
+  // 1) API routes — no locale handling; gate price-bearing endpoints.
   if (pathname.startsWith("/api")) {
     if (
       pathname.startsWith("/api/price") ||
@@ -94,7 +82,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3) Ensure a locale prefix on page routes.
+  // 2) Ensure a locale prefix on page routes.
   const first = pathname.split("/")[1];
   if (!isLocale(first)) {
     const locale = detectLocale(req.headers.get("accept-language"));
@@ -103,7 +91,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 4) Reserved gated area: /{locale}/account
+  // 3) Reserved gated area: /{locale}/account
   const segments = pathname.split("/");
   if (segments[2] === "account") {
     const token = req.cookies.get(SESSION_COOKIE)?.value;
