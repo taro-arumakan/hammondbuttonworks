@@ -29,15 +29,28 @@ app's outbound magic-link / quote email.
 
 ## A. Web — point the domain at Vercel
 
-1. [ ] Vercel → Project → **Settings → Domains → Add** → `hammondbutton.works`
-       (and add `www.hammondbutton.works`, set to redirect to the apex).
-2. [ ] In Onamae DNS, add what Vercel asks for (use the value Vercel's Domains
+1. [x] Vercel → Project → **Settings → Domains → Add** → `hammondbutton.works`,
+       plus `www.hammondbutton.works` and the `hammondbuttonworks.vercel.app`
+       deploy URL.
+2. [x] In Onamae DNS, add what Vercel asks for (use the value Vercel's Domains
        page shows — as of 2026-07 it's the new IP-range address; the older
        `76.76.21.21` / `cname.vercel-dns.com` still work but are being phased out):
        - `A`  host **blank/@**  → `216.198.79.1`  _(Vercel-recommended; 76.76.21.21 also works)_
-       - `CNAME` host **www** → `cname.vercel-dns.com`  _(only needed if you add `www` as a domain in the Vercel project)_
-3. [ ] Wait for Vercel to show the domain **Valid / SSL issued** (auto certificate).
-4. [ ] Confirm `https://hammondbutton.works` loads the site.
+       - `CNAME` host **www** → `e00d81113707ae98.vercel-dns-017.com`  _(the per-project
+         target Vercel now recommends — same one `admin` uses; generic
+         `cname.vercel-dns.com` still resolves)_
+3. [x] Wait for Vercel to show the domain **Valid / SSL issued** (auto certificate).
+4. [x] Confirm `https://hammondbutton.works` loads the site.
+
+### A1. Canonical host — one address
+
+`www` and the `*.vercel.app` deploy URL redirect to the bare apex so there is a
+single canonical address (one cookie scope, one SEO signal). This is configured
+**in Vercel** (Domains → Edit → *Redirect to Another Domain* → **308 Permanent**
+→ `hammondbutton.works`), not in app code — the redirect fires at Vercel's edge
+before the function runs. Set on both `www.hammondbutton.works` and
+`hammondbuttonworks.vercel.app`. Verified 2026-07-13: both 308 → apex (path +
+query preserved); the apex serves; preview deploys are unaffected.
 
 ### A2. Staff admin host (`admin.hammondbutton.works`)
 
@@ -169,7 +182,7 @@ instead of emailing (see `src/lib/email.ts`).
 | Type  | Host (Onamae label)        | Value                                   | Source        |
 |-------|----------------------------|-----------------------------------------|---------------|
 | A     | _(blank/@)_                | `216.198.79.1` _(76.76.21.21 also works)_ | Vercel      |
-| CNAME | `www`                      | `cname.vercel-dns.com`                  | Vercel        |
+| CNAME | `www`                      | `e00d81113707ae98.vercel-dns-017.com` _(→ 308 to apex, set in Vercel)_ | Vercel _(console)_ |
 | CNAME | `admin`                    | `e00d81113707ae98.vercel-dns-017.com` _(staff toolset; set `ADMIN_HOST` first)_ | Vercel _(console)_ |
 | TXT   | _(blank/@)_                | `google-site-verification=…`            | Google _(console)_ |
 | MX    | _(blank/@)_                | `smtp.google.com` (prio 1)              | Google _(console)_ |
