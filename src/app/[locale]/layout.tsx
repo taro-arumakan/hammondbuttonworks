@@ -5,6 +5,7 @@ import { Marcellus, Zen_Old_Mincho } from "next/font/google";
 import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
+import { siteUrl } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MobileNav } from "@/components/MobileNav";
@@ -59,6 +60,8 @@ export async function generateMetadata({
             "Handcrafted natural buttons for apparel makers — buffalo horn, hardwood, and solid metal. Uncoated, made to order in any size. Wholesale trade pricing.",
         };
   return {
+    // Lets pages declare relative OG/canonical URLs and resolves them absolutely.
+    metadataBase: new URL(siteUrl()),
     title: { default: meta.title, template: "%s · Hammond Button Works" },
     description: meta.description,
   };

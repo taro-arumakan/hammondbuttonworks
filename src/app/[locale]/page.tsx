@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getAllProducts } from "@/lib/products";
@@ -8,6 +9,18 @@ import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
 import { ProductCard } from "@/components/ProductCard";
 import { Logo } from "@/components/Logo";
+import { localeAlternates } from "@/lib/seo";
+
+/** Title/description come from the locale layout; this adds canonical + hreflang. */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  return { alternates: localeAlternates(locale, "") };
+}
 
 export default async function HomePage({
   params,

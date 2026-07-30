@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { QuoteForm } from "@/components/QuoteForm";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
+import { localeAlternates } from "@/lib/seo";
 import { issueFormToken } from "@/lib/form-guard";
 
 // A fresh anti-spam token must be minted per load, so never statically cache.
@@ -12,9 +13,14 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = getDictionary(isLocale(locale) ? locale : DEFAULT_LOCALE);
-  return { title: dict.quote.title, description: dict.quote.subtitle };
+  const { locale: raw } = await params;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  const dict = getDictionary(locale);
+  return {
+    title: dict.quote.title,
+    description: dict.quote.subtitle,
+    alternates: localeAlternates(locale, "/quote"),
+  };
 }
 
 export default async function QuotePage({

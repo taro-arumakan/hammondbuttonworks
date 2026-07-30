@@ -6,6 +6,7 @@ import { fromUnitPriceOf } from "@/lib/pricing";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
+import { localeAlternates } from "@/lib/seo";
 import {
   PAGE_SIZE,
   applyFilters,
@@ -25,12 +26,24 @@ import { Pagination } from "@/components/Pagination";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = getDictionary(isLocale(locale) ? locale : DEFAULT_LOCALE);
-  return { title: dict.nav.catalog, description: dict.catalog.subtitleGuest };
+  const [{ locale: raw }, sp] = await Promise.all([params, searchParams]);
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  const dict = getDictionary(locale);
+  // Filtered/sorted variants consolidate onto the bare listing — but paginated
+  // pages self-canonicalise (?page=N): pagination is a crawl-discovery path,
+  // and pointing page 2+ at page 1 tells Google to ignore the deeper pages.
+  const page = Math.max(1, parseInt(String(sp.page ?? "1"), 10) || 1);
+  const path = page > 1 ? `/catalog?page=${page}` : "/catalog";
+  return {
+    title: dict.nav.catalog,
+    description: dict.catalog.subtitleGuest,
+    alternates: localeAlternates(locale, path),
+  };
 }
 
 export default async function CatalogPage({

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
+import { localeAlternates } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 
 export async function generateMetadata({
@@ -8,9 +9,14 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const dict = getDictionary(isLocale(locale) ? locale : DEFAULT_LOCALE);
-  return { title: dict.nav.about, description: dict.about.lead };
+  const { locale: raw } = await params;
+  const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+  const dict = getDictionary(locale);
+  return {
+    title: dict.nav.about,
+    description: dict.about.lead,
+    alternates: localeAlternates(locale, "/about"),
+  };
 }
 
 export default async function AboutPage({

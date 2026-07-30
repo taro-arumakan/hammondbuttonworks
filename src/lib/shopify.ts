@@ -35,6 +35,12 @@ export async function shopifyFetch<T>(query: string, variables: Record<string, u
     body: JSON.stringify({ query, variables }),
     // Product data is fairly static; cache briefly and revalidate.
     next: { revalidate: 60 },
+    // Bound the wait: undici only bounds the CONNECT phase (10s) — a Shopify
+    // endpoint that accepts the connection and then stalls would otherwise hang
+    // until Next's 60s static-generation timeout and HARD-FAIL `next build`
+    // (the sitemap prerenders at build time). An AbortError THROWS, so callers'
+    // catch paths (e.g. sitemap.ts) degrade gracefully instead.
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`Shopify HTTP ${res.status}`);
   const json = (await res.json()) as { data?: T; errors?: unknown };
@@ -148,6 +154,7 @@ export type ShopifyProduct = {
   shortJa?: string;
   category: string; // productType
   createdAt: string; // ISO timestamp, for "newest" sorting
+  updatedAt: string; // ISO timestamp, for sitemap lastModified
   descriptionHtml: string;
   image?: string;
   images: string[];
@@ -175,6 +182,7 @@ const PRODUCT_FIELDS = `
   title
   productType
   createdAt
+  updatedAt
   descriptionHtml
   featuredMedia { preview { image { url } } }
   media(first: 12) { nodes { preview { image { url } } } }
@@ -208,6 +216,7 @@ type RawProduct = {
   title: string;
   productType: string;
   createdAt: string;
+  updatedAt: string;
   descriptionHtml: string;
   featuredMedia: { preview: { image: { url: string } | null } | null } | null;
   media: { nodes: { preview: { image: { url: string } | null } | null }[] };
@@ -250,6 +259,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     shortJa: p.shortJa?.value,
     category: p.productType,
     createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
     descriptionHtml: p.descriptionHtml,
     image,
     images,

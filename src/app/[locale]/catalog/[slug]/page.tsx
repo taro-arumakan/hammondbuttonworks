@@ -8,6 +8,7 @@ import { getProductBySlug } from "@/lib/products";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
+import { localeAlternates } from "@/lib/seo";
 import { PriceBlock } from "@/components/PriceBlock";
 
 export async function generateMetadata({
@@ -21,7 +22,19 @@ export async function generateMetadata({
   if (!base) return {};
   const product = localizeProduct(base, locale);
   const description = locale === "ja" ? product.shortJa : undefined;
-  return { title: product.name, description };
+  return {
+    title: product.name,
+    // Only set description when we have one: `description: undefined` still
+    // participates in Next's metadata merge and ERASES the layout's inherited
+    // description — EN product pages would ship with none at all.
+    ...(description ? { description } : {}),
+    // Canonical is the BARE product URL: the listing links every colourway as
+    // `?color=…`, so without this each design competes with itself as N
+    // near-duplicate pages. Built from the Shopify handle (base.slug), not the
+    // raw URL segment — productByHandle is case-insensitive, so /catalog/PEBBLE
+    // renders fine but must canonicalise to the lowercase handle, not itself.
+    alternates: localeAlternates(locale, `/catalog/${base.slug}`),
+  };
 }
 
 function Spec({ label, value }: { label: string; value: string }) {
