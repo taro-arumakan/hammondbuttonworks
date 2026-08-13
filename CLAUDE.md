@@ -207,9 +207,16 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   canonical = bare lowercase handle, paginated listings self-canonicalise, `seo.ts:siteUrl()`
   survives malformed `NEXT_PUBLIC_SITE_URL` (else generateMetadata throws ⇒ site-wide silent
   metadata blackout); (d) **Vercel Firewall custom rule "Deny meta-externalagent crawler"**
-  (UA contains → Deny, verified 403; browsers/Googlebot 200). NB Hobby usage cycles are
-  30-day (anchor ≈ the 26th); counters only reset at the boundary. The structural fix —
-  edge-cacheable guest pages (drop `auth()` from the server render path) — is still TODO.
+  (UA contains → Deny, verified 403; browsers/Googlebot 200). Post-incident facts (2026-08-13):
+  Hobby limits are a **trailing 30-day window**, not a fixed cycle — the Jul 28-30 spike kept
+  CPU >100% until it aged out (~Aug 27-29), and Vercel re-sends the same threshold emails
+  fortnightly while over (identical times of day = re-alert, not new burn). Denied requests
+  cost nothing and don't count toward limits. Refinement: the deny rule 403'd /robots.txt too,
+  so the bot could never learn to stop and kept knocking ~40K/day — fixed by a rule exception
+  (AND Request Path ≠ /robots.txt) + a `meta-externalagent → Disallow: /` group in robots.ts.
+  Bot Protection is set to **Log** (decision pending); AI Bots = Allow (deliberate). The
+  structural fix — edge-cacheable guest pages (drop `auth()` from the server render path) —
+  is still TODO.
 - **Built, pending one switch:** cart → checkout → **Shopify draft order** (bank transfer,
   engraving flag, expected ship date). Cart is localStorage selections only
   (`src/lib/cart-client.ts`); prices via gated `/api/cart/quote`; `/api/checkout` creates
