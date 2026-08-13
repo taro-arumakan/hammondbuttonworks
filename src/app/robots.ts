@@ -43,7 +43,14 @@ export default function robots(): MetadataRoute.Robots {
   ];
 
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow }],
+    rules: [
+      { userAgent: "*", allow: "/", disallow },
+      // Meta's AI crawler exhausted the Vercel free tier walking the faceted
+      // catalog (2026-07). The firewall denies it everywhere EXCEPT /robots.txt
+      // — this group is the eviction notice it reads there. Crawlers obey the
+      // most specific matching group, so this fully overrides `*` for this UA.
+      { userAgent: "meta-externalagent", disallow: "/" },
+    ],
     sitemap: `${siteUrl()}/sitemap.xml`,
   };
 }
