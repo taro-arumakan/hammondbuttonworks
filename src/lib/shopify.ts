@@ -175,10 +175,17 @@ export type ShopifyProduct = {
 
 // --- Queries -----------------------------------------------------------------
 let currencyCache: string | null = null;
-export async function shopCurrency(): Promise<string> {
+export async function shopCurrency(revalidate?: number): Promise<string> {
   if (currencyCache) return currencyCache;
+  // ⚠️ Must forward `revalidate` like every other read: Next lowers a route's
+  // interval to the SMALLEST fetch revalidate seen while rendering it, so this
+  // one un-parameterised fetch silently pinned "revalidate = 3600" pages to
+  // 60s — and only for the render that happened to miss `currencyCache`, so
+  // the interval differed per route and per lambda.
   const d = await shopifyFetch<{ shop: { currencyCode: string } }>(
     `{ shop { currencyCode } }`,
+    {},
+    revalidate,
   );
   currencyCache = d.shop.currencyCode;
   return currencyCache;
@@ -280,7 +287,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
 }
 
 export async function getShopifyProducts(revalidate?: number): Promise<ShopifyProduct[]> {
-  const currency = await shopCurrency();
+  const currency = await shopCurrency(revalidate);
   const out: ShopifyProduct[] = [];
   let cursor: string | null = null;
   // Paginate so this scales to the full ~200-design catalog.
@@ -306,7 +313,7 @@ export async function getShopifyProductByHandle(
   handle: string,
   revalidate?: number,
 ): Promise<ShopifyProduct | null> {
-  const currency = await shopCurrency();
+  const currency = await shopCurrency(revalidate);
   const d = await shopifyFetch<{ productByHandle: RawProduct | null }>(
     `query($handle: String!) { productByHandle(handle: $handle) { ${PRODUCT_FIELDS} } }`,
     { handle },
