@@ -37,6 +37,30 @@ const FACET_PARAMS = ["category", "size", "color", "stock", "sort"] as const;
 /** Locale-scoped utility routes: gated, or otherwise worthless to crawl. */
 const UTILITY_PATHS = ["cart", "login", "signin/"] as const;
 
+/**
+ * Meta's crawler fleet — evicted wholesale.
+ *
+ * Tokens per developers.facebook.com/docs/sharing/webmasters/web-crawlers;
+ * Meta documents all of these as robots.txt-obedient (allow up to 24h for a
+ * change to take effect — they cache robots.txt).
+ *
+ * Naming only `meta-externalagent` (2026-07) was not enough: on 2026-08-18 the
+ * traffic was 96K/24h from **meta-webindexer** and 33K from meta-externalagent,
+ * all on /{locale}/catalog, which the `*` group allows. That wave paused the
+ * Vercel team. Enumerate the whole fleet, and keep the firewall (which denies
+ * by Facebook's AS number, not by UA) as the enforcement layer — robots.txt is
+ * only ever a request.
+ *
+ * NOT listed: `facebookexternalhit`, the link-preview fetcher. It renders the
+ * card when someone shares the shop on Meta's apps and its volume is noise.
+ */
+const META_CRAWLERS = [
+  "meta-externalagent",
+  "meta-webindexer",
+  "meta-externalads",
+  "meta-externalfetcher",
+] as const;
+
 export default function robots(): MetadataRoute.Robots {
   const disallow = [
     "/api/",
@@ -47,11 +71,10 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: "*", allow: "/", disallow },
-      // Meta's AI crawler exhausted the Vercel free tier walking the faceted
-      // catalog (2026-07). The firewall denies it everywhere EXCEPT /robots.txt
-      // — this group is the eviction notice it reads there. Crawlers obey the
-      // most specific matching group, so this fully overrides `*` for this UA.
-      { userAgent: "meta-externalagent", disallow: "/" },
+      // Crawlers obey the single most specific matching group, so each of these
+      // fully overrides `*` for that UA. The firewall denies them everywhere
+      // EXCEPT /robots.txt — this is the eviction notice they read there.
+      ...META_CRAWLERS.map((userAgent) => ({ userAgent, disallow: "/" })),
     ],
     sitemap: `${siteUrl()}/sitemap.xml`,
   };
