@@ -8,6 +8,7 @@ import {
   verifyStaffToken,
 } from "./session";
 import { STAFF_COOKIE, isStaffEmail } from "./staff";
+import { HINT_COOKIE, encodeHint } from "./hint-cookie";
 import type { Account } from "./allowlist";
 import type { CustomerClass } from "./customer";
 
@@ -47,17 +48,31 @@ export async function startSession(account: Account): Promise<void> {
     customerClass: account.customerClass,
     company: account.company,
   });
-  (await cookies()).set(SESSION_COOKIE, token, {
+  const jar = await cookies();
+  const maxAge = 30 * 24 * 60 * 60;
+  jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge,
+  });
+  // Display hint for client JS on statically-served pages (header, price
+  // tiles). Deliberately NOT httpOnly — and deliberately WITHOUT the customer
+  // class; see hint-cookie.ts. Lifecycle is welded to the session cookie.
+  jar.set(HINT_COOKIE, encodeHint({ email: account.email, company: account.company }), {
+    httpOnly: false,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge,
   });
 }
 
 export async function endSession(): Promise<void> {
-  (await cookies()).delete(SESSION_COOKIE);
+  const jar = await cookies();
+  jar.delete(SESSION_COOKIE);
+  jar.delete(HINT_COOKIE);
 }
 
 // --- Staff sessions (admin toolset) ---------------------------------------------

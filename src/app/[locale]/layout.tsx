@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Marcellus, Zen_Old_Mincho } from "next/font/google";
-import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
 import { siteUrl } from "@/lib/seo";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MobileNav } from "@/components/MobileNav";
-import { CartLink } from "@/components/CartLink";
+import { HeaderAccount } from "@/components/HeaderAccount";
 import "../globals.css";
 
 // Inscriptional low-contrast Roman serif — chosen to align with niceness.jp's
@@ -78,9 +77,11 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
 
   const dict = getDictionary(locale);
-  const session = await auth();
-  const account = session?.user;
   const home = `/${locale}`;
+  // No auth() here — the layout must stay static so every public page can be
+  // served from the CDN cache (the fix for the 2026-07 crawler cost incident).
+  // Account-dependent chrome is the HeaderAccount / MobileNav client islands,
+  // driven by the display-hint cookie (see lib/hint-cookie.ts).
 
   return (
     <html lang={locale} className={`${display.variable} ${jp.variable}`}>
@@ -103,39 +104,19 @@ export default async function LocaleLayout({
                 <Link href={`${home}/quote`} className="hover:text-accent">
                   {dict.nav.quote}
                 </Link>
-                {account && (
-                  <CartLink href={`${home}/cart`} label={dict.nav.cartPrefix} />
-                )}
-                {account ? (
-                  // No pricing-class badge — customers must not be able to tell
-                  // their tier (standard/plus). Prices reflect the class, but the
-                  // class name is never shown or sent to the client.
-                  <span className="flex items-center gap-2 text-stone-500">
-                    <span>{account.companyName ?? account.email}</span>
-                    <form action="/api/auth/logout" method="post">
-                      <button type="submit" className="text-xs underline hover:text-accent">
-                        {dict.nav.signout}
-                      </button>
-                    </form>
-                  </span>
-                ) : (
-                  <Link
-                    href={`${home}/login`}
-                    className="rounded-md bg-foreground px-3 py-1.5 text-background hover:bg-accent"
-                  >
-                    {dict.nav.login}
-                  </Link>
-                )}
+                <HeaderAccount
+                  home={home}
+                  labels={{
+                    cartPrefix: dict.nav.cartPrefix,
+                    signout: dict.nav.signout,
+                    login: dict.nav.login,
+                  }}
+                />
               </div>
 
               {/* Always-visible language switcher + mobile hamburger */}
               <LanguageSwitcher current={locale} />
-              {/* Pass only display fields to the client nav — never customerClass. */}
-              <MobileNav
-                home={home}
-                dict={dict}
-                account={account && { email: account.email, companyName: account.companyName }}
-              />
+              <MobileNav home={home} dict={dict} />
             </div>
           </nav>
         </header>

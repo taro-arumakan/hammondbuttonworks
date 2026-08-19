@@ -28,13 +28,21 @@ function endpoint(): string {
   return `https://${DOMAIN}/admin/api/${VERSION}/graphql.json`;
 }
 
-export async function shopifyFetch<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
+export async function shopifyFetch<T>(
+  query: string,
+  variables: Record<string, unknown> = {},
+  // Fetch-cache TTL. ⚠️ Next lowers a route's effective revalidation interval
+  // to the smallest fetch revalidate inside it — so an ISR page exporting
+  // `revalidate = 3600` regenerates every 60s unless its fetches pass 3600
+  // here. Request-time API routes keep the fresher 60s default.
+  revalidate: number = 60,
+): Promise<T> {
   const res = await fetch(endpoint(), {
     method: "POST",
     headers: { "X-Shopify-Access-Token": TOKEN as string, "Content-Type": "application/json" },
     body: JSON.stringify({ query, variables }),
-    // Product data is fairly static; cache briefly and revalidate.
-    next: { revalidate: 60 },
+    // Product data is fairly static; cache and revalidate (TTL per caller).
+    next: { revalidate },
     // Bound the wait: undici only bounds the CONNECT phase (10s) — a Shopify
     // endpoint that accepts the connection and then stalls would otherwise hang
     // until Next's 60s static-generation timeout and HARD-FAIL `next build`
@@ -167,10 +175,17 @@ export type ShopifyProduct = {
 
 // --- Queries -----------------------------------------------------------------
 let currencyCache: string | null = null;
-export async function shopCurrency(): Promise<string> {
+export async function shopCurrency(revalidate?: number): Promise<string> {
   if (currencyCache) return currencyCache;
+  // ⚠️ Must forward `revalidate` like every other read: Next lowers a route's
+  // interval to the SMALLEST fetch revalidate seen while rendering it, so this
+  // one un-parameterised fetch silently pinned "revalidate = 3600" pages to
+  // 60s — and only for the render that happened to miss `currencyCache`, so
+  // the interval differed per route and per lambda.
   const d = await shopifyFetch<{ shop: { currencyCode: string } }>(
     `{ shop { currencyCode } }`,
+    {},
+    revalidate,
   );
   currencyCache = d.shop.currencyCode;
   return currencyCache;
@@ -271,8 +286,8 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
   };
 }
 
-export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
-  const currency = await shopCurrency();
+export async function getShopifyProducts(revalidate?: number): Promise<ShopifyProduct[]> {
+  const currency = await shopCurrency(revalidate);
   const out: ShopifyProduct[] = [];
   let cursor: string | null = null;
   // Paginate so this scales to the full ~200-design catalog.
@@ -286,6 +301,7 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
            }
          }`,
         { cursor },
+        revalidate,
       );
     out.push(...d.products.nodes.map((p) => mapProduct(p, currency)));
     cursor = d.products.pageInfo.hasNextPage ? d.products.pageInfo.endCursor : null;
@@ -293,11 +309,15 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
   return out;
 }
 
-export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProduct | null> {
-  const currency = await shopCurrency();
+export async function getShopifyProductByHandle(
+  handle: string,
+  revalidate?: number,
+): Promise<ShopifyProduct | null> {
+  const currency = await shopCurrency(revalidate);
   const d = await shopifyFetch<{ productByHandle: RawProduct | null }>(
     `query($handle: String!) { productByHandle(handle: $handle) { ${PRODUCT_FIELDS} } }`,
     { handle },
+    revalidate,
   );
   return d.productByHandle ? mapProduct(d.productByHandle, currency) : null;
 }

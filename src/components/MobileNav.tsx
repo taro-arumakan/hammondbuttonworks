@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
+import { useAccountHint } from "@/lib/account-hint";
 import { CartLink } from "@/components/CartLink";
-
-// Display fields only — the pricing class is never sent to the client.
-type Account = { email: string; companyName?: string };
 
 const DURATION = 200; // ms — keep in sync with the `duration-200` classes below
 
@@ -16,15 +14,11 @@ const DURATION = 200; // ms — keep in sync with the `duration-200` classes bel
  * mobile. The panel mounts, then animates (slide-down + fade) in and out; the
  * language switcher stays in the bar (handled by the layout).
  */
-export function MobileNav({
-  home,
-  dict,
-  account,
-}: {
-  home: string;
-  dict: Dictionary;
-  account?: Account;
-}) {
+export function MobileNav({ home, dict }: { home: string; dict: Dictionary }) {
+  // Signed-in state from the display-hint cookie (account-hint.ts) — the
+  // layout is static now, so it can't pass session props. Email/company only;
+  // the pricing class never reaches the client.
+  const account = useAccountHint();
   const [mounted, setMounted] = useState(false); // in the DOM?
   const [visible, setVisible] = useState(false); // animated-in state
 
@@ -110,7 +104,7 @@ export function MobileNav({
             {account ? (
               <div className="flex items-center justify-between pt-4">
                 <span className="flex items-center gap-2 text-sm text-stone-500">
-                  <span className="truncate">{account.companyName ?? account.email}</span>
+                  <span className="truncate">{account.company ?? account.email}</span>
                 </span>
                 <form action="/api/auth/logout" method="post">
                   <button type="submit" className="text-sm underline hover:text-accent">

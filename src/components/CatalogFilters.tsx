@@ -1,10 +1,12 @@
-import Link from "next/link";
+"use client";
 
 /**
- * Sterling-inspired sidebar filters, HBW heritage-minimal styling. Pure links —
- * the page precomputes each option's toggle href + count, so this stays a
- * server component with zero client JS (and zero price data). On mobile the
- * same groups render inside a collapsible <details>.
+ * Sterling-inspired sidebar filters, HBW heritage-minimal styling. Since the
+ * listing went static, filter state lives in `CatalogBrowser` (client) and the
+ * URL is just a mirror — so options are buttons firing `onToggle`, not links.
+ * (The old link-based facet URLs still resolve: the browser reads them on
+ * load. They remain robots-disallowed.) Zero price data in here.
+ * On mobile the same groups render inside a collapsible <details>.
  */
 
 export type FilterOption = {
@@ -12,7 +14,6 @@ export type FilterOption = {
   label: string;
   count: number;
   active: boolean;
-  href: string;
 };
 
 export type FilterGroup = {
@@ -21,7 +22,13 @@ export type FilterGroup = {
   options: FilterOption[];
 };
 
-function FilterRows({ groups }: { groups: FilterGroup[] }) {
+function FilterRows({
+  groups,
+  onToggle,
+}: {
+  groups: FilterGroup[];
+  onToggle: (groupKey: string, value: string) => void;
+}) {
   return (
     <div className="space-y-6">
       {groups.map((g) => (
@@ -32,11 +39,11 @@ function FilterRows({ groups }: { groups: FilterGroup[] }) {
           <ul className="mt-2 space-y-1 border-t border-line pt-2">
             {g.options.map((o) => (
               <li key={o.value}>
-                <Link
-                  href={o.href}
-                  rel="nofollow"
+                <button
+                  type="button"
+                  onClick={() => onToggle(g.key, o.value)}
                   aria-pressed={o.active}
-                  className={`group flex items-center gap-2 py-0.5 text-sm transition-colors ${
+                  className={`group flex w-full items-center gap-2 py-0.5 text-left text-sm transition-colors ${
                     o.count === 0 && !o.active
                       ? "text-stone-400"
                       : "text-stone-600 hover:text-foreground"
@@ -52,7 +59,7 @@ function FilterRows({ groups }: { groups: FilterGroup[] }) {
                   />
                   <span className={o.active ? "font-medium text-foreground" : ""}>{o.label}</span>
                   <span className="ml-auto text-xs tabular-nums text-stone-400">{o.count}</span>
-                </Link>
+                </button>
               </li>
             ))}
           </ul>
@@ -66,19 +73,25 @@ export function CatalogFilters({
   groups,
   title,
   clearLabel,
-  clearHref,
   hasActive,
+  onToggle,
+  onClear,
 }: {
   groups: FilterGroup[];
   title: string;
   clearLabel: string;
-  clearHref: string;
   hasActive: boolean;
+  onToggle: (groupKey: string, value: string) => void;
+  onClear: () => void;
 }) {
   const clear = hasActive && (
-    <Link href={clearHref} className="text-xs text-stone-500 underline hover:text-foreground">
+    <button
+      type="button"
+      onClick={onClear}
+      className="text-xs text-stone-500 underline hover:text-foreground"
+    >
       {clearLabel}
-    </Link>
+    </button>
   );
 
   return (
@@ -92,7 +105,7 @@ export function CatalogFilters({
           </span>
         </summary>
         <div className="border-t border-line px-4 py-4">
-          <FilterRows groups={groups} />
+          <FilterRows groups={groups} onToggle={onToggle} />
           {clear && <div className="mt-4">{clear}</div>}
         </div>
       </details>
@@ -104,7 +117,7 @@ export function CatalogFilters({
           {clear}
         </div>
         <div className="mt-4">
-          <FilterRows groups={groups} />
+          <FilterRows groups={groups} onToggle={onToggle} />
         </div>
       </aside>
     </>

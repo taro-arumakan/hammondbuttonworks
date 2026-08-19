@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllProducts } from "@/lib/products";
+import { PAGE_REVALIDATE, getAllProducts } from "@/lib/products";
 import { DEFAULT_LOCALE, LOCALES } from "@/lib/i18n-config";
 import { absoluteUrl } from "@/lib/seo";
 
@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // A Shopify outage must not 500 the sitemap — still serve the static pages.
   let productEntries: MetadataRoute.Sitemap = [];
   try {
-    const products = await getAllProducts();
+    const products = await getAllProducts(PAGE_REVALIDATE);
     productEntries = products.flatMap((p) =>
       entriesFor(`/catalog/${p.slug}`, {
         lastModified: p.updatedAt ? new Date(p.updatedAt) : undefined,

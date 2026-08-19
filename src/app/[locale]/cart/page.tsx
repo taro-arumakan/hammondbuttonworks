@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
+import { CartGate } from "@/components/CartGate";
 import { CartView } from "@/components/CartView";
 
+/**
+ * Static shell — the cart itself is entirely client-side (localStorage
+ * selections; prices arrive per-render from the gated /api/cart/quote). The
+ * guest redirect moved into CartGate: a guest sees a sign-in prompt instead,
+ * and every priced/ordering API still 401s without a signed session.
+ */
 export async function generateMetadata({
   params,
 }: {
@@ -24,17 +29,13 @@ export default async function CartPage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  // Ordering requires a trade session (prices are gated); guests go to login.
-  const session = await auth();
-  if (!session) {
-    redirect(`/${locale}/login?next=/${locale}/cart`);
-  }
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
       <h1 className="font-serif text-4xl tracking-tight">{dict.cart.title}</h1>
       <p className="mt-2 max-w-2xl text-stone-600">{dict.cart.subtitle}</p>
-      <CartView locale={locale} dict={dict} />
+      <CartGate locale={locale} dict={dict}>
+        <CartView locale={locale} dict={dict} />
+      </CartGate>
     </div>
   );
 }

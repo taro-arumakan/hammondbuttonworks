@@ -1,32 +1,55 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Product } from "@/lib/products";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
-import { TradeOrderPanel } from "./TradeOrderPanel";
+import { useAccountHint } from "@/lib/account-hint";
+import { TradeOrderPanel, type VariantView } from "./TradeOrderPanel";
 
 /**
- * Decides what a viewer may see:
- *  - Guest → a "sign in for trade pricing" CTA. No prices reach the payload.
- *  - Trade → the interactive ordering panel (prices fetched server-side).
- * Takes a bare `signedIn` boolean, never the class name — so the tier can't leak
- * into the client payload. (The panel fetches prices from the gated API.)
+ * Decides what a viewer sees on the (static) product page:
+ *  - Guest → a "sign in for trade pricing" CTA. This is the prerendered HTML,
+ *    so the cached page contains no prices by construction.
+ *  - Trade (account-hint cookie) → the interactive ordering panel, which
+ *    fetches its prices from the gated /api/price.
+ *
+ * ⚠️ Client component — every prop is serialized into the page payload. It
+ * takes ONLY display scalars and the price-free `VariantView` list, never the
+ * product object (whose variants carry basePrice) and never the class name.
+ *
+ * The `?color=` preselect (from catalog tiles) is read from location.search
+ * after mount — reading it server-side would force the page dynamic, and
+ * useSearchParams would swap the prerendered HTML for a Suspense fallback.
  */
 export function PriceBlock({
-  product,
-  signedIn,
-  initialColor,
-  productUrl,
+  slug,
+  leadTimeDays,
+  colors,
+  sizesMm,
+  variants,
+  productName,
   locale,
   dict,
 }: {
-  product: Product;
-  signedIn: boolean;
-  initialColor?: string; // from the catalog tile's `?color=` link
-  productUrl: string;
+  slug: string;
+  leadTimeDays: number;
+  colors: string[];
+  sizesMm: number[];
+  variants: VariantView[];
+  productName: string;
   locale: Locale;
   dict: Dictionary;
 }) {
-  if (!signedIn) {
+  const account = useAccountHint();
+  // null = not yet read (pre-mount); "" = no preselect in the URL.
+  const [initialColor, setInitialColor] = useState<string | null>(null);
+
+  useEffect(() => {
+    setInitialColor(new URLSearchParams(window.location.search).get("color") ?? "");
+  }, []);
+
+  if (!account) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 p-6">
         <h2 className="text-lg font-semibold">{dict.priceBlock.heading}</h2>
@@ -39,36 +62,34 @@ export function PriceBlock({
             {dict.priceBlock.login}
           </Link>
           <Link
-            href={`/${locale}/quote?sku=${encodeURIComponent(product.variants[0]?.sku ?? product.slug)}`}
+            href={`/${locale}/quote?sku=${encodeURIComponent(variants[0]?.sku ?? slug)}`}
             className="rounded-md border border-stone-300 px-4 py-2 text-sm font-medium hover:border-accent"
           >
             {dict.priceBlock.requestAccess}
           </Link>
         </div>
         <p className="mt-4 text-xs text-stone-500">
-          {fmt(dict.priceBlock.moqLine, { days: product.leadTimeDays })}
+          {fmt(dict.priceBlock.moqLine, { days: leadTimeDays })}
         </p>
       </div>
     );
   }
 
+  // One frame while the URL preselect is read — the panel initializes its
+  // colour state from `initialColor` at mount, so it must not mount earlier.
+  if (initialColor === null) return null;
+
   return (
     <TradeOrderPanel
-      productName={product.name}
-      slug={product.slug}
-      leadTimeDays={product.leadTimeDays}
-      colors={product.colors}
-      initialColor={initialColor}
-      sizesMm={product.sizesMm}
-      productUrl={productUrl}
+      productName={productName}
+      slug={slug}
+      leadTimeDays={leadTimeDays}
+      colors={colors}
+      initialColor={initialColor || undefined}
+      sizesMm={sizesMm}
       locale={locale}
       dict={dict}
-      variants={product.variants.map((v) => ({
-        sku: v.sku,
-        color: v.color,
-        sizeMm: v.sizeMm,
-        inStock: v.inStock,
-      }))}
+      variants={variants}
     />
   );
 }

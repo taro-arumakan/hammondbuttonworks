@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n-config";
 
@@ -9,25 +9,47 @@ import type { Locale } from "@/lib/i18n-config";
  * owner (and the requester), and optionally appends to a Google Sheet.
  *
  * Anti-spam: a hidden honeypot field ("website") bots fill but humans don't,
- * plus a server-signed "formToken" stamped at render time — the handler rejects
- * submissions that arrive too fast or without a valid token (see form-guard.ts).
+ * plus a server-signed "formToken" the handler uses to reject submissions that
+ * arrive too fast or token-less (see form-guard.ts). The token is fetched on
+ * mount (the quote page is static, so it can't be minted at render time) —
+ * which keeps the same guarantee: a bot that doesn't run JS never gets one.
+ *
+ * The `?sku=&qty=` prefills (links from the product page / order panel) are
+ * read from location.search after mount for the same reason — reading
+ * searchParams server-side would force the page dynamic.
  */
-export function QuoteForm({
-  dict,
-  locale,
-  defaultSku,
-  defaultQty,
-  formToken,
-}: {
-  dict: Dictionary;
-  locale: Locale;
-  defaultSku?: string;
-  defaultQty?: string;
-  formToken: string;
-}) {
+export function QuoteForm({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const t = dict.quote;
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [formToken, setFormToken] = useState("");
+  const skuRef = useRef<HTMLInputElement>(null);
+  const qtyRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Prefill sku/qty from the URL (uncontrolled inputs — set once, only if
+    // the visitor hasn't already typed something).
+    const sp = new URLSearchParams(window.location.search);
+    const sku = sp.get("sku");
+    const qty = sp.get("qty");
+    if (sku && skuRef.current && !skuRef.current.value) skuRef.current.value = sku;
+    if (qty && qtyRef.current && !qtyRef.current.value) qtyRef.current.value = qty;
+
+    // Mint the time-trap token. (Also naturally enforces the ≥3s minimum fill
+    // time from actual page load.)
+    let active = true;
+    fetch("/api/form-token")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { token?: string } | null) => {
+        if (active && d?.token) setFormToken(d.token);
+      })
+      .catch(() => {
+        /* token stays empty; /api/quote will reject — surfaced via errorGeneric */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -36,6 +58,18 @@ export function QuoteForm({
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
     try {
+      // Retry path: if the mount-time token fetch failed (network blip), the
+      // form must not be a dead end — mint one now. (A sub-3s submit still
+      // 400s by design; the user's natural retry then succeeds.)
+      let token = formToken;
+      if (!token) {
+        token = await fetch("/api/form-token")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d: { token?: string } | null) => d?.token ?? "")
+          .catch(() => "");
+        if (token) setFormToken(token);
+      }
+      data.formToken = token;
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,7 +77,9 @@ export function QuoteForm({
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? t.errorGeneric);
+        // 400s carry English validation strings — show the localized generic
+        // message instead of an untranslated server error.
+        throw new Error(res.status === 400 ? t.errorGeneric : (body.error ?? t.errorGeneric));
       }
       setStatus("ok");
       form.reset();
@@ -83,8 +119,8 @@ export function QuoteForm({
         <Field name="name" label={t.name} required />
         <Field name="email" label={t.email} type="email" required />
         <Field name="phone" label={t.phone} />
-        <Field name="sku" label={t.sku} defaultValue={defaultSku} />
-        <Field name="qty" label={t.qty} defaultValue={defaultQty} />
+        <Field name="sku" label={t.sku} inputRef={skuRef} />
+        <Field name="qty" label={t.qty} inputRef={qtyRef} />
       </div>
 
       <div>
@@ -119,13 +155,13 @@ function Field({
   label,
   type = "text",
   required,
-  defaultValue,
+  inputRef,
 }: {
   name: string;
   label: string;
   type?: string;
   required?: boolean;
-  defaultValue?: string;
+  inputRef?: React.Ref<HTMLInputElement>;
 }) {
   return (
     <div>
@@ -137,7 +173,7 @@ function Field({
         name={name}
         type={type}
         required={required}
-        defaultValue={defaultValue}
+        ref={inputRef}
         className="mt-1 w-full rounded-md border border-stone-300 px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
       />
     </div>

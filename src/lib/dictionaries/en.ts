@@ -139,6 +139,9 @@ const en = {
     subtitle: "Review your order. Payment is by bank transfer — we'll send an invoice (請求書) after you place the order.",
     empty: "Your cart is empty.",
     browseCatalog: "Browse the catalog →",
+    guestHeading: "Trade sign-in required",
+    guestBody:
+      "Sign in with your approved trade account to view your cart and place orders. Not a trade customer yet? Request access via the quote form.",
     item: "Item",
     qty: "Qty",
     unitPrice: "Unit price",
