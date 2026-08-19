@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
 import { addToCart } from "@/lib/cart-client";
+import { dropAccountHint } from "@/lib/account-hint";
 
 /**
  * Logged-in ordering panel. Prices come from the gated /api/price endpoint
@@ -14,7 +15,7 @@ import { addToCart } from "@/lib/cart-client";
  * Shopify draft order, paid by bank transfer.
  */
 
-type VariantView = { sku: string; color: string; sizeMm: number; inStock: boolean };
+export type VariantView = { sku: string; color: string; sizeMm: number; inStock: boolean };
 
 type Props = {
   productName: string;
@@ -25,7 +26,6 @@ type Props = {
   initialColor?: string;
   sizesMm: number[];
   variants: VariantView[];
-  productUrl: string;
   locale: Locale;
   dict: Dictionary;
 };
@@ -84,6 +84,7 @@ export function TradeOrderPanel({
       body: JSON.stringify({ slug, variantSku: selected.sku, qty: Math.max(1, qty) }),
     })
       .then(async (r) => {
+        if (r.status === 401) dropAccountHint(); // stale hint → back to guest UI
         if (!r.ok) throw new Error((await r.json()).error ?? t.pricingError);
         return r.json();
       })

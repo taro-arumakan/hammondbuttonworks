@@ -2,10 +2,13 @@ import type { ShopifyProduct, ShopifyVariant } from "./shopify";
 import type { Locale } from "./i18n-config";
 
 /**
- * Catalog filtering / sorting / pagination — pure, URL-driven (Sterling-style
- * sidebar UX, OT-22). State lives entirely in searchParams so filters are
- * plain links: server-rendered, SEO-friendly, and no price data ever needs to
- * reach the client. Within a dimension values are OR'd; across dimensions AND.
+ * Catalog filtering / sorting / pagination — pure helpers (Sterling-style
+ * sidebar UX, OT-22). State lives entirely in the URL query. Since the
+ * cacheability refactor (2026-08) the LISTING PAGE IS STATIC and these run
+ * CLIENT-SIDE in `CatalogBrowser` over the price-free `CatalogTile` model —
+ * which is why every helper below must stay isomorphic (no server-only
+ * imports; the ShopifyProduct/Variant imports are type-only, erased at
+ * compile time). Within a dimension values are OR'd; across dimensions AND.
  *
  * The listing's unit is the COLOURWAY (product × colour), not the product: photos
  * are shot per colour, so a colourway tile always shows a true image of the thing
@@ -86,6 +89,51 @@ export function toColorways(products: ShopifyProduct[]): Colorway[] {
   return out;
 }
 
+// --- Tiles (the client-safe projection) ------------------------------------------
+
+/**
+ * What the static listing serializes into the client payload — one entry per
+ * colourway, carrying ONLY what filtering/sorting/rendering needs.
+ *
+ * ⚠️ INVARIANT #1 LIVES HERE. A `Colorway` holds full `ShopifyVariant`s,
+ * including `basePrice` — it must NEVER be passed to a client component.
+ * `toTiles()` is the choke point that strips prices; the catalog page hands
+ * the browser tiles, never colorways. Prices reach the signed-in client only
+ * through the gated /api/price endpoint (see TilePrice/price-batcher).
+ */
+export type CatalogTile = {
+  key: string; // `${slug}::${color}`
+  slug: string;
+  name: string;
+  color: string; // exact option value, e.g. "Brown (Rosewood)"
+  base: string; // facet token, e.g. "Brown"
+  image?: string;
+  category: string; // productType (display case; compared lowercased)
+  createdAt: string; // ISO, for "newest"
+  currency: string;
+  sizesMm: number[]; // sizes available in this colour
+  hasStock: boolean; // any variant in stock
+  hasMto: boolean; // any variant made-to-order
+};
+
+/** Project colorways to the client-safe tile model (drops variants/prices). */
+export function toTiles(colorways: Colorway[]): CatalogTile[] {
+  return colorways.map((cw) => ({
+    key: cw.key,
+    slug: cw.product.slug,
+    name: cw.product.name,
+    color: cw.color,
+    base: cw.base,
+    image: cw.image,
+    category: cw.product.category,
+    createdAt: cw.product.createdAt,
+    currency: cw.product.currency,
+    sizesMm: [...new Set(cw.variants.map((v) => v.sizeMm))].sort((a, b) => a - b),
+    hasStock: cw.variants.some((v) => v.inStock),
+    hasMto: cw.variants.some((v) => !v.inStock),
+  }));
+}
+
 type SearchParams = Record<string, string | string[] | undefined>;
 
 function csv(param: string | string[] | undefined): string[] {
@@ -122,30 +170,28 @@ export function parseCatalogQuery(sp: SearchParams, allowPriceSort: boolean): Ca
 
 type Dimension = "categories" | "sizes" | "colors" | "stock";
 
-function matchesDimension(cw: Colorway, q: CatalogQuery, dim: Dimension): boolean {
+function matchesDimension(t: CatalogTile, q: CatalogQuery, dim: Dimension): boolean {
   switch (dim) {
     case "categories":
-      return q.categories.length === 0 || q.categories.includes(cw.product.category.toLowerCase());
+      return q.categories.length === 0 || q.categories.includes(t.category.toLowerCase());
     case "sizes":
-      return q.sizes.length === 0 || cw.variants.some((v) => q.sizes.includes(v.sizeMm));
+      return q.sizes.length === 0 || t.sizesMm.some((s) => q.sizes.includes(s));
     case "colors":
-      // Exact now: a colour filter matches the tile's own colour, not "the product
+      // Exact: a colour filter matches the tile's own colour, not "the product
       // has some variant in this colour".
-      return q.colors.length === 0 || q.colors.includes(cw.base);
+      return q.colors.length === 0 || q.colors.includes(t.base);
     case "stock":
       return (
         q.stock.length === 0 ||
-        q.stock.some((a) =>
-          a === "in" ? cw.variants.some((v) => v.inStock) : cw.variants.some((v) => !v.inStock),
-        )
+        q.stock.some((a) => (a === "in" ? t.hasStock : t.hasMto))
       );
   }
 }
 
 const DIMENSIONS: Dimension[] = ["categories", "sizes", "colors", "stock"];
 
-export function applyFilters(colorways: Colorway[], q: CatalogQuery): Colorway[] {
-  return colorways.filter((cw) => DIMENSIONS.every((d) => matchesDimension(cw, q, d)));
+export function applyFilters(tiles: CatalogTile[], q: CatalogQuery): CatalogTile[] {
+  return tiles.filter((t) => DIMENSIONS.every((d) => matchesDimension(t, q, d)));
 }
 
 export function hasActiveFilters(q: CatalogQuery): boolean {
@@ -159,40 +205,40 @@ export function hasActiveFilters(q: CatalogQuery): boolean {
 
 export type FacetCount = { value: string; count: number };
 
-function crossFiltered(colorways: Colorway[], q: CatalogQuery, except: Dimension) {
-  return colorways.filter((cw) =>
-    DIMENSIONS.every((d) => d === except || matchesDimension(cw, q, d)),
+function crossFiltered(tiles: CatalogTile[], q: CatalogQuery, except: Dimension) {
+  return tiles.filter((t) =>
+    DIMENSIONS.every((d) => d === except || matchesDimension(t, q, d)),
   );
 }
 
 /** Counts are colourway (tile) counts — they match what the grid will show. */
-export function facetCounts(colorways: Colorway[], q: CatalogQuery) {
-  const forCategories = crossFiltered(colorways, q, "categories");
-  const forSizes = crossFiltered(colorways, q, "sizes");
-  const forColors = crossFiltered(colorways, q, "colors");
-  const forStock = crossFiltered(colorways, q, "stock");
+export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
+  const forCategories = crossFiltered(tiles, q, "categories");
+  const forSizes = crossFiltered(tiles, q, "sizes");
+  const forColors = crossFiltered(tiles, q, "colors");
+  const forStock = crossFiltered(tiles, q, "stock");
 
   const categories = new Map<string, number>();
-  for (const cw of colorways) categories.set(cw.product.category.toLowerCase(), 0);
-  for (const cw of forCategories) {
-    const k = cw.product.category.toLowerCase();
+  for (const t of tiles) categories.set(t.category.toLowerCase(), 0);
+  for (const t of forCategories) {
+    const k = t.category.toLowerCase();
     categories.set(k, (categories.get(k) ?? 0) + 1);
   }
 
   const sizes = new Map<number, number>();
-  for (const cw of colorways) for (const v of cw.variants) if (!sizes.has(v.sizeMm)) sizes.set(v.sizeMm, 0);
-  for (const cw of forSizes) {
-    for (const s of new Set(cw.variants.map((v) => v.sizeMm))) sizes.set(s, (sizes.get(s) ?? 0) + 1);
+  for (const t of tiles) for (const s of t.sizesMm) if (!sizes.has(s)) sizes.set(s, 0);
+  for (const t of forSizes) {
+    for (const s of t.sizesMm) sizes.set(s, (sizes.get(s) ?? 0) + 1);
   }
 
   const colors = new Map<string, number>();
-  for (const cw of colorways) if (!colors.has(cw.base)) colors.set(cw.base, 0);
-  for (const cw of forColors) colors.set(cw.base, (colors.get(cw.base) ?? 0) + 1);
+  for (const t of tiles) if (!colors.has(t.base)) colors.set(t.base, 0);
+  for (const t of forColors) colors.set(t.base, (colors.get(t.base) ?? 0) + 1);
 
   const stock: Record<Availability, number> = { in: 0, mto: 0 };
-  for (const cw of forStock) {
-    if (cw.variants.some((v) => v.inStock)) stock.in++;
-    if (cw.variants.some((v) => !v.inStock)) stock.mto++;
+  for (const t of forStock) {
+    if (t.hasStock) stock.in++;
+    if (t.hasMto) stock.mto++;
   }
 
   return {
@@ -209,26 +255,34 @@ export function facetCounts(colorways: Colorway[], q: CatalogQuery) {
 
 // --- Sorting ---------------------------------------------------------------------
 
-function minPrice(cw: Colorway): number {
-  return cw.variants.length ? Math.min(...cw.variants.map((v) => v.basePrice)) : Infinity;
-}
-
-export function sortColorways(colorways: Colorway[], sort: SortKey, locale: Locale): Colorway[] {
-  const sorted = [...colorways];
+/**
+ * Sort tiles. Tiles carry no prices (invariant #1), so price sorts take an
+ * injected `priceOf` — the signed-in browser supplies from-prices it fetched
+ * from the gated API (guests never see the price-sort options at all). While
+ * prices are still loading, unknown entries sink to the end via Infinity.
+ */
+export function sortTiles(
+  tiles: CatalogTile[],
+  sort: SortKey,
+  locale: Locale,
+  priceOf?: (key: string) => number | undefined,
+): CatalogTile[] {
+  const sorted = [...tiles];
   // Every comparator falls back to (name, colour) so a design's colourways stay
   // adjacent in the grid — which is what makes swatches unnecessary.
-  const byName = (a: Colorway, b: Colorway) =>
-    a.product.name.localeCompare(b.product.name, locale) || a.color.localeCompare(b.color, locale);
+  const byName = (a: CatalogTile, b: CatalogTile) =>
+    a.name.localeCompare(b.name, locale) || a.color.localeCompare(b.color, locale);
+  const price = (t: CatalogTile) => priceOf?.(t.key) ?? Infinity;
 
   switch (sort) {
     case "newest":
-      sorted.sort((a, b) => b.product.createdAt.localeCompare(a.product.createdAt) || byName(a, b));
+      sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || byName(a, b));
       break;
     case "price-asc":
-      sorted.sort((a, b) => minPrice(a) - minPrice(b) || byName(a, b));
+      sorted.sort((a, b) => price(a) - price(b) || byName(a, b));
       break;
     case "price-desc":
-      sorted.sort((a, b) => minPrice(b) - minPrice(a) || byName(a, b));
+      sorted.sort((a, b) => price(b) - price(a) || byName(a, b));
       break;
     case "title":
     default:

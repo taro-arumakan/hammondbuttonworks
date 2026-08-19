@@ -3,10 +3,10 @@ import { QuoteForm } from "@/components/QuoteForm";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
 import { localeAlternates } from "@/lib/seo";
-import { issueFormToken } from "@/lib/form-guard";
 
-// A fresh anti-spam token must be minted per load, so never statically cache.
-export const dynamic = "force-dynamic";
+// Static: the anti-spam token is fetched client-side from /api/form-token on
+// mount (see QuoteForm), and the ?sku=&qty= prefills are read from
+// location.search there too — nothing here needs the request.
 
 export async function generateMetadata({
   params,
@@ -25,16 +25,12 @@ export async function generateMetadata({
 
 export default async function QuotePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sku?: string; qty?: string }>;
 }) {
   const { locale: raw } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
-  const { sku, qty } = await searchParams;
-  const formToken = await issueFormToken();
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
@@ -43,7 +39,7 @@ export default async function QuotePage({
       <p className="mt-3 text-stone-600">{dict.quote.subtitleCatalog}</p>
 
       <div className="mt-8 rounded-xl border border-stone-200 bg-white p-6">
-        <QuoteForm dict={dict} locale={locale} defaultSku={sku} defaultQty={qty} formToken={formToken} />
+        <QuoteForm dict={dict} locale={locale} />
       </div>
 
       <p className="mt-6 text-sm text-stone-500">{dict.quote.preferEmail}</p>

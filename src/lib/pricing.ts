@@ -47,11 +47,5 @@ export function fromUnitPriceOf(
   return resolvePrice(cheapest, customerClass, currency)?.unitPrice ?? null;
 }
 
-export function formatPrice(amount: number, currency: string): string {
-  return new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency,
-    currencyDisplay: "narrowSymbol",
-    maximumFractionDigits: currency === "JPY" ? 0 : 2,
-  }).format(amount);
-}
+// (Display formatting lives in `money.ts` — client-safe; this module stays
+// server-only and holds only the resolvers.)

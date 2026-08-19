@@ -43,9 +43,12 @@ export function absoluteUrl(locale: Locale, path = ""): string {
 
 /**
  * `alternates` block for Next metadata. `path` is the locale-less path
- * ("" for home, "/catalog", "/catalog/pebble"). Filter/sort queries must NOT
- * be included — the canonical is the bare URL. The one legitimate query is
- * pagination ("/catalog?page=2"): paginated listings self-canonicalise.
+ * ("" for home, "/catalog", "/catalog/pebble"). NO query string is ever
+ * legitimate in a canonical: since the static-listing refactor (2026-08)
+ * every ?page=/facet variant serves the same cached page-1 document and
+ * canonicalises to the bare URL. (Product discovery is sitemap-driven; do
+ * not "restore" ?page= self-canonicalisation — reading searchParams would
+ * make the listing dynamic again, which is the crawler-cost incident.)
  */
 export function localeAlternates(locale: Locale, path = "") {
   const languages: Record<string, string> = {};

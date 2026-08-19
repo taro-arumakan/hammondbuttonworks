@@ -11,9 +11,11 @@ import {
   clearCart,
   type CartItem,
 } from "@/lib/cart-client";
+import { dropAccountHint } from "@/lib/account-hint";
 
 /**
- * Cart page body (logged-in only; the server shell redirects guests). Prices
+ * Cart page body (rendered behind CartGate — guests see a sign-in prompt;
+ * the page itself is static). Prices
  * and availability come from the gated /api/cart/quote on every cart change —
  * the client stores only selections. "Place order" POSTs to /api/checkout,
  * which creates the Shopify draft order (bank-transfer flow).
@@ -78,6 +80,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
       body: JSON.stringify({ lines: items.map(({ slug, sku, qty }) => ({ slug, sku, qty })) }),
     })
       .then(async (r) => {
+        if (r.status === 401) dropAccountHint(); // stale hint → CartGate takes over
         if (!r.ok) throw new Error((await r.json()).error ?? t.errorGeneric);
         return r.json();
       })
@@ -102,6 +105,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
         }),
       });
       const data = await r.json();
+      if (r.status === 401) dropAccountHint(); // stale hint → CartGate takes over
       if (!r.ok) throw new Error(data.error ?? t.errorGeneric);
       setPlaced({ name: data.name, expectedShipping: data.expectedShipping });
       clearCart();

@@ -1,25 +1,28 @@
-import Link from "next/link";
+"use client";
 
 /**
- * Link-based pagination (server component). Page hrefs are precomputed by the
- * page. Hidden entirely when there's a single page.
+ * Button-based pagination, driven by `CatalogBrowser` (the listing is static;
+ * paging is client state mirrored to ?page=N). Hidden when there's one page.
+ * Product discovery for crawlers doesn't depend on these controls — every
+ * product × locale is in the sitemap.
  */
 export function Pagination({
   page,
-  pages,
+  totalPages,
   pageOf,
   prevLabel,
   nextLabel,
+  onPage,
 }: {
   page: number;
-  pages: { page: number; href: string }[];
+  totalPages: number;
   pageOf: string; // preformatted "Page X / Y"
   prevLabel: string;
   nextLabel: string;
+  onPage: (page: number) => void;
 }) {
-  if (pages.length <= 1) return null;
-  const prev = pages.find((p) => p.page === page - 1);
-  const next = pages.find((p) => p.page === page + 1);
+  if (totalPages <= 1) return null;
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const linkCls =
     "border border-line bg-surface px-3 py-1.5 text-sm text-stone-600 transition-colors hover:border-accent hover:text-foreground";
@@ -27,40 +30,41 @@ export function Pagination({
 
   return (
     <nav aria-label={pageOf} className="mt-8 flex items-center justify-between gap-4">
-      {prev ? (
-        <Link href={prev.href} rel="prev" className={linkCls}>
+      {page > 1 ? (
+        <button type="button" onClick={() => onPage(page - 1)} className={linkCls}>
           ← {prevLabel}
-        </Link>
+        </button>
       ) : (
         <span className={disabledCls}>← {prevLabel}</span>
       )}
 
       <div className="flex items-center gap-1">
         {pages.map((p) =>
-          p.page === page ? (
+          p === page ? (
             <span
-              key={p.page}
+              key={p}
               aria-current="page"
               className="border border-accent bg-accent px-2.5 py-1 text-sm text-white"
             >
-              {p.page}
+              {p}
             </span>
           ) : (
-            <Link
-              key={p.page}
-              href={p.href}
+            <button
+              key={p}
+              type="button"
+              onClick={() => onPage(p)}
               className="border border-transparent px-2.5 py-1 text-sm text-stone-500 hover:border-line hover:text-foreground"
             >
-              {p.page}
-            </Link>
+              {p}
+            </button>
           ),
         )}
       </div>
 
-      {next ? (
-        <Link href={next.href} rel="next" className={linkCls}>
+      {page < totalPages ? (
+        <button type="button" onClick={() => onPage(page + 1)} className={linkCls}>
           {nextLabel} →
-        </Link>
+        </button>
       ) : (
         <span className={disabledCls}>{nextLabel} →</span>
       )}

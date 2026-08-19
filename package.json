@@ -2,10 +2,10 @@
   "name": "hammondbuttonworks",
   "version": "0.1.0",
   "private": true,
-  "description": "B2B garment-button storefront pilot — Next.js 15, server-side price gating, tiered wholesale pricing, quote requests.",
+  "description": "B2B garment-button storefront pilot \u2014 Next.js 15, server-side price gating, tiered wholesale pricing, quote requests.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/guard-guest-html.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"

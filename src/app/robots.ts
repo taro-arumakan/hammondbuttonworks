@@ -23,7 +23,9 @@ import { siteUrl } from "@/lib/seo";
  *    crawl path to the products. `/{locale}/catalog?` only matches when `?`
  *    immediately follows `catalog`, so deeper product URLs never match.
  *
- * `page` is intentionally NOT blocked: listing pagination is a discovery path.
+ * `page` is unblocked but no longer linked anywhere (pagination went
+ * client-side with the static listing, 2026-08) — harmless to crawl (same
+ * cached document), and product discovery is sitemap-driven.
  *
  * Not listed: the admin surface. It 404s on the public host and already sends
  * `noindex, nofollow` on its own host — naming it here would only advertise it.

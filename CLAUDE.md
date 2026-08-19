@@ -215,8 +215,55 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   so the bot could never learn to stop and kept knocking ~40K/day — fixed by a rule exception
   (AND Request Path ≠ /robots.txt) + a `meta-externalagent → Disallow: /` group in robots.ts.
   Bot Protection is set to **Log** (decision pending); AI Bots = Allow (deliberate). The
-  structural fix — edge-cacheable guest pages (drop `auth()` from the server render path) —
-  is still TODO.
+  structural fix — edge-cacheable guest pages — landed 2026-08-19 (next bullet).
+- **Cacheability refactor (2026-08-19) — the structural fix, DONE.** Context: the Hobby team
+  was **paused by Vercel on Aug 18** (site serves 402 `DEPLOYMENT_DISABLED`; Fluid CPU hit
+  300%, Edge Requests 1M — a second, UA-unknown bot wave that the meta-externalagent deny
+  rule didn't match). Plan: new **Pro-trial team** in the same account → **transfer the
+  project** (domains+env move with it; redeploy; re-create firewall rules, which are
+  per-project) → observe 14 days → add card + spend cap. The refactor makes bot traffic
+  structurally cheap:
+  - **No `auth()`/`cookies()`/`searchParams` anywhere in the public render path.** Every
+    public page (home, catalog, product, cart, quote, login, about) is **static/ISR**
+    (`revalidate = 3600` — literal, since Next requires static segment config; keep in sync
+    with `PAGE_REVALIDATE` in `products.ts`). ⚠️ Next lowers a route's effective interval to
+    its smallest fetch revalidate, so `shopifyFetch` takes a `revalidate` param: pages/
+    sitemap pass 3600, the gated APIs keep the fresher 60s default.
+  - **Signed-in UI is client-side, driven by the `hbw_ui` display-hint cookie**
+    (`hint-cookie.ts`/`account-hint.ts`): non-httpOnly, email+company ONLY — never the
+    class — set/cleared strictly alongside `hbw_session` in `auth.ts`. ⚠️ `encodeHint`
+    returns **bare JSON**: Next's cookie serializer applies `encodeURIComponent` itself;
+    pre-encoding double-encodes and every island silently renders guest (hit in review).
+    Stale hint (session dead) self-heals: gated-API 401 → `dropAccountHint()` (batcher,
+    TradeOrderPanel, CartView). Accepted: sessions issued BEFORE this deploy have no hint —
+    those buyers see guest UI until their next magic-link login.
+  - **Prices hydrate client-side for signed-in buyers only**: `TilePrice` + `price-batcher`
+    (one pooled POST per page view; cache bound to the hint email so a class-priced cache
+    can't leak across account switches) → `/api/price` batch shape (`{tiles:[{slug,color}]}`,
+    per-slug error catch so one throttled Shopify lookup can't 500 the batch). Guests/bots:
+    **zero** function invocations.
+  - **The catalog listing is ONE static document per locale**: `CatalogBrowser` runs
+    filters/sort/pagination client-side over the price-free `CatalogTile[]` (`toTiles()` in
+    `catalog.ts` is the invariant-#1 choke point — a `Colorway` carries `basePrice` and must
+    never cross into a client component). Vercel ignores the query string for prerendered
+    routes, so the entire faceted URL space (the 2026-07 burn) collapses onto cache hits
+    (verified byte-identical). URL state syncs via a `useSearchParams` bridge inside its own
+    `<Suspense fallback={null}>` (mount-time `location.search` reads MISS soft navigations —
+    a same-route Link keeps components mounted; this bit LoginStatus + the nav-reset case in
+    review) + `history.pushState` (which Next syncs). Price sorts: signed-in only, via the
+    batch API.
+  - **`scripts/guard-guest-html.mjs` runs in `npm run build`** (so on every Vercel deploy):
+    fails the build if any public page stops being prerendered, if any prerendered HTML/RSC
+    (incl. every product page) contains a price/class string, or — when `SHOPIFY_STORE_DOMAIN`
+    is set — if the catalog prerendered empty (lost env vars would otherwise ship a green
+    deploy where every product URL 404s).
+  - **Products fetch failure contract** (`products.ts`): env unset → empty catalog + warn
+    (local no-creds builds pass); env set + Shopify error → **throw** (build fails loudly,
+    previous deploy stays live; ISR regen failure keeps serving the last good page).
+  - Catalog canonical is now always the bare `/catalog` (the page can't read `?page=`);
+    pagination is buttons, not links — product discovery is **sitemap-driven**. Quote page:
+    anti-spam token now minted by `GET /api/form-token`, fetched on mount with a submit-time
+    retry. Cart: static shell + `CartGate` island (guest prompt; dict `cart.guestHeading/-Body`).
 - **Built, pending one switch:** cart → checkout → **Shopify draft order** (bank transfer,
   engraving flag, expected ship date). Cart is localStorage selections only
   (`src/lib/cart-client.ts`); prices via gated `/api/cart/quote`; `/api/checkout` creates

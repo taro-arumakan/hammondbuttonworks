@@ -28,13 +28,21 @@ function endpoint(): string {
   return `https://${DOMAIN}/admin/api/${VERSION}/graphql.json`;
 }
 
-export async function shopifyFetch<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
+export async function shopifyFetch<T>(
+  query: string,
+  variables: Record<string, unknown> = {},
+  // Fetch-cache TTL. ⚠️ Next lowers a route's effective revalidation interval
+  // to the smallest fetch revalidate inside it — so an ISR page exporting
+  // `revalidate = 3600` regenerates every 60s unless its fetches pass 3600
+  // here. Request-time API routes keep the fresher 60s default.
+  revalidate: number = 60,
+): Promise<T> {
   const res = await fetch(endpoint(), {
     method: "POST",
     headers: { "X-Shopify-Access-Token": TOKEN as string, "Content-Type": "application/json" },
     body: JSON.stringify({ query, variables }),
-    // Product data is fairly static; cache briefly and revalidate.
-    next: { revalidate: 60 },
+    // Product data is fairly static; cache and revalidate (TTL per caller).
+    next: { revalidate },
     // Bound the wait: undici only bounds the CONNECT phase (10s) — a Shopify
     // endpoint that accepts the connection and then stalls would otherwise hang
     // until Next's 60s static-generation timeout and HARD-FAIL `next build`
@@ -271,7 +279,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
   };
 }
 
-export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
+export async function getShopifyProducts(revalidate?: number): Promise<ShopifyProduct[]> {
   const currency = await shopCurrency();
   const out: ShopifyProduct[] = [];
   let cursor: string | null = null;
@@ -286,6 +294,7 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
            }
          }`,
         { cursor },
+        revalidate,
       );
     out.push(...d.products.nodes.map((p) => mapProduct(p, currency)));
     cursor = d.products.pageInfo.hasNextPage ? d.products.pageInfo.endCursor : null;
@@ -293,11 +302,15 @@ export async function getShopifyProducts(): Promise<ShopifyProduct[]> {
   return out;
 }
 
-export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProduct | null> {
+export async function getShopifyProductByHandle(
+  handle: string,
+  revalidate?: number,
+): Promise<ShopifyProduct | null> {
   const currency = await shopCurrency();
   const d = await shopifyFetch<{ productByHandle: RawProduct | null }>(
     `query($handle: String!) { productByHandle(handle: $handle) { ${PRODUCT_FIELDS} } }`,
     { handle },
+    revalidate,
   );
   return d.productByHandle ? mapProduct(d.productByHandle, currency) : null;
 }

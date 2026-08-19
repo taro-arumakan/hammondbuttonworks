@@ -1,8 +1,14 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { requestMagicLink } from "./actions";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
+import { LoginStatus } from "@/components/LoginStatus";
+
+// Static: the ?status= banner is a client island (LoginStatus) so the page —
+// linked from every guest header — serves from the cache instead of invoking
+// a function per crawler hit.
 
 export async function generateMetadata({
   params,
@@ -16,50 +22,22 @@ export async function generateMetadata({
 
 export default async function LoginPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ status?: string }>;
 }) {
   const { locale: raw } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
-  const { status } = await searchParams;
-
-  const messages: Record<string, { tone: "info" | "warn" | "error"; text: string }> = {
-    sent: { tone: "info", text: dict.login.msgSent },
-    notfound: { tone: "warn", text: dict.login.msgNotfound },
-    invalid: { tone: "error", text: dict.login.msgInvalid },
-    error: { tone: "error", text: dict.login.msgError },
-  };
-  const message = status ? messages[status] : undefined;
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <h1 className="font-serif text-3xl tracking-tight">{dict.login.title}</h1>
       <p className="mt-2 text-stone-600">{dict.login.subtitle}</p>
 
-      {message && (
-        <div
-          className={`mt-6 rounded-md border px-4 py-3 text-sm ${
-            message.tone === "info"
-              ? "border-green-200 bg-green-50 text-green-800"
-              : message.tone === "warn"
-                ? "border-amber-200 bg-amber-50 text-amber-800"
-                : "border-red-200 bg-red-50 text-red-800"
-          }`}
-        >
-          {message.text}
-          {status === "notfound" && (
-            <>
-              {" "}
-              <Link href={`/${locale}/quote`} className="font-medium underline">
-                {dict.login.requestQuoteLink}
-              </Link>
-            </>
-          )}
-        </div>
-      )}
+      {/* Suspense keeps the page prerenderable despite useSearchParams. */}
+      <Suspense fallback={null}>
+        <LoginStatus locale={locale} dict={dict} />
+      </Suspense>
 
       <form action={requestMagicLink} className="mt-8 space-y-4">
         <input type="hidden" name="locale" value={locale} />

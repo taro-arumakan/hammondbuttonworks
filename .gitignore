@@ -31,3 +31,6 @@ next-env.d.ts
 
 # brand source assets / supplier catalogs — keep local, not in the public repo
 /references
+
+# Vercel billing/usage warning emails — personal account mail, keep local
+/vercel_warning_emails

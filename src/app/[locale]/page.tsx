@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { getAllProducts } from "@/lib/products";
-import { fromUnitPriceOf } from "@/lib/pricing";
+import { PAGE_REVALIDATE, getAllProducts } from "@/lib/products";
 import { toColorways } from "@/lib/catalog";
 import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
 import { ProductCard } from "@/components/ProductCard";
+import { GuestOnly } from "@/components/GuestOnly";
 import { Logo } from "@/components/Logo";
 import { localeAlternates } from "@/lib/seo";
+
+// Static + ISR: no session reads in the render path (prices hydrate client-side
+// through the gated API), so guests and crawlers are served from the page
+// cache. Catalog data refreshes hourly; prices are always live via the API.
+// Must be a literal (Next statically analyzes segment config) — keep in sync
+// with PAGE_REVALIDATE in lib/products.ts, which the data fetches also use.
+export const revalidate = 3600;
 
 /** Title/description come from the locale layout; this adds canonical + hreflang. */
 export async function generateMetadata({
@@ -31,13 +37,11 @@ export default async function HomePage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  const session = await auth();
-  const customerClass = session?.user.customerClass ?? null;
   // Home shows a taster of the range (2 rows of 4) — the full catalog lives
   // behind "View all". Without the cap this would render all ~200 designs.
   // One tile per design here (its first colourway), not per colourway, so the
   // teaser shows breadth rather than colour repeats.
-  const products = (await getAllProducts())
+  const products = (await getAllProducts(PAGE_REVALIDATE))
     .slice(0, 8)
     .map((p) => localizeProduct(p, locale));
   const tiles = products
@@ -102,17 +106,18 @@ export default async function HomePage({
           {tiles.map((cw) => (
             <ProductCard
               key={cw.key}
-              product={cw.product}
+              slug={cw.product.slug}
+              name={cw.product.name}
+              category={cw.product.category}
               color={cw.color}
               image={cw.image}
               sizesMm={cw.variants.map((v) => v.sizeMm)}
-              price={fromUnitPriceOf(cw.variants, cw.product.currency, customerClass)}
               locale={locale}
               dict={dict}
             />
           ))}
         </div>
-        {!customerClass && (
+        <GuestOnly>
           <p className="mt-6 text-sm text-stone-500">
             {dict.home.guestNote}{" "}
             <Link href={`/${locale}/login`} className="underline">
@@ -124,7 +129,7 @@ export default async function HomePage({
             </Link>
             .
           </p>
-        )}
+        </GuestOnly>
       </section>
     </div>
   );
