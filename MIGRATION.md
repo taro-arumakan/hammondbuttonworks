@@ -42,24 +42,27 @@ the account. Do the firewall rules **before** pointing the domain.
 
 ## 1. Before deleting anything — what only exists in the old account
 
-### Environment variables (10, project-scoped; no shared/team vars)
+### Environment variables (18 entries; no shared/team vars)
 
-| Variable | Env | Recoverable? |
-|---|---|---|
-| `STAFF_EMAILS` | Production + Preview | ✅ readable in dashboard; also in local `.env.local` |
-| `ADMIN_HOST` | Production + Preview | ✅ readable — `admin.hammondbutton.works` |
-| `SHOPIFY_API_VERSION` | Production | ✅ local `.env.local` |
-| `SHOPIFY_STORE_DOMAIN` | Production | ✅ local `.env.local` |
-| `EMAIL_FROM` | Production | ✅ readable |
-| `NEXT_PUBLIC_SITE_URL` | Production | ✅ readable — `https://hammondbutton.works` |
-| `CONTACT_INBOX` | Production | ✅ readable |
-| `AUTH_SECRET` | Production | 🔒 **Sensitive — unreadable.** Use the value in local `.env.local`, or generate a new one (`openssl rand -base64 32`); a new secret invalidates live sessions and unclicked magic links |
-| `RESEND_API_KEY` | Production | 🔒 **Sensitive — unreadable.** Create a fresh key in the Resend dashboard |
-| `STAFF_LINK_SECRET` | Production | 🔒 Sensitive — **dead variable**, referenced nowhere in the codebase. Do not recreate |
+Production (11):
 
-⚠️ **`SHOPIFY_ADMIN_TOKEN` is not in the Vercel list at all** — verify how production was
-reading Shopify before assuming; the working value is in local `.env.local` either way.
-Set it on the new project.
+| Variable | Recoverable? |
+|---|---|
+| `STAFF_EMAILS` *(also Preview)* | ✅ readable; also in local `.env.local` |
+| `ADMIN_HOST` *(also Preview)* | ✅ readable — `admin.hammondbutton.works` |
+| `SHOPIFY_API_VERSION` | ✅ readable; local `.env.local` |
+| `SHOPIFY_STORE_DOMAIN` | ✅ readable; local `.env.local` |
+| `EMAIL_FROM` | ✅ readable |
+| `NEXT_PUBLIC_SITE_URL` | ✅ readable — `https://hammondbutton.works` |
+| `CONTACT_INBOX` | ✅ readable |
+| `SHOPIFY_ADMIN_TOKEN` | 🔒 Sensitive — but the value is in local `.env.local` |
+| `AUTH_SECRET` | 🔒 Sensitive. Use the local `.env.local` value, or generate a new one (`openssl rand -base64 32`) — a new secret invalidates live sessions and unclicked magic links |
+| `RESEND_API_KEY` | 🔒 Sensitive and **not recoverable** — create a fresh key in the Resend dashboard |
+| `STAFF_LINK_SECRET` | 🔒 Sensitive — **dead variable**, referenced nowhere in the codebase. Do not recreate |
+
+Preview (4, all Sensitive) and Development (4, readable) carry only the Shopify trio +
+`AUTH_SECRET`. `TRADE_ALLOWLIST` is not set anywhere — production resolves accounts from
+Shopify, so the env fallback is unused.
 
 ### Domains
 
