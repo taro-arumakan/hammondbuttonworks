@@ -128,6 +128,50 @@ everything in §1 must be captured before you start.)
 
 ---
 
+## 2b. Progress (2026-08-21)
+
+Done on the new account (`sniarti-fi1`, user `tarormkn-7023`):
+
+- Project `hammondbuttonworks` created and linked; GitHub connected, so a push to
+  `main` auto-deploys (verified — the first deploy was triggered by a push).
+- All 10 production env vars set. NB the CLI marks everything **Sensitive**, so none
+  can be read back from the dashboard; verification below is behavioural instead.
+- Firewall rule **"Deny Meta crawler ASN"** published and live:
+  `geo AS number equals 32934` AND `path does not equal /robots.txt` → Deny.
+- Live on `https://hammondbuttonworks-six.vercel.app` (the project's production alias;
+  `hammondbuttonworks.vercel.app` is still held by the old account).
+
+⚠️ **Trap hit:** `vercel project add` creates a project with **no framework detection** —
+it defaulted to Framework Preset "Other", Output Directory `public`. `npm run build` still
+ran a complete Next.js build, but Vercel published `public/` as a static site:
+`/brand/hammond-lockup.svg` served 200 while `/en`, `/` and `/robots.txt` all 404'd.
+A green build and no website. Fixed by committing `vercel.json` with
+`"framework": "nextjs"` + `"buildCommand": "npm run build"` — in the repo, not the
+dashboard, since dashboard-only configuration is what made this migration expensive.
+
+Verified live (2026-08-21):
+
+| Check | Result |
+|---|---|
+| Prices in guest `/en/catalog` + `/ja/catalog` | **0 / 0** ✓ |
+| `customerClass` / `pricing_segment` / `"plus"` in guest HTML | **0 / 0** ✓ |
+| `POST /api/price`, `/api/cart/quote` as guest | **401** ✓ |
+| Catalog renders | 40 product links ✓ |
+| `x-vercel-cache` on `/en/catalog` | **HIT, HIT, HIT** ✓ |
+| Faceted URL vs bare listing | **byte-identical**, and HIT ✓ |
+| Product page | 200, 0 prices, cache HIT ✓ |
+| `/admin`, `/admin/login`, `/api/admin/*` on public host | **404** ✓ |
+| robots.txt | all four Meta crawlers `Disallow: /` ✓ |
+| sitemap.xml | 54 URLs on `https://hammondbutton.works` ✓ |
+
+The faceted-URL row is the one that matters most: that exact URL space is what burned the
+old account, and it now resolves to one cached document.
+
+Remaining: AI Bots ruleset → Deny (dashboard only, no CLI equivalent); domain cutover;
+delete the old account.
+
+---
+
 ## 3. Verification checklist
 
 ```bash
