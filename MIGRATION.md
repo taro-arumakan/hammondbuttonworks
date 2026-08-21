@@ -172,6 +172,74 @@ delete the old account.
 
 ---
 
+## 2c. Domain cutover — DONE (2026-08-21)
+
+`hammondbutton.works` is **live again on the new account.**
+
+How it went:
+
+- The old project's domain list was already empty; the old **team** still owned the apex
+  (as "Third Party"). Vercel's **Move teams** only offers teams the current login belongs
+  to, and these are two separate users — so the apex had to be deleted from the old team
+  (taking 3 related aliases with it) and re-added from the new one. The registration lives
+  at Onamae, so Vercel only ever held a pointer; nothing about the registration changed.
+- `vercel domains add` for apex + `www` + `admin`, all three now
+  **configured-correctly / verified** against the new project, `configuredBy: A`.
+- **No DNS change was needed** — the Onamae records already resolve to Vercel's anycast
+  (`216.198.79.1`), and Vercel routes by Host header.
+
+Verified on the live domain (through a real browser, see the Bot Protection note):
+
+| Check | Result |
+|---|---|
+| `/en/catalog`, `/ja/catalog` — yen strings | **0 / 0** ✓ |
+| `/en`, `/ja`, `/robots.txt`, `/sitemap.xml` — yen strings | **0** ✓ |
+| All of the above — `customerClass` / `pricing_segment` / `"plus"` | **0** ✓ |
+| `POST /api/price` as guest | **401** ✓ |
+| Faceted URL vs bare listing | **byte-identical** ✓ |
+| `x-vercel-cache` | HIT / PRERENDER ✓ |
+| `admin.hammondbutton.works/en/catalog` | → `/admin/login?next=%2Fadmin` ✓ |
+
+### Still open
+
+1. **`www` → apex 308 is gone.** Domain redirects are per-project config and did not
+   transfer; `www.hammondbutton.works` currently *serves* the site rather than redirecting.
+   Canonical tags still point at the apex so this is not an SEO emergency, but restore it:
+   Domains → `www.hammondbutton.works` → Edit → Redirect to `hammondbutton.works`, 308.
+   Do the same for the project's `*.vercel.app` alias. **No CLI equivalent — dashboard only.**
+2. **Before deleting the old account**, consider repointing `www` and `admin` at Onamae to
+   the same A record as the apex. They currently CNAME to
+   `e00d81113707ae98.vercel-dns-017.com`, a target provisioned while the domain lived on the
+   old account. Vercel reports all three `configuredBy: A`, so the CNAME is probably not
+   load-bearing — but "probably" is not what you want to discover after the account is gone.
+3. **Magic-link email** end-to-end (Resend key is new) and a staff sign-in at
+   `admin.hammondbutton.works` have not been exercised yet.
+
+### ⚠️ Bot Protection = Challenge changes how you verify this site
+
+Bot Protection is set to **Challenge** (AI Bots is **Deny**). Challenge serves
+`429` + `x-vercel-mitigated: challenge` — a "Vercel Security Checkpoint" JS interstitial —
+to every client that does not look like a browser. Consequences:
+
+- **`curl` no longer works against this site**, with or without a browser User-Agent.
+  Every check in §3 below must now run inside a real browser. Any uptime monitor or
+  server-to-server integration added later will need a WAF **bypass** rule.
+- Real Googlebot is IP/rDNS-verified and exempt, so indexing should be unaffected — note
+  this is *unverified from here*: a spoofed Googlebot UA is correctly challenged, which is
+  exactly what makes the real one impossible to test remotely.
+- The residual risk is the status code: if verified-bot detection ever misses a crawler,
+  it receives `429`, which crawlers read as "back off". That is a worse failure mode than
+  a 403 for a site that wants to rank.
+- It also partly undoes a deliberate choice: robots.txt allows `facebookexternalhit` so
+  shared links still render a preview card. That preview now depends on Vercel classing it
+  as a verified bot.
+
+The ASN deny rule and AI Bots = Deny are what actually stop the traffic that paused the old
+account. Challenge is additive, and it is one dropdown to revert to **Log** if the
+verification friction outweighs it.
+
+---
+
 ## 3. Verification checklist
 
 ```bash
