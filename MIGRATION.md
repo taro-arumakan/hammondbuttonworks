@@ -207,11 +207,20 @@ Verified on the live domain (through a real browser, see the Bot Protection note
    Canonical tags still point at the apex so this is not an SEO emergency, but restore it:
    Domains → `www.hammondbutton.works` → Edit → Redirect to `hammondbutton.works`, 308.
    Do the same for the project's `*.vercel.app` alias. **No CLI equivalent — dashboard only.**
-2. **Before deleting the old account**, consider repointing `www` and `admin` at Onamae to
-   the same A record as the apex. They currently CNAME to
-   `e00d81113707ae98.vercel-dns-017.com`, a target provisioned while the domain lived on the
-   old account. Vercel reports all three `configuredBy: A`, so the CNAME is probably not
-   load-bearing — but "probably" is not what you want to discover after the account is gone.
+2. ~~Repoint `www` / `admin` CNAMEs before deleting the old account.~~ **Checked — leave
+   them alone.** The concern does not hold:
+   - `e00d81113707ae98.vercel-dns-017.com` → `216.198.79.65` / `64.29.17.65`, i.e. Vercel's
+     **current** anycast range (same `216.198.79.x` block as the apex `216.198.79.1`).
+   - The generic `cname.vercel-dns.com` → `66.33.60.35` / `76.76.21.123`, the **legacy**
+     range Vercel is phasing out. Switching to it would move the site backwards.
+   - Decisive evidence: the granular CNAME **already survived the account migration** —
+     `www` and `admin` route to the new project right now and Vercel verifies all three
+     domains as configured-correctly. The hostname is an edge entry point; routing is by
+     Host header, so it carries no account identity.
+
+   If you ever want zero Vercel-issued hostnames in the zone, the fallback is `A` records to
+   `216.198.79.1` for `www`/`admin` (matching the apex) — but that trades Vercel's ability to
+   move you off a retiring IP for manual maintenance. Not worth doing today.
 3. **Magic-link email** end-to-end (Resend key is new) and a staff sign-in at
    `admin.hammondbutton.works` have not been exercised yet.
 
