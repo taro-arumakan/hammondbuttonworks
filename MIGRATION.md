@@ -224,6 +224,44 @@ Verified on the live domain (through a real browser, see the Bot Protection note
 3. **Magic-link email** end-to-end (Resend key is new) and a staff sign-in at
    `admin.hammondbutton.works` have not been exercised yet.
 
+### Env var visibility — fixed (2026-08-21)
+
+The CLI stores everything as **Sensitive** by default, which makes values unreadable
+afterwards. Recreated the seven non-secret vars with `--no-sensitive`, so only real secrets
+are hidden now:
+
+| Non-sensitive (readable) | Sensitive (correctly hidden) |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL`, `ADMIN_HOST`, `CONTACT_INBOX`, `EMAIL_FROM`, `STAFF_EMAILS`, `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_API_VERSION` (+ `ADMIN_HOST`/`STAFF_EMAILS` on Preview) | `AUTH_SECRET`, `SHOPIFY_ADMIN_TOKEN`, `RESEND_API_KEY` |
+
+⚠️ `vercel env rm` **hangs when stdin is a pipe** even with `--yes` — it still tries to
+prompt. Run env commands with `</dev/null` and a `timeout`, or they wedge silently.
+
+Note `vercel env ls` displays non-sensitive values as an `eyJ2IjoidjIi…` blob — that is the
+encrypted-at-rest envelope, a display quirk. `vercel env pull` shows the real plaintext.
+
+### Remaining after the cutover
+
+1. **Magic-link email** end-to-end + a staff sign-in at `admin.hammondbutton.works` — needs
+   a real inbox, so it is the owner's test. The `RESEND_API_KEY` is new and has never sent.
+2. **Confirm the `www` 308** in a browser (`curl` only ever sees the Bot Protection 429).
+3. **Delete the old Vercel account** once 1 passes.
+4. **Preview/Development env vars are not fully set** on the new project — only `ADMIN_HOST`
+   and `STAFF_EMAILS` exist for Preview. The old project also carried the Shopify trio and
+   `AUTH_SECRET` there. Without them a branch preview builds an **empty catalog** (the
+   `products.ts` contract: env unset → empty + warn, build still passes), which looks like a
+   broken site rather than a missing config. Set them if previews are used.
+5. **`DNS-SETUP.md` is partly stale** — it describes the old project's redirect setup. The
+   record values in it are still correct.
+6. **Six code follow-ups** from the branch review (§6 below), the notable one being catalog
+   internal links: only the first 40 tiles carry `<a href>` in static HTML.
+7. `hammondbuttonworks.vercel.app` frees up when the old account goes — the project could
+   reclaim that alias instead of `hammondbuttonworks-six.vercel.app`.
+
+**Daily check:** a scheduled task `hbw-daily-traffic-check` runs at 09:00 local and reports
+liveness, deployment status, firewall state and (when the browser has the new account)
+firewall traffic + usage. It treats `429` as healthy, `402` as the pause alarm.
+
 ### ⚠️ Bot Protection = Challenge changes how you verify this site
 
 Bot Protection is set to **Challenge** (AI Bots is **Deny**). Challenge serves
