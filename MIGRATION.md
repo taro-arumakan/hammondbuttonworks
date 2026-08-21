@@ -60,6 +60,26 @@ Production (11):
 | `RESEND_API_KEY` | 🔒 Sensitive and **not recoverable** — create a fresh key in the Resend dashboard |
 | `STAFF_LINK_SECRET` | 🔒 Sensitive — **dead variable**, referenced nowhere in the codebase. Do not recreate |
 
+**Recovered production values** (captured 2026-08-19 from the old dashboard before
+deletion — the non-secret ones, so nothing depends on that account staying reachable):
+
+```
+NEXT_PUBLIC_SITE_URL   https://hammondbutton.works
+ADMIN_HOST             admin.hammondbutton.works
+CONTACT_INBOX          contact@hammondbutton.works
+EMAIL_FROM             Hammond Button Works <no-reply@send.hammondbutton.works>
+STAFF_EMAILS           info@alvana.jp, support@sniarti.fi, taro.rmkn@gmail.com
+SHOPIFY_STORE_DOMAIN   hammondbuttonworks.myshopify.com
+SHOPIFY_API_VERSION    2025-07
+```
+
+⚠️ Production `STAFF_EMAILS` is NOT what local `.env.local` holds (`staff@sniarti.fi`).
+Use the list above, or nobody can sign in to `/admin`.
+
+The three remaining values are secrets and must be pasted by hand — never routed through
+a transcript or a tool: `AUTH_SECRET` and `SHOPIFY_ADMIN_TOKEN` are in local `.env.local`;
+`RESEND_API_KEY` has to be re-created in the Resend dashboard.
+
 Preview (4, all Sensitive) and Development (4, readable) carry only the Shopify trio +
 `AUTH_SECRET`. `TRADE_ALLOWLIST` is not set anywhere — production resolves accounts from
 Shopify, so the env fallback is unused.
