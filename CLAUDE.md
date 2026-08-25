@@ -264,12 +264,13 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
     pagination is buttons, not links — product discovery is **sitemap-driven**. Quote page:
     anti-spam token now minted by `GET /api/form-token`, fetched on mount with a submit-time
     retry. Cart: static shell + `CartGate` island (guest prompt; dict `cart.guestHeading/-Body`).
-- **Built, pending one switch:** cart → checkout → **Shopify draft order** (bank transfer,
-  engraving flag, expected ship date). Cart is localStorage selections only
-  (`src/lib/cart-client.ts`); prices via gated `/api/cart/quote`; `/api/checkout` creates
-  the draft order. ⚠️ Requires **`write_draft_orders`** scope on the Shopify custom app
-  (Shopify admin → Develop apps → Configuration) — until granted, checkout 502s gracefully
-  and the cart is preserved.
+- **Cart → checkout → Shopify draft order is UNBLOCKED.** Cart is localStorage selections
+  only (`src/lib/cart-client.ts`); prices via gated `/api/cart/quote`; `/api/checkout` creates
+  the draft order (bank transfer, engraving flag, expected ship date). The
+  **`write_draft_orders` scope IS granted** — verified 2026-08-25 against the live app
+  installation, so the long-standing "checkout 502s until the scope lands" note is retired.
+  ⚠️ Scope granted ≠ path verified: cart → `/api/checkout` → draft order has never been run
+  end-to-end on the new Vercel project. See `GO-LIVE.md`.
 
 ## Status (2026-06-26)
 - **Repo:** standalone git repo initialized and pushed to
