@@ -1,7 +1,6 @@
 # Go-live checklist
 
-State as measured on **2026-08-25**, four days after the migration to the new Vercel
-account. Site healthy: liveness 429 (= challenge served, see [MONITORING.md](MONITORING.md)),
+State as measured on **2026-08-25**, updated **2026-09-02**. Site healthy: liveness 429 (= challenge served, see [MONITORING.md](MONITORING.md)),
 latest production deployment Ready, firewall rule armed, all 10 env vars present, daily
 traffic checks quiet.
 
@@ -38,16 +37,22 @@ it reads *Success*. Expect 74% of its 54 URLs to be dummy products until the cat
 (§5); their later 404s are normal and need no deploy, since the sitemap regenerates hourly
 from Shopify's active products.
 
-### 2. Magic-link email, end to end
+### 2. ~~Magic-link email, end to end~~ ✅ SUBSTANTIALLY RESOLVED 2026-09-02
 
-`RESEND_API_KEY` on this project is a **new key that has never sent a message**. Request a
-link at `/en/login` as a seeded buyer and confirm it arrives and signs you in. Nothing about
-this is recoverable from the old account, so it must be tested on its own merits.
+The concern was that `RESEND_API_KEY` on this project was a **new key that had never sent a
+message**. It has now: staff sign-in (§3) delivers its magic link through the same Resend
+transport in `src/lib/email.ts`, and it arrived and worked.
 
-### 3. Staff sign-in at `admin.hammondbutton.works`
+Residual: the *buyer* template at `/en/login` has not been exercised specifically. Same
+transport, different template — so what is untested is the copy and the `customer.locale`
+language selection, not whether mail sends at all. Worth one pass with a seeded buyer before
+inviting real accounts.
 
-Same reason — the staff magic link path has never run on this project. `STAFF_EMAILS` is
-`info@alvana.jp, support@sniarti.fi, taro.rmkn@gmail.com`.
+### 3. ~~Staff sign-in at `admin.hammondbutton.works`~~ ✅ RESOLVED 2026-09-02
+
+Signed in successfully as `support@sniarti.fi`; the staff tool renders both actions
+(代理で注文を作成 / ログインリンク発行). This also confirms `STAFF_EMAILS` and `ADMIN_HOST`
+are correct in production, neither of which is readable back from the dashboard.
 
 ### 4. Checkout → Shopify draft order
 
@@ -82,9 +87,7 @@ accounts and remove the rest.
 7. **Catalog internal links.** Only the first 40 colourway tiles carry `<a href>` in the
    static HTML; the rest of the catalog is sitemap-only. Harmless at 46 colourways, a real
    problem once the full range lands. Fix: render every tile and hide off-page ones with CSS.
-8. **Preview env vars are incomplete** — only `ADMIN_HOST` and `STAFF_EMAILS` exist. A branch
-   preview therefore builds an *empty catalog* (env unset → empty + warn, build still
-   passes), which looks like a broken site rather than a missing config.
+8. **Preview environment is half-configured** — see "Should Preview be a real site?" below.
 9. **Turnstile on the quote form** — still not implemented; `form-guard.ts` only mentions it
    in a comment. Current defence is honeypot + signed time-trap + per-IP rate limit, which
    has held so far.
@@ -97,6 +100,50 @@ accounts and remove the rest.
 13. **Trademark check.** An established Japanese brand **"Button Works" (ボタンワークス)**
     exists in the same workwear-button niche. This has been open since the pilot began, and
     go-live is the point where it stops being theoretical.
+
+---
+
+## Should Preview be a real site? (decision for later)
+
+Today Preview holds only `ADMIN_HOST` and `STAFF_EMAILS`. With no Shopify credentials,
+`shopifyConfigured()` is false, so every branch preview builds an **empty catalog** and
+cannot issue sessions — it looks like a broken site rather than a missing config. In
+practice that means previews cannot be used to review the thing the site mostly *is*.
+
+⚠️ **It is all three Shopify vars or none.** Adding just the two non-secret ones actively
+breaks preview builds:
+
+```js
+// scripts/guard-guest-html.mjs
+if (process.env.SHOPIFY_STORE_DOMAIN) {   // now true
+  if (productPages === 0) { fail }        // but no token → 0 products → build FAILS
+```
+
+`shopifyConfigured()` requires domain **and** token, so a partial config flips the guard's
+safety check on while leaving the data fetch disabled.
+
+Options, roughly in order of preference:
+
+| | Approach | Blast radius | Cost |
+|---|---|---|---|
+| **D** | **Second Shopify custom app, read-only scopes**, token given to Preview | Previews can browse and price, but cannot create draft orders or edit products | One app to create; ~10 min |
+| B | Separate Shopify **development store** for Preview | None — different store entirely | Two catalogs to keep in sync |
+| A | Give Preview the **production** Admin token | A branch deploy holds `write_draft_orders` / `write_products` / `write_customers` against the live store | Zero |
+| C | Status quo — no credentials | None | Zero, but previews stay useless |
+
+**D is the recommendation.** It makes previews genuinely reviewable while keeping every
+write path out of them — and `/api/checkout` failing on a preview is arguably correct
+behaviour rather than a limitation.
+
+Two details for whichever option is chosen:
+
+- Preview also needs `AUTH_SECRET`, and it should be a **different value from production**,
+  not a copy. Session cookies are host-scoped so they cannot cross over, but magic-link
+  tokens are signed blobs that would verify on either host if the secret were shared. A
+  separate preview secret removes that entirely.
+- Preview deployments already sit behind Vercel's Deployment Protection (the deployment URL
+  302s to Vercel SSO), so previews are not publicly reachable. That is what makes option A
+  merely inadvisable rather than dangerous.
 
 ---
 
