@@ -9,23 +9,34 @@ traffic checks quiet.
 
 ## Blockers — do before real buyers arrive
 
-### 1. Confirm Googlebot is not being challenged ⚠️ highest risk
+### 1. ~~Confirm Googlebot is not being challenged~~ ✅ RESOLVED 2026-09-02
 
 Bot Protection is set to **Challenge**, which serves `429` + a JS interstitial to anything
-that does not look like a browser. Verified today: `/sitemap.xml` returns the challenge page
-to `curl`.
+that does not look like a browser — verified on `/sitemap.xml` via `curl`. The open question
+was whether Googlebot was caught by it, which could not be tested from outside: a spoofed
+Googlebot UA is correctly challenged, which is exactly what made the real one untestable.
 
-Google *should* be exempt — Vercel excludes verified bots by IP/rDNS — but **this cannot be
-tested from outside**, because a spoofed Googlebot UA is correctly challenged, which is
-exactly what makes the real one untestable. The failure mode is bad: Google reads `429` as
-"back off", and with only 40 product links in the static catalog HTML, the sitemap is the
-main discovery path.
+**Answered with the only instrument that could answer it.** Google Search Console →
+URL Inspection → **Live Test** on `https://hammondbutton.works/en/catalog/crest` returns
+**"URL is available to Google" / "Page can be indexed"**. The fetch originates from Google's
+own infrastructure with verified Googlebot identity, so Vercel's verified-bot exemption is
+working. **Bot Protection stays on Challenge**; the "revert to Log" fallback is not needed.
 
-Verify properly in **Google Search Console**: submit `https://hammondbutton.works/sitemap.xml`,
-then check it is *Success* rather than *Couldn't fetch*, and use URL Inspection → Live Test on
-one product page. If Google is being challenged, set Bot Protection back to **Log** — the
-ASN deny rule and AI Bots = Deny are what actually stop the crawler that paused the old
-account; Challenge is additive.
+Scope of what this proves: Googlebot specifically. It does not cover other non-browser
+clients — Bingbot, and `facebookexternalhit`, which robots.txt deliberately allows so shared
+links render a preview card. Those remain unverified; check a link preview by hand if it
+matters commercially.
+
+Property is a **Domain** property verified under `sniarti.fi@gmail.com` (DNS TXT). Note the
+apex now carries **two** `google-site-verification` records: the July one belonging to the
+**alvana Workspace domain alias** (which mail depends on) and this new one. Never edit or
+replace an existing TXT — only append; removing the Workspace token would un-verify the
+alias and break mail to `@hammondbutton.works`.
+
+Remaining here: submit `https://hammondbutton.works/sitemap.xml` under Sitemaps and confirm
+it reads *Success*. Expect 74% of its 54 URLs to be dummy products until the catalog swap
+(§5); their later 404s are normal and need no deploy, since the sitemap regenerates hourly
+from Shopify's active products.
 
 ### 2. Magic-link email, end to end
 
