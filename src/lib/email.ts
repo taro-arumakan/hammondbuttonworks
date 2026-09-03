@@ -90,7 +90,7 @@ export function magicLinkEmail(url: string, company: string, locale: Locale): st
   if (locale === "ja") {
     return `${SHELL_OPEN}
     <p>${c} 様</p>
-    <p>Hammond Button Works の取引カタログへのログインリンクをお送りします。下のボタンから、卸売価格のご確認とご注文いただけます。</p>
+    <p>Hammond Button Works の取引カタログへのログインリンクをお送りします。下のボタンから、卸売価格をご確認のうえ、ご注文いただけます。</p>
     ${button("取引カタログを開く")}
     <p style="color:#78716c;font-size:13px">リンクの有効期限は15分間、ご利用は1回限りです。期限が切れた場合は hammondbutton.works から再度お手続きください。</p>
     <p style="color:#78716c;font-size:13px">このメールは hammondbutton.works でこのアドレスが入力されたため送信されています。お心当たりがない場合は破棄してください。</p>
