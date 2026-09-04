@@ -34,3 +34,8 @@ next-env.d.ts
 
 # Vercel billing/usage warning emails — personal account mail, keep local
 /vercel_warning_emails
+
+# product photography originals + the shoot list — owner's source assets.
+# The repo is PUBLIC; processed, web-sized images belong in Shopify, not here.
+/20260904_product_images
+/*_product_images
