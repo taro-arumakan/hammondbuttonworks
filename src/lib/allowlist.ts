@@ -20,7 +20,8 @@ export type Account = {
 
 const SEEDED: Account[] = [
   { email: "buyer@example-standard.com", customerClass: "standard", company: "Standard Trade Co." },
-  { email: "buyer@example-plus.com", customerClass: "plus", company: "Plus Apparel Ltd." },
+  { email: "buyer@example-plus5.com", customerClass: "plus5", company: "Plus5 Apparel Ltd." },
+  { email: "buyer@example-plus10.com", customerClass: "plus10", company: "Plus10 Apparel Ltd." },
 ];
 
 function fromEnv(): Account[] {

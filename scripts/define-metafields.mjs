@@ -9,9 +9,11 @@
  * with pin:true, surfaces it on the resource's admin page so staff can set it.
  *
  * hbw.pricing_segment (CUSTOMER): the B2B pricing class the storefront reads to
- * resolve customer-class pricing. Values are STABLE KEYS ("standard" | "plus"),
- * not percentages — the multiplier (×1.0 / ×1.1) lives in code (src/lib/
+ * resolve customer-class pricing. Values are STABLE KEYS ("standard" | "plus5" |
+ * "plus10") — the multiplier (×1.00 / ×1.05 / ×1.10) lives in code (src/lib/
  * customer.ts) so a rate change is one line, not a migration across customers.
+ * The keys name the RATE, not a rank: "plus" alone left no room for a second
+ * tier, which is exactly what happened.
  */
 const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
@@ -39,9 +41,11 @@ const DEFINITIONS = [
     ownerType: "CUSTOMER",
     type: "single_line_text_field",
     description:
-      "B2B pricing class. standard = base price (100%); plus = +10% (110%). " +
+      "B2B pricing class. standard = base (100%); plus5 = 105%; plus10 = 110%. " +
       "The storefront reads this to resolve customer-class pricing.",
-    validations: [{ name: "choices", value: JSON.stringify(["standard", "plus"]) }],
+    validations: [
+      { name: "choices", value: JSON.stringify(["standard", "plus5", "plus10"]) },
+    ],
     pin: true,
     // access omitted → Shopify applies the default (merchant read/write in admin,
     // editable on the customer page). The app isn't permitted to set it explicitly.
@@ -101,6 +105,14 @@ const EXISTS = `
     }
   }`;
 
+const UPDATE = `
+  mutation Upd($definition: MetafieldDefinitionUpdateInput!) {
+    metafieldDefinitionUpdate(definition: $definition) {
+      updatedDefinition { id key validations { name value } }
+      userErrors { field message code }
+    }
+  }`;
+
 const DELETE = `
   mutation Del($id: ID!) {
     metafieldDefinitionDelete(id: $id, deleteAllAssociatedMetafields: true) {
@@ -126,7 +138,34 @@ for (const def of DEFINITIONS) {
   });
   const existing = found.metafieldDefinitions.nodes[0];
   if (existing && existing.type.name === def.type) {
-    console.log(`✓ exists, skipping: ${label}`);
+    // Same type — but the choice list may have grown (a new pricing segment, a
+    // new material). Validations ARE updatable in place, so reconcile them
+    // rather than skipping; otherwise the store silently keeps the old dropdown.
+    const norm = (v) =>
+      JSON.stringify(
+        (v ?? []).map(({ name, value }) => [name, value]).sort((a, b) => a[0].localeCompare(b[0])),
+      );
+    if (norm(existing.validations) === norm(def.validations)) {
+      console.log(`✓ exists, skipping: ${label}`);
+      continue;
+    }
+    const upd = await gql(UPDATE, {
+      definition: {
+        namespace: def.namespace,
+        key: def.key,
+        ownerType: def.ownerType,
+        name: def.name,
+        description: def.description,
+        validations: def.validations,
+      },
+    });
+    const uerrs = upd.metafieldDefinitionUpdate.userErrors;
+    if (uerrs.length) {
+      console.error(`✗ update failed: ${label}`, uerrs);
+      process.exitCode = 1;
+    } else {
+      console.log(`↻ updated validations: ${label}`);
+    }
     continue;
   }
   if (existing) {
