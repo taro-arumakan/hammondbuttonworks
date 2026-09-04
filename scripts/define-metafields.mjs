@@ -46,7 +46,45 @@ const DEFINITIONS = [
     // access omitted → Shopify applies the default (merchant read/write in admin,
     // editable on the customer page). The app isn't permitted to set it explicitly.
   },
+  {
+    name: "Material",
+    namespace: "hbw",
+    key: "material",
+    ownerType: "PRODUCTVARIANT",
+    type: "single_line_text_field",
+    description:
+      "What the button is made of. Stable keys, not display names — the EN/JA " +
+      "labels live in the dictionaries so wording changes are a code edit, not a " +
+      "data migration across every variant.",
+    validations: [
+      {
+        name: "choices",
+        value: JSON.stringify(["buffalo", "acacia", "rosewood", "mango", "brass"]),
+      },
+    ],
+    pin: true,
+  },
 ];
+
+/**
+ * Why material is a VARIANT metafield and not part of the colour option
+ * ---------------------------------------------------------------------
+ * The seed catalogue encoded the species inside the colour value
+ * ("Brown (Rosewood)", SKU round-no9-BrownRosewood-18mm). That conflates two
+ * independent attributes and makes colour filtering lie: a buyer filtering for
+ * "brown" would miss "Brown (Rosewood)" unless every species variant is
+ * enumerated in the filter list.
+ *
+ * It has to be per-VARIANT rather than per-product because material genuinely
+ * varies within a single design: WBT-3586 is one product code offered in
+ * rosewood (dark brown, 20mm), mango (beige, 20mm) and acacia (brown, 15mm).
+ * A product-level field could not represent that without splitting the design
+ * into three products.
+ *
+ * With the owner's rule — rosewood = dark brown, mango = beige, acacia = brown —
+ * colour and material stay derivable from one another for wood, but they are
+ * recorded separately so neither has to be parsed out of the other.
+ */
 
 const EXISTS = `
   query Exists($ownerType: MetafieldOwnerType!, $namespace: String!, $key: String!) {
