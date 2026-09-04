@@ -84,13 +84,20 @@ when no Resend key is set:
 | Real vector logo | `public/brand/hammond-lockup.svg` → `src/components/Logo.tsx` |
 | Brand source assets (gitignored) | `references/` — AI/SVG logo + supplier catalog PDFs |
 
-**Material lives in the `hbw.material` VARIANT metafield** (choices buffalo / acacia /
-rosewood / mango / brass; defined in `scripts/define-metafields.mjs`, pinned in admin).
-Decided 2026-09-04, replacing the seed convention that baked the species into the colour
-option ("Brown (Rosewood)"). Per-VARIANT because material varies within one design —
-`WBT-3586` is a single code in rosewood (dark brown, 20mm), mango (beige, 20mm) and acacia
-(brown, 15mm). Wood colour is derived from species by the owner's rule: **rosewood = dark
-brown, mango = beige, acacia = brown**.
+**Material lives in the `hbw.material` VARIANT metafield** — a
+**`list.single_line_text_field`** (choices `buffalo` / `acacia` / `rosewood` / `mango` /
+`metal`; `scripts/define-metafields.mjs`, pinned in admin). Decided 2026-09-04, replacing
+the seed convention that baked the species into the colour option ("Brown (Rosewood)").
+- **Per-VARIANT** because material varies within one design — `WBT-3586` is a single code in
+  rosewood (dark brown, 20mm), mango (beige, 20mm) and acacia (brown, 15mm).
+- **A list** because a variant can be two materials: `HBT-35-COMBI` is metal at the centre
+  with buffalo around it. Comma-separating into one string would have forced dropping the
+  `choices` validation (so no admin dropdown, no typo protection) and repeats the exact
+  mistake of packing two attributes into one string.
+- Buffalo horn is `buffalo` and brass is `metal`; only wood carries its species, which also
+  determines colour: **rosewood = dark brown, mango = beige, acacia = brown**.
+- Shopify cannot change a definition's type in place, so the script refuses a type change
+  unless run with `--recreate` (which deletes stored values).
 
 **Data model:** product = a button *style*; variants = size (mm/ligne) × finish. Tiers:
 `tier_standard` / `tier_volume` / `tier_partner`, each with ascending quantity breaks.

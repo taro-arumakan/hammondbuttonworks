@@ -51,15 +51,23 @@ const DEFINITIONS = [
     namespace: "hbw",
     key: "material",
     ownerType: "PRODUCTVARIANT",
-    type: "single_line_text_field",
+    // A LIST, not a single value: HBT-35-COMBI is metal at the centre with
+    // buffalo around it, so a variant can legitimately be two materials. A
+    // comma-separated string would have to drop the `choices` validation (since
+    // "metal,buffalo" is not itself a choice), losing the admin dropdown and the
+    // typo protection — and packing two attributes into one string is precisely
+    // the mistake we just undid by taking the species out of "Brown (Rosewood)".
+    // list.single_line_text_field keeps the validation AND renders as a
+    // multi-select in admin.
+    type: "list.single_line_text_field",
     description:
-      "What the button is made of. Stable keys, not display names — the EN/JA " +
-      "labels live in the dictionaries so wording changes are a code edit, not a " +
-      "data migration across every variant.",
+      "What the button is made of; pick several for mixed-material designs " +
+      "(HBT-35-COMBI is metal + buffalo). Wood carries the species, which also " +
+      "sets its colour: rosewood = dark brown, mango = beige, acacia = brown.",
     validations: [
       {
         name: "choices",
-        value: JSON.stringify(["buffalo", "acacia", "rosewood", "mango", "brass"]),
+        value: JSON.stringify(["buffalo", "acacia", "rosewood", "mango", "metal"]),
       },
     ],
     pin: true,
@@ -89,7 +97,15 @@ const DEFINITIONS = [
 const EXISTS = `
   query Exists($ownerType: MetafieldOwnerType!, $namespace: String!, $key: String!) {
     metafieldDefinitions(first: 1, ownerType: $ownerType, namespace: $namespace, key: $key) {
-      nodes { id name pinnedPosition validations { name value } }
+      nodes { id name type { name } pinnedPosition validations { name value } }
+    }
+  }`;
+
+const DELETE = `
+  mutation Del($id: ID!) {
+    metafieldDefinitionDelete(id: $id, deleteAllAssociatedMetafields: true) {
+      deletedDefinitionId
+      userErrors { field message code }
     }
   }`;
 
@@ -108,9 +124,30 @@ for (const def of DEFINITIONS) {
     namespace: def.namespace,
     key: def.key,
   });
-  if (found.metafieldDefinitions.nodes.length) {
+  const existing = found.metafieldDefinitions.nodes[0];
+  if (existing && existing.type.name === def.type) {
     console.log(`✓ exists, skipping: ${label}`);
     continue;
+  }
+  if (existing) {
+    // Shopify cannot change a definition's type in place. Recreating DELETES the
+    // stored values, so this never happens implicitly.
+    if (!process.argv.includes("--recreate")) {
+      console.error(
+        `✗ ${label} exists as ${existing.type.name}, wanted ${def.type}.\n` +
+          `  Re-run with --recreate to delete and rebuild it (DESTROYS stored values).`,
+      );
+      process.exitCode = 1;
+      continue;
+    }
+    const del = await gql(DELETE, { id: existing.id });
+    const derr = del.metafieldDefinitionDelete.userErrors;
+    if (derr.length) {
+      console.error(`✗ delete failed: ${label}`, derr);
+      process.exitCode = 1;
+      continue;
+    }
+    console.log(`− deleted ${label} (was ${existing.type.name})`);
   }
   const res = await gql(CREATE, { definition: def });
   const errs = res.metafieldDefinitionCreate.userErrors;
