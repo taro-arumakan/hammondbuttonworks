@@ -64,6 +64,32 @@ signed-in order through and confirm the draft appears in Shopify with the correc
 
 ### 5. Replace the dummy catalog
 
+**Photography arrived 2026-09-04 and is prepared** — see `20260904_product_images/`
+(gitignored; originals are the owner's source assets and the repo is public).
+
+- `by-variant/<CODE>/<COLOUR>/<SIZE>/{01-front,02-side,03-three-quarter,04-back}.jpg`
+  — **104 product variants**, hard-linked so no disk is duplicated.
+- `logo-samples/LOGO-SAMPLE-{BUFFALO,WOOD}/…` — **14 engraving reference samples**, for the
+  separate buyers' reference page, not the catalogue.
+- `catalog-photos/` — 12 frames (`000706`–`000717`) reserved for advertising use.
+- `manifest.csv` maps every original filename → variant, so a correction is a re-run rather
+  than a re-sort. `shooting-list.csv` lists all 125 combinations incl. the 7 unphotographed.
+
+The mapping is **deterministic, not inferred**: 118 photographed items × 4 angles − 1
+(`MBT-0812-DO-18mm` has no back shot) = 471, exactly the number of product frames.
+Two spreadsheet conventions had to be handled to get there — merged 品番 cells spanning up
+to 8 columns, and blank cells meaning "same as the column to the left". Reading the colour
+row as the item count undercounted by 14 and silently corrupted every downstream boundary.
+
+Data corrected against the owner's rules: `buffal0`→buffalo, `acasia`→acacia, `11,5mm`→
+`11.5mm`, codes uppercased, `xdull`→`xDULL`, and wood colour derived from species
+(**rosewood = dark brown, mango = beige, acacia = brown**) which fixed `bwige`→beige and
+resolved a `WBT-3586` collision where one code+colour+size covered three different woods.
+
+Still to do here:
+
+
+
 Measured today: **23 active products — 20 tagged `dummy`, 3 real** (`round-no9`, `crest`,
 `work-4hole`). 138 variants, every one carrying an image, but those are the recoloured
 placeholders from `scripts/seed-colorway-images.py`.
