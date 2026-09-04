@@ -84,6 +84,14 @@ when no Resend key is set:
 | Real vector logo | `public/brand/hammond-lockup.svg` → `src/components/Logo.tsx` |
 | Brand source assets (gitignored) | `references/` — AI/SVG logo + supplier catalog PDFs |
 
+**Material lives in the `hbw.material` VARIANT metafield** (choices buffalo / acacia /
+rosewood / mango / brass; defined in `scripts/define-metafields.mjs`, pinned in admin).
+Decided 2026-09-04, replacing the seed convention that baked the species into the colour
+option ("Brown (Rosewood)"). Per-VARIANT because material varies within one design —
+`WBT-3586` is a single code in rosewood (dark brown, 20mm), mango (beige, 20mm) and acacia
+(brown, 15mm). Wood colour is derived from species by the owner's rule: **rosewood = dark
+brown, mango = beige, acacia = brown**.
+
 **Data model:** product = a button *style*; variants = size (mm/ligne) × finish. Tiers:
 `tier_standard` / `tier_volume` / `tier_partner`, each with ascending quantity breaks.
 `material` includes `buffalo` (horn), `wood`, `metal`; sizes display in **mm**; `unit` is

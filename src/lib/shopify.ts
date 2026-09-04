@@ -12,9 +12,16 @@ import type { Locale } from "./i18n-config";
  *
  * Data model in Shopify (see scripts/seed-shopify.mjs):
  *  - design = Product; `productType` = category (Military/Classic/Work)
- *  - options: Color (value carries the species, e.g. "Brown (Rosewood)") × Size ("15mm")
+ *  - options: Color × Size ("15mm")
  *  - variant.price = base price per (color × size), in the shop currency (JPY)
- *  - metafields hbw.{name_ja, short_ja, lead_time_days}; variant hbw.in_stock
+ *  - metafields hbw.{name_ja, short_ja, lead_time_days}; variant hbw.{in_stock, material}
+ *
+ * ⚠️ Material used to be encoded INSIDE the colour option ("Brown (Rosewood)",
+ * SKU round-no9-BrownRosewood-18mm). Superseded 2026-09-04 by the per-variant
+ * `hbw.material` metafield (buffalo/acacia/rosewood/mango/brass). Conflating the
+ * two made colour filtering lie — filtering "brown" missed "Brown (Rosewood)" —
+ * and material varies WITHIN a design (WBT-3586 is one code in three woods), so
+ * it cannot live on the product. The 3 seeded products still use the old scheme.
  */
 
 const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
@@ -146,7 +153,7 @@ export async function resolveTradeAccount(email: string): Promise<Account | null
 export type ShopifyVariant = {
   id: string;
   sku: string;
-  color: string; // option value, e.g. "Brown (Rosewood)"
+  color: string; // option value, e.g. "brown" — species is hbw.material, not this
   sizeMm: number;
   basePrice: number; // shop currency (JPY), before customer-class multiplier
   inStock: boolean;
