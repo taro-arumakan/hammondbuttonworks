@@ -244,6 +244,17 @@ const ja = {
       red: "Red",
       blue: "Blue",
       white: "White",
+      "dark brown": "Dark Brown",
+      indigo: "Indigo",
+      military: "Military",
+      // Dyed buffalo (BT-3579 / BT-3605). Shown with the qualifier, but they
+      // filter as the plain colour — see displayColorKey in lib/colors.ts.
+      "dyed-black": "Dyed Black",
+      "dyed-brown": "Dyed Brown",
+      "dyed-beige": "Dyed Beige",
+      "dyed-grey": "Dyed Grey",
+      "dyed-indigo": "Dyed Indigo",
+      "dyed-military": "Dyed Military",
     } as Record<string, string>,
     material: {
       metal: "金属",
