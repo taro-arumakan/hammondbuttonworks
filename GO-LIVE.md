@@ -102,17 +102,28 @@ When the real photography lands:
 
 ### 5b. Price list — being keyed in
 
-Google Sheet (owner `taro.rmkn@gmail.com`), one row per sellable variant:
-https://docs.google.com/spreadsheets/d/1VbFNJTUVA87Sa4inFCvVEbKn6wlxu5OWYoVVoYxf7PI/edit
+Google Sheet (owner `taro.rmkn@gmail.com`), a **grid**: one row per product code + colour,
+one column per size.
+https://docs.google.com/spreadsheets/d/1akT5hPyvmxCeh6PcsewMSOqnNA28FMbBoQ0Eby5f0Go/edit
 
-**111 rows, pre-filled from the corrected shoot list** — `Product code | Color | Size |
-Price (JPY, per piece)`, with only the price column empty. Pre-filling is deliberate: the
-first three columns are the join key the import matches on, so a retyped `11,5mm` or
-`H2xdull` would silently fail to match. Verified that code+colour+size is **unique across
-all 111 rows**, so no two lines are ambiguous.
+⚠️ **The shoot list is NOT the variant list.** Photography deliberately covered only a few
+sizes — 84 of the 97 code+colour pairs were shot at a single size — while each pair is
+actually sold across a size range. Anything that treats `shooting-list.csv` as the catalogue
+will therefore under-create variants by a wide margin.
 
-The 14 logo/engraving samples are excluded (reference items, not sold). The 7 variants whose
-samples never arrived ARE included — they still need prices.
+Layout: `Product code | Color | Material | Photographed size(s) |` then 18 size columns
+(7, 10, 11, 11.5, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 55 mm). A price in a
+cell means that size is offered; **blank means not offered**, which is how the "most products
+have the full range, a few don't" case gets captured without anyone guessing. 97 rows beats
+the ~600–1700 rows a long `code|colour|size` layout would need, nearly all of them empty.
+
+Sizes are the union of what was photographed and the owner's stated typical set
+(11, 13, 15, 18, 20, 25). **Open question:** the owner said *11mm* but every photographed
+buffalo button is *11.5mm* — both columns exist for now; drop one once confirmed.
+
+Columns A–D are the join key and reference; only the size columns get keyed. The 14
+logo/engraving samples are excluded (not sold). The 7 variants whose samples never arrived
+are included — they still need prices.
 
 ### 6. Clear test data
 
