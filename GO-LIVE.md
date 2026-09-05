@@ -100,6 +100,20 @@ When the real photography lands:
   with recolours,
 - re-check the catalog grid, which is tuned for a 5-column desktop layout at `PAGE_SIZE` 40.
 
+### 5b. Price list — being keyed in
+
+Google Sheet (owner `taro.rmkn@gmail.com`), one row per sellable variant:
+https://docs.google.com/spreadsheets/d/1VbFNJTUVA87Sa4inFCvVEbKn6wlxu5OWYoVVoYxf7PI/edit
+
+**111 rows, pre-filled from the corrected shoot list** — `Product code | Color | Size |
+Price (JPY, per piece)`, with only the price column empty. Pre-filling is deliberate: the
+first three columns are the join key the import matches on, so a retyped `11,5mm` or
+`H2xdull` would silently fail to match. Verified that code+colour+size is **unique across
+all 111 rows**, so no two lines are ambiguous.
+
+The 14 logo/engraving samples are excluded (reference items, not sold). The 7 variants whose
+samples never arrived ARE included — they still need prices.
+
 ### 6. Clear test data
 
 4 customers (`buyer@example-standard.com`, `buyer@example-plus.com`, `taro@sniarti.fi`,
@@ -123,7 +137,13 @@ accounts and remove the rest.
 11. **Confirm the `www` → apex 308** in a browser (curl only ever sees the challenge).
 12. **`DNS-SETUP.md` is stale** — it describes the old project's redirect setup; record values
     are still correct.
-13. **Trademark check.** An established Japanese brand **"Button Works" (ボタンワークス)**
+13. **Japanese colour labels are English.** Every value in `dict.labels.color` in
+    `src/lib/dictionaries/ja.ts` is the English word (`brown: "Brown"`), not katakana —
+    pre-existing across the whole map, not just the entries added on 2026-09-04. Japanese
+    apparel listings normally use katakana (ブラウン / ベージュ / ブラック). When doing this,
+    render the dyed range as 「ブラック（染色）」 rather than a literal 「染めブラック」, which
+    reads as a calque.
+14. **Trademark check.** An established Japanese brand **"Button Works" (ボタンワークス)**
     exists in the same workwear-button niche. This has been open since the pilot began, and
     go-live is the point where it stops being theoretical.
 
