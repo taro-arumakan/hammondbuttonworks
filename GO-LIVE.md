@@ -100,28 +100,35 @@ When the real photography lands:
   with recolours,
 - re-check the catalog grid, which is tuned for a 5-column desktop layout at `PAGE_SIZE` 40.
 
-### 5b. Price list — being keyed in
+### 5b. Price list — being keyed in (three sheets)
 
-Google Sheet (owner `taro.rmkn@gmail.com`), a **grid**: one row per product code + colour,
-one column per size.
-https://docs.google.com/spreadsheets/d/1akT5hPyvmxCeh6PcsewMSOqnNA28FMbBoQ0Eby5f0Go/edit
+Split by size regime on 2026-09-08, after the maker (Yukinori Ueda) confirmed the ranges
+over LINE. One sheet per regime, because a single grid would be mostly blank:
 
-⚠️ **The shoot list is NOT the variant list.** Photography deliberately covered only a few
-sizes — 84 of the 97 code+colour pairs were shot at a single size — while each pair is
-actually sold across a size range. Anything that treats `shooting-list.csv` as the catalogue
-will therefore under-create variants by a wide margin.
+| # | Sheet | Rows | Size columns |
+|---|---|---|---|
+| 1 | [Standard sizes (buffalo and wood)](https://docs.google.com/spreadsheets/d/1XxSRWCD9bbMIgMSzyZ8wxaU4BnS4gA2kAEbZXEsdrm4/edit) | 69 | 10, 11.5, 15, 18, 20, 23, 25 |
+| 2 | [Toggle buttons 角型・トグル](https://docs.google.com/spreadsheets/d/1xU9Bpa0eIHT2Kz-FXH4g2W0XnBL9xWt10iV2KFtMrFc/edit) | 6 | 45, 55 |
+| 3 | [Metal](https://docs.google.com/spreadsheets/d/1mo1TiB_oAN2jQdE4TQaRw9iff5b3okULt0Bwj1GJcwM/edit) | 24 | long format — one row per size |
 
-Layout: `Product code | Color | Material | Photographed size(s) |` then 18 size columns
-(7, 10, 11, 11.5, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 55 mm). A price in a
-cell means that size is offered; **blank means not offered**, which is how the "most products
-have the full range, a few don't" case gets captured without anyone guessing. 97 rows beats
-the ~600–1700 rows a long `code|colour|size` layout would need, nearly all of them empty.
+**標準サイズは10、11.5、15、18、20、23、25mm** — verified against the shoot data: every
+non-metal, non-toggle photographed size falls inside that set, with nothing outside it. The
+earlier single grid wrongly carried 11mm and 13mm columns; 11.5 is correct and 13 is metal-only.
 
-Sizes are the union of what was photographed and the owner's stated typical set
-(11, 13, 15, 18, 20, 25). **Open question:** the owner said *11mm* but every photographed
-buffalo button is *11.5mm* — both columns exist for now; drop one once confirmed.
+**角型はトグルボタンで45、55mmの2種類** — 45mm was never photographed, so that column starts
+empty. Sheets 1 and 2 are grids (a price means the size is offered, blank means it is not).
 
-Columns A–D are the join key and reference; only the size columns get keyed. The 14
+**Metal is size-per-design** and each design can be re-cut to another size on request, so no
+fixed column set exists. Sheet 3 is therefore long format — `code | colour | material | size |
+price`, one row per size, extendable by adding rows. A list of manufacturable sizes per metal
+code has been requested and is not yet in hand; until it arrives the sheet holds only the
+sizes actually photographed.
+
+⚠️ **`WBT-3578` spans both regimes**: `dark brown`/rosewood at 20 + 15mm (sheet 1) and
+`beige`/mango at 55mm (sheet 2). Same code, two shapes — confirm whether that is one design
+made both ways or a code collision, before the import treats them as one product.
+
+Columns A–D are the join key and reference; only the size/price columns get keyed. The 14
 logo/engraving samples are excluded (not sold). The 7 variants whose samples never arrived
 are included — they still need prices.
 
