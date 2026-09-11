@@ -100,33 +100,44 @@ When the real photography lands:
   with recolours,
 - re-check the catalog grid, which is tuned for a 5-column desktop layout at `PAGE_SIZE` 40.
 
-### 5b. Price list — being keyed in (three sheets)
+### 5b. Price list — being keyed in
 
-Split by size regime on 2026-09-08, after the maker (Yukinori Ueda) confirmed the ranges
-over LINE. One sheet per regime, because a single grid would be mostly blank:
+One workbook, three tabs (+ README), owner `taro.rmkn@gmail.com`:
+https://docs.google.com/spreadsheets/d/1RveEGNAq9ohcmJ1iOG9mKgVs0CuXsGWYjizBPZK9cdw/edit
 
-| # | Sheet | Rows | Size columns |
-|---|---|---|---|
-| 1 | [Standard sizes (buffalo and wood)](https://docs.google.com/spreadsheets/d/1XxSRWCD9bbMIgMSzyZ8wxaU4BnS4gA2kAEbZXEsdrm4/edit) | 69 | 10, 11.5, 15, 18, 20, 23, 25 |
-| 2 | [Toggle buttons 角型・トグル](https://docs.google.com/spreadsheets/d/1xU9Bpa0eIHT2Kz-FXH4g2W0XnBL9xWt10iV2KFtMrFc/edit) | 6 | 45, 55 |
-| 3 | [Metal](https://docs.google.com/spreadsheets/d/1mo1TiB_oAN2jQdE4TQaRw9iff5b3okULt0Bwj1GJcwM/edit) | 24 | long format — one row per size |
+| Tab | Rows | Size columns |
+|---|---|---|
+| 1. Standard (buffalo and wood) | 69 | 10, 11.5, 15, 18, 20, 23, 25 |
+| 2. Toggle 角型・トグル | 6 | 45, 55 |
+| 3. Metal | 24 | long format — one row per size |
+
+Split by size regime after the maker (Yukinori Ueda) confirmed the ranges over LINE.
 
 **標準サイズは10、11.5、15、18、20、23、25mm** — verified against the shoot data: every
-non-metal, non-toggle photographed size falls inside that set, with nothing outside it. The
-earlier single grid wrongly carried 11mm and 13mm columns; 11.5 is correct and 13 is metal-only.
+non-metal, non-toggle photographed size falls inside that set, nothing outside it. An earlier
+draft wrongly carried 11mm and 13mm columns; 11.5 is correct and 13 is metal-only.
 
 **角型はトグルボタンで45、55mmの2種類** — 45mm was never photographed, so that column starts
-empty. Sheets 1 and 2 are grids (a price means the size is offered, blank means it is not).
+empty. Tabs 1 and 2 are grids (a price means the size is offered, blank means it is not).
 
 **Metal is size-per-design** and each design can be re-cut to another size on request, so no
-fixed column set exists. Sheet 3 is therefore long format — `code | colour | material | size |
-price`, one row per size, extendable by adding rows. A list of manufacturable sizes per metal
-code has been requested and is not yet in hand; until it arrives the sheet holds only the
-sizes actually photographed.
+fixed column set exists. Tab 3 is long format, extendable by adding rows. A list of
+manufacturable sizes per metal code has been requested and is not yet in hand.
 
-⚠️ **`WBT-3578` spans both regimes**: `dark brown`/rosewood at 20 + 15mm (sheet 1) and
-`beige`/mango at 55mm (sheet 2). Same code, two shapes — confirm whether that is one design
-made both ways or a code collision, before the import treats them as one product.
+✅ **`WBT-3578` on the toggle side was a wrong code — it is `WBT-3592`** (owner-confirmed
+2026-09-11). It had been the one product code spanning two size regimes, which is what made
+it suspicious. The correction completes a family that was previously broken: three toggle
+designs, each made in both horn and wood —
+
+| design | horn (`HTB-`) | wood (`WBT-`) |
+|---|---|---|
+| 3581 | H3 buffalo | brown acacia |
+| 3592 | HB01 buffalo | beige mango |
+| 3601 | HT01 buffalo | dark brown rosewood |
+
+Applied to `by-variant/` (folder moved), `manifest.csv`, `shooting-list.csv` and the
+regenerated contact sheets. ⚠️ The workbook's README tab still carries the superseded
+"open question" wording about WBT-3578 — delete those two lines.
 
 Columns A–D are the join key and reference; only the size/price columns get keyed. The 14
 logo/engraving samples are excluded (not sold). The 7 variants whose samples never arrived

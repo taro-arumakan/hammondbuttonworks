@@ -39,3 +39,8 @@ next-env.d.ts
 # The repo is PUBLIC; processed, web-sized images belong in Shopify, not here.
 /20260904_product_images
 /*_product_images
+
+# Price lists — commercial pricing, and the repo is PUBLIC.
+*PriceList*.xlsx
+*price-list*.xlsx
+*price-list*.csv
