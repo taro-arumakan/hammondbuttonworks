@@ -1,6 +1,7 @@
 import type { ShopifyProduct, ShopifyVariant } from "./shopify";
 import type { Locale } from "./i18n-config";
 import { FILTER_COLORS, colorLabels, filterColorOf } from "./colors";
+import { materialGroupsOf, type MaterialSlug } from "./materials";
 
 /**
  * Catalog filtering / sorting / pagination — pure helpers (Sterling-style
@@ -154,6 +155,17 @@ export type CatalogTile = {
   hasStock: boolean; // any variant in stock
   hasMto: boolean; // any variant made-to-order
 };
+
+/**
+ * The colourways listed on one material's page (/materials/<slug>). Membership
+ * is decided per colourway, not per product: whether buffalo is natural or
+ * piece-dyed is read off the colour (see lib/materials.ts).
+ */
+export function colorwaysOfMaterial(colorways: Colorway[], slug: MaterialSlug): Colorway[] {
+  return colorways.filter((cw) =>
+    materialGroupsOf(cw.color, [...new Set(cw.variants.flatMap((v) => v.materials))]).includes(slug),
+  );
+}
 
 /** Project colorways to the client-safe tile model (drops variants/prices). */
 export function toTiles(colorways: Colorway[]): CatalogTile[] {

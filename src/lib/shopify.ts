@@ -159,6 +159,11 @@ export type ShopifyVariant = {
   inStock: boolean;
   /** Native Shopify variant image — one photo per colour, shared by its sizes. */
   image?: string;
+  /**
+   * `hbw.material` (a list: buffalo / acacia / rosewood / mango / metal).
+   * Read for the by-material pages (lib/materials.ts); not displayed.
+   */
+  materials: string[];
 };
 
 export type ShopifyProduct = {
@@ -221,6 +226,7 @@ const PRODUCT_FIELDS = `
       image { url }
       selectedOptions { name value }
       inStock: metafield(namespace: "hbw", key: "in_stock") { value }
+      material: metafield(namespace: "hbw", key: "material") { value }
     }
   }
 `;
@@ -232,6 +238,7 @@ type RawVariant = {
   image: { url: string } | null;
   selectedOptions: { name: string; value: string }[];
   inStock: { value: string } | null;
+  material: { value: string } | null;
 };
 type RawProduct = {
   id: string;
@@ -250,6 +257,17 @@ type RawProduct = {
   options: { name: string; optionValues: { name: string }[] }[];
   variants: { nodes: RawVariant[] };
 };
+
+/** A list metafield's value is a JSON array string; anything else reads as empty. */
+function parseList(value: string | undefined): string[] {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
 
 function sizeToMm(size: string): number {
   return parseFloat(String(size).replace(/[^\d.]/g, "")) || 0;
@@ -272,6 +290,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
       basePrice: Number(v.price),
       inStock: v.inStock?.value === "true",
       image: v.image?.url,
+      materials: parseList(v.material?.value),
     };
   });
 

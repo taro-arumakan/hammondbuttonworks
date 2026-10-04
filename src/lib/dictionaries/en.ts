@@ -8,6 +8,7 @@ const en = {
 
   nav: {
     catalog: "Product",
+    materials: "Material",
     about: "Craft",
     quote: "Custom & Catalog Inquiry",
     login: "Login",
@@ -17,13 +18,101 @@ const en = {
   },
 
   about: {
-    lead: "Designing and making original buttons since 2008.",
+    // Owner copy, 2026-10 ("HBW copies" sheet, about tab), translated.
+    eyebrow: "About",
+    heading: "Hammond Button Works",
+    lead: "We began designing and making original buttons in 2008.",
     paragraphs: [
-      "Built around handcraft, we design distinctive buttons that bring out the textures only handwork can produce, and the individual character of each material.",
-      "Working with clients in Japan, New York, and beyond, we pursue products that draw on each partner's techniques and heritage. From material selection through processing and finishing, we obsess over every detail to create pieces that are loved for years.",
-      "Over the years we've handled collaborations with many brands and developed bespoke buttons, proposing designs for fashion and a wide range of other fields.",
-      "With original design and craft that can only be made here, we'll keep delivering products of every kind.",
+      "With handcraft at the core, we create buttons of our own that bring out the texture only handwork can give and the character of each material.",
+      "Working with clients in Japan, New York and beyond, we pursue products that draw on each partner's skills and background. We care about every detail, from choosing the material to shaping and finishing, to make pieces that are loved for years.",
+      "Over the years we have collaborated with many brands and developed buttons for them, proposing designs for fashion and a wide range of other fields.",
+      "We will keep bringing a wide range of products to life, through design and craft that can only come from here.",
     ],
+    bannerAlt: "Close-up of buffalo horn buttons, some engraved HAMMOND H.B.W., on a black ground",
+  },
+
+  // The by-material pages: /materials (index) and /materials/<id>. Owner copy,
+  // 2026-10 ("HBW copies" sheet, one tab per material), translated. `id` is the
+  // URL segment and must match MATERIAL_SLUGS in lib/materials.ts, which also
+  // decides which products each page lists. `name` is the display title on the
+  // index (kept English in both locales); `title` heads the material's page.
+  // Each block is one paragraph; its lines render as separate lines in JA.
+  // Images: /images/site/material-<id>-*.jpg (page banner, home row) and the
+  // index's grid shots, named in app/[locale]/materials/page.tsx.
+  materials: {
+    title: "Material",
+    description:
+      "Buffalo horn, Himalayan wood, piece-dyed buffalo horn and metal: the materials behind Hammond Button Works.",
+    items: [
+      {
+        id: "buffalo",
+        name: "Buffalo Horn",
+        title: "Buffalo horn buttons",
+        blocks: [
+          [
+            "Natural texture and a calm, settled look, born of buffalo horn.",
+            "No two buttons share quite the same colour or grain, which lends clothing a quiet distinction.",
+            "A material we have made for many years, and one whose character we will keep bringing to you.",
+          ],
+          [
+            "Available in four colours: BLACK (HT01), DARK BROWN (H2), BROWN (H3) and OFF WHITE (BO).",
+            "Engraving, custom designs and custom colours are also available.",
+          ],
+        ],
+        imageAlt: "Close-up of buffalo horn buttons and toggles on a black ground",
+        gridAlt: "Buffalo horn buttons in four colours laid out in rows on a black ground",
+      },
+      {
+        id: "wood",
+        name: "Himalayan Wood",
+        title: "Himalayan wood buttons",
+        blocks: [
+          [
+            "Buttons made from wood that grows wild in the high Himalaya, strong yet warm to the touch.",
+            "Its distinctive colour and grain add character and quality to whatever you make.",
+          ],
+          [
+            "Available in three colours: dark brown, brown and beige. Engraving and custom designs are also available.",
+            "Our popular toggle buttons are also in the range.",
+          ],
+        ],
+        imageAlt: "Close-up of wood buttons and toggles on a black ground",
+        gridAlt: "Wood buttons and toggles laid out in rows on a black ground",
+      },
+      {
+        id: "dyed",
+        name: "Piece-dyed Buffalo Horn",
+        title: "Piece-dyed buffalo horn buttons",
+        blocks: [
+          [
+            "A newly developed series of buffalo horn buttons, dyed after they are made.",
+            "They keep the natural look of the material while drawing out a distinctive colour and a vintage feel.",
+            "We hope their gentle unevenness of colour and simple, honest texture bring a new accent to your garments.",
+          ],
+          [
+            "Available in six colours: BLACK, GRAY, INDIGO, MILITARY, BROWN and BEIGE.",
+            "For custom orders, please feel free to get in touch.",
+          ],
+        ],
+        imageAlt: "Close-up of piece-dyed buffalo horn buttons in six colours on a black ground",
+        gridAlt: "Piece-dyed buffalo horn buttons in six colours laid out in rows on a black ground",
+      },
+      {
+        // No owner copy for metal yet — the page shows its title and products.
+        id: "metal",
+        name: "Metal",
+        title: "Metal buttons",
+        blocks: [] as string[][],
+        imageAlt: "Metal buttons with engraved and embossed faces on a black ground",
+        gridAlt: "Metal buttons laid out in rows on a black ground",
+      },
+    ],
+    rangeTitle: "The range",
+    empty:
+      "This series is not in the online catalog yet. For samples or custom orders, please get in touch.",
+    emptyCta: "Contact us →",
+    backLink: "← All materials",
+    customLink: "Custom design & original engraving →",
   },
 
   home: {
@@ -44,6 +133,9 @@ const en = {
     guestLogin: "Trade login",
     guestOr: "or",
     guestAccess: "request access",
+    bannerAlt: "Wood and buffalo horn buttons laid out in rows on a black ground",
+    materialsTitle: "Material",
+    materialsMore: "About our materials →",
   },
 
   catalog: {
@@ -168,8 +260,19 @@ const en = {
 
   quote: {
     title: "Custom & Catalog Inquiry",
-    subtitle:
-      "We take on a wide range of custom work — original designs, logo and name engraving (刻印), and custom colors. Materials, sizes, and finishes are made to your specification. Feel free to get in touch.",
+    // Owner copy, 2026-10 ("HBW copies" sheet, 別注 tab), translated. Same
+    // block/line layout as materials.sections[].blocks.
+    customTitle: "Custom design / Original engraving",
+    customBlocks: [
+      [
+        "We make original buttons to your requirements.",
+        "From vintage-inspired pieces to entirely new designs, we take on a wide range of work.",
+      ],
+      ["We also offer brand-name engraving, sample making and laser work."],
+      ["To discuss a project, email us or contact your account representative."],
+    ],
+    bannerAlt: "Engraved metal buttons laid out in rows on a black ground",
+    inquiryTitle: "Inquiry",
     subtitleCatalog:
       "Considering doing business with us? Our product catalog is available on request — send your company name and contact person via this form and we'll follow up with the catalog and trade details.",
     preferEmail: "Prefer email? Reach us directly and we'll route your request to the right person.",

@@ -46,6 +46,21 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Banner crossfade (components/Banner.tsx): the second slide fades in over the
+   first and back out, 8s each. Reduced motion keeps the first slide only. */
+@keyframes banner-fade {
+  0%, 45% { opacity: 0; }
+  50%, 95% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.banner-fade {
+  opacity: 0;
+  animation: banner-fade 16s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .banner-fade { animation: none; }
+}
+
 /* Heritage double-line frame — mirrors the Hammond logo lockup. */
 .frame-double {
   border: 1px solid var(--foreground);

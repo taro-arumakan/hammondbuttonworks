@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { MATERIAL_SLUGS } from "@/lib/materials";
 import { PAGE_REVALIDATE, getAllProducts } from "@/lib/products";
 import { DEFAULT_LOCALE, LOCALES } from "@/lib/i18n-config";
 import { absoluteUrl } from "@/lib/seo";
@@ -28,6 +29,12 @@ export const revalidate = 3600;
 const STATIC_PATHS: { path: string; priority: number; changeFrequency: "daily" | "weekly" | "monthly" }[] = [
   { path: "", priority: 1.0, changeFrequency: "weekly" },
   { path: "/catalog", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/materials", priority: 0.6, changeFrequency: "monthly" },
+  ...MATERIAL_SLUGS.map((m) => ({
+    path: `/materials/${m}`,
+    priority: 0.7,
+    changeFrequency: "weekly" as const,
+  })),
   { path: "/quote", priority: 0.7, changeFrequency: "monthly" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
 ];

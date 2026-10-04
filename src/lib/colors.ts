@@ -43,6 +43,15 @@ const HORN: Record<string, FilterColor> = {
 };
 
 /**
+ * True when a Color option value is a natural buffalo-horn code (`BO`, `H2`,
+ * `H2xDULL`, `TH01xAG` …) rather than a plain colour word. lib/materials.ts
+ * uses it to tell natural horn from the piece-dyed series.
+ */
+export function isHornCode(option: string): boolean {
+  return Object.hasOwn(HORN, splitFinish(option.trim().toLowerCase()).base);
+}
+
+/**
  * Metal finish codes. They name a finish (antique brass, dark oxidised, … — the
  * display names are in `FINISHES` below) but all filter as one colour — the
  * owner's rule is that metal is metal.

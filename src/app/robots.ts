@@ -66,6 +66,8 @@ export default function robots(): MetadataRoute.Robots {
     "/api/",
     ...LOCALES.flatMap((l) => UTILITY_PATHS.map((p) => `/${l}/${p}`)),
     ...LOCALES.flatMap((l) => FACET_PARAMS.map((k) => `/${l}/catalog?*${k}=`)),
+    // The material pages embed the same faceted listing (CatalogBrowser).
+    ...LOCALES.flatMap((l) => FACET_PARAMS.map((k) => `/${l}/materials/*?*${k}=`)),
   ];
 
   return {
