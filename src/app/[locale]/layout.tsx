@@ -127,6 +127,26 @@ export default async function LocaleLayout({
         <main className="flex-1">{children}</main>
 
         <footer className="border-t border-line mt-16">
+          {/* The site's pages again, for every screen size: on phones the header
+              collapses to the ☰ menu, so without this the About (Craft) page
+              had no link anywhere on the page itself. */}
+          <nav
+            aria-label={dict.footer.navLabel}
+            className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-3 border-b border-line px-4 py-6 font-serif text-[15px] tracking-[0.02em]"
+          >
+            <Link href={`${home}/catalog`} className="hover:text-accent">
+              {dict.nav.catalog}
+            </Link>
+            <Link href={`${home}/materials`} className="hover:text-accent">
+              {dict.nav.materials}
+            </Link>
+            <Link href={`${home}/about`} className="hover:text-accent">
+              {dict.nav.about}
+            </Link>
+            <Link href={`${home}/quote`} className="hover:text-accent">
+              {dict.nav.quote}
+            </Link>
+          </nav>
           <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-stone-500 flex flex-col sm:flex-row items-start justify-between gap-6">
             <div className="flex items-center gap-4">
               <Logo variant="stamp" className="h-14 w-14 text-foreground shrink-0" />

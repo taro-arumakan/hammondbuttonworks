@@ -310,6 +310,7 @@ const en = {
   },
 
   footer: {
+    navLabel: "Site pages",
     brand: "Hammond Button Works",
     handcraft: "Handcrafted in Nepal · Tokyo, Japan",
     contact: "info@alvana.jp",

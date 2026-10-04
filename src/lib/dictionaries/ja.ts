@@ -307,6 +307,7 @@ const ja = {
   },
 
   footer: {
+    navLabel: "サイト内のページ",
     brand: "Hammond Button Works",
     handcraft: "ネパールの手仕事 ・ 東京（日本）",
     contact: "info@alvana.jp",
