@@ -29,9 +29,11 @@ Brown / Dull, Black / Dull" where it showed raw supplier codes that morning.
 status back to restore it. Store state: 29 active (all real), 23 archived, 1 draft (`HBT-3577`).
 The live catalog is now 56 real colourway tiles with a clean colour facet
 (White · Beige · Brown · Dark Brown · Black · Metal), no Category facet since no real product has
-one, and every tile made to order. ⚠️ Archived and draft products are still reachable by direct
-URL — `getShopifyProductByHandle()` does not filter on status and the product page does not set
-`dynamicParams: false` — so `/en/catalog/dummy-anchor` still renders the old dummy, with a 200.
+one, and every tile made to order. Since 2026-10-04 a product that is not ACTIVE also **404s at
+its own URL** (with `noindex`): `getShopifyProductByHandle()` now returns null for DRAFT and
+ARCHIVED, so `/api/price` and `/api/cart/quote` treat it as missing too. Before that, the archived
+dummies kept serving 200 with a self-canonical; they were in the sitemap, so Google drops them
+only as it recrawls.
 
 ## The two repos
 
@@ -178,8 +180,10 @@ intended state, because **the title is the 品番**.
 - **A non-zero exit does not mean nothing was written.** Refusals are per product code, so a
   run can refuse one code, print the refusal, return 1, and still have applied the others.
   Dry-run, read the per-code `writes :` lines, then commit.
-- **`DRAFT` hides a product from the catalog listing but not from its own URL.**
-  `getShopifyProducts()` filters `status:active`; `getShopifyProductByHandle()` does not.
+- **A `DRAFT` product cannot be previewed on the live site** — its URL 404s, like an archived
+  one (since 2026-10-04; `getShopifyProductByHandle()` filters on status). Use the Shopify admin's
+  preview, or flip it ACTIVE. Both readers now agree: what the listing does not show does not
+  exist anywhere on the storefront.
 - **Cutover ordering is load-bearing.** Import as DRAFT, flip at least one real product to
   ACTIVE, and *only then* delete the 23 seeded products. Reversed, no product page prerenders
   and `scripts/guard-guest-html.mjs` fails every Vercel build.

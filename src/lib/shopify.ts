@@ -201,6 +201,7 @@ export async function shopCurrency(revalidate?: number): Promise<string> {
 const PRODUCT_FIELDS = `
   id
   handle
+  status
   title
   productType
   createdAt
@@ -235,6 +236,7 @@ type RawVariant = {
 type RawProduct = {
   id: string;
   handle: string;
+  status: string;
   title: string;
   productType: string;
   createdAt: string;
@@ -326,5 +328,12 @@ export async function getShopifyProductByHandle(
     { handle },
     revalidate,
   );
-  return d.productByHandle ? mapProduct(d.productByHandle, currency) : null;
+  // productByHandle ignores status, so without this a DRAFT or ARCHIVED
+  // product still rendered (200, self-canonical, indexable) at its URL and
+  // could be priced through /api/price and /api/cart/quote. Anything the
+  // listing would not show (it queries status:active) does not exist here
+  // either: the product page 404s and the APIs report it missing — the same
+  // view checkout already has, since order-lines builds from getAllProducts.
+  const p = d.productByHandle;
+  return p && p.status === "ACTIVE" ? mapProduct(p, currency) : null;
 }
