@@ -50,16 +50,19 @@ export function materialGroupsOf(color: string, materials: readonly string[]): M
 
 /**
  * Photographs per material, by /public/images/site base name:
- *   grid   — the plain flat-lay on the /materials index (`-1200`/`-2400`)
- *   banner — the top of the material's own page (`-1200`/`-2400`)
- *   card   — the home page's Material row (`-1200` only)
+ *   grid   — the plain flat-lay on the /materials index (`-1200`/`-2400`),
+ *            trimmed to 12:5 around the buttons, one framing scale for all four
+ *   banner — the top of the material's own page (`-1200`/`-2400`), trimmed 3:1
+ *   card   — the home page's Material row (`-1200` only, 3:2)
+ * The files are cut to the aspect they display at, so nothing is cropped in
+ * CSS: the index renders `aspect-[12/5]`, the page banner `aspect-[3/1]`.
  * The owner's direction (2026-10): plain grid layouts for banners, close-ups
  * inside; nothing styled with props such as flowers. Metal has no close-up in
- * the shoot, so its page reuses the grid and its card is a crop of it.
+ * the shoot, so its banner and card are crops of its grid.
  */
 export const MATERIAL_IMAGES: Record<MaterialSlug, { grid: string; banner: string; card: string }> = {
-  buffalo: { grid: "banner-horn-grid-offwhite", banner: "material-buffalo", card: "material-buffalo" },
-  wood: { grid: "banner-wood-grid", banner: "material-wood", card: "material-wood" },
-  dyed: { grid: "banner-dyed-grid", banner: "material-dyed", card: "material-dyed" },
-  metal: { grid: "banner-metal-grid", banner: "banner-metal-grid", card: "material-metal" },
+  buffalo: { grid: "materials-grid-buffalo", banner: "materials-banner-buffalo", card: "material-buffalo" },
+  wood: { grid: "materials-grid-wood", banner: "materials-banner-wood", card: "material-wood" },
+  dyed: { grid: "materials-grid-dyed", banner: "materials-banner-dyed", card: "material-dyed" },
+  metal: { grid: "materials-grid-metal", banner: "materials-banner-metal", card: "material-metal" },
 };

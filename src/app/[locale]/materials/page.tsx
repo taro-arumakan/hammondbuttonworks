@@ -52,7 +52,7 @@ export default async function MaterialsIndexPage({
             <div className="transition duration-700 ease-out group-hover:scale-[1.02]">
               <Banner
                 images={[{ name: MATERIAL_IMAGES[item.slug].grid, alt: item.gridAlt }]}
-                className="aspect-[4/3] sm:aspect-[2/1]"
+                className="aspect-[12/5]"
                 sizes="(min-width: 1152px) 1152px, 100vw"
                 priority={i === 0}
               />
