@@ -91,6 +91,8 @@ the same eight columns, each column's guidance in the row under its own header, 
 rows. Rows beginning with `#` are ignored by the importer, so the sheet exports straight back
 to `overrides.csv` with no reformatting. ⚠️ It is a **separate copy**: nothing syncs
 automatically yet, so after staff fill it in, export it and replace `hbw/overrides.csv`.
+Column E (`construction`) was pre-filled for all 45 codes on 2026-10-04 from the photographs,
+identical to `overrides.csv`; the owner confirms it in the sheet below.
 
 `overrides.csv` columns, as of 2026-10-04:
 `code, description_html, description_ja, lead_time_days, construction, category, tags,
@@ -115,6 +117,23 @@ intended state, because **the title is the 品番**.
 
 ## Blocked on the owner — the list to show them
 
+**It has been shown to them, as [HBW オーナー確認シート](https://docs.google.com/spreadsheets/d/1fVRi4vkPw_RpGFfwZoMCH0lpHmbHmrJfLqTfGG9OMoI/edit)**
+(2026-10-04, Japanese only). Four tabs: はじめに (how to answer); 色コード (22 colour codes —
+horn codes, `xDULL`, metal finishes, plain colour words — each with photos, the filter colour,
+the English label buyers see now, a proposed Japanese label and where the mapping came from);
+穴・足の種類 (all 45 codes, front/side/back photos); 未入力の項目 (this list, per code). Each
+row has a 確認 dropdown (OK / 修正あり / わからない) plus a comment column. Yellow rows are the
+judgement calls: `H2` (photos look black), `TH01` (never in the owner's list, no photo — black is
+our placeholder), `DO` (the record says "dull ordinary"), `SP`, `AG`, and constructions
+`HBT-3578` (slots), `HTB-3581` / `HTB-3601` (toggle shape, sewn through two holes).
+⚠️ The photos are `IMAGE()` formulas: they show `#REF!` until someone clicks **Allow access** on
+the external-data banner once in a desktop browser. The 15 unregistered codes' photos are 50
+unattached files in Shopify **Files**, all named `owner-review-*` — delete them once the review
+is done (the importer uploads its own copies as product media when prices land).
+When answers come back: colour corrections go to `HORN` / `FINISHES` in `src/lib/colors.ts`,
+Japanese labels to `dict.labels.color` in `src/lib/dictionaries/ja.ts` (still English today),
+construction corrections to `hbw/overrides.csv` and HBWProductMaster column E.
+
 1. **`description_html` for all 45 codes.** The only hard blocker. It is the only prose on an
    English product page, and `--publish-ready` refuses an empty one.
 2. **Prices for 15 codes**, still blank in the sheet: `BT-3579`, `BT-3605`, `HBT-35-COMBI`,
@@ -129,14 +148,13 @@ intended state, because **the title is the 品番**.
    Japanese page with one sentence.
 5. **`lead_time_days`** wherever the real figure is not 30. This is the one master cell that
    reaches an invoice: it becomes the per-line 出荷予定 and the expected ship date on the 請求書.
-6. **Construction and style classification.** Not a publish blocker. Construction (2-hole,
-   4-hole, shank, toggle) can be pre-filled by reading the contact sheets in
-   `20260904_product_images/verify/` so the owner confirms a filled list rather than a blank
-   column.
+6. **Confirm colour codes and construction** in the owner sheet above. Not a publish blocker.
+   Construction is pre-filled for all 45; style/taste (`category`) is still empty, on purpose.
 
 ## Next, in order
 
-1. **Add `construction` and `category` columns to the master.** Owner decision, 2026-10-04:
+1. **Give `construction` and `category` their own metafields.** The master columns exist (since
+   2026-10-04) and the importer collects them, but writes neither. Owner decision, 2026-10-04:
    each filter dimension gets **its own metafield with `choices`**, not a tag — same reasoning
    as `hbw.material`, which exists precisely so the admin gets a dropdown and typos cannot
    happen. Construction and category are **per-product**; material is per-variant and already
@@ -148,10 +166,10 @@ intended state, because **the title is the 品番**.
    `hbw.description_ja` and render it the same way. Free to do now: only `hbw.pricing_segment`
    and `hbw.material` have metafield *definitions*, and Shopify cannot change a definition's
    type in place once it exists.
-3. **Publish `overrides.csv` as a Google Sheet** for staff to fill in, the way `HBWPriceList`
-   was done.
-4. **First real import: `--commit --only MEA-0212`** (1 colour, 1 size, 4 photographs). No
-   mutation payload in this importer has ever reached Shopify.
+3. ~~Publish `overrides.csv` as a Google Sheet~~ — done (HBWProductMaster). Still one-way:
+   an `--overrides-sheet` flag so the importer reads the sheet directly would remove the
+   export step.
+4. ~~First real import~~ — done 2026-10-04; 30 products registered, re-runs are no-ops.
 5. **Storefront items that gate publishing.** All pre-existing, detailed in
    [GO-LIVE.md](GO-LIVE.md) §5c. Briefly: `hbw.in_stock`, `lead_time_days` and the JA body
    have no metafield definitions. Fixed 2026-10-04: buyers now read colour labels
