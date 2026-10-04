@@ -143,6 +143,155 @@ Columns A–D are the join key and reference; only the size/price columns get ke
 logo/engraving samples are excluded (not sold). The 7 variants whose samples never arrived
 are included — they still need prices.
 
+### 5c. Product registration — the importer
+
+Lives in the **private** repo `/Users/taro/sc/hammondbuttonworks-tooling`, not here. ⚠️ It was
+originally written inside `shopify_product_management`, which is **PUBLIC** — and its README and
+~90 test fixtures quote the real wholesale ladders, so it was moved out before anything was
+committed. Never put HBW pricing in SPM. SPM is consumed as an editable **uv path dependency**
+(private → public, the safe direction), so both repos must be checked out under the same parent.
+The machinery it reuses is there:
+(`ShopifyGraphqlClient` with `ProductCreate`/`Medias`/`Metafields`/`Variants`, the Google
+Sheets interface, credentials, tests), and both of its inputs — the price sheet and
+`20260904_product_images/` — are gitignored out of this public repo.
+
+```
+/Users/taro/sc/hammondbuttonworks-tooling/
+  hbw/
+  import_products.py   planner + applier + CLI
+  price_sheet.py       the two tab shapes; price / size / material normalisation
+  images.py            manifest.csv reader, unique media names, hardlink staging
+  overrides.py         the owner-editable copy file
+  client.py            HbwClient(ShopifyGraphqlClient)
+  overrides.csv        TEMPLATE — all 45 codes, every value cell blank
+  README.md            prerequisites, gotchas, the plausibility constants
+```
+
+Run from the tooling repo root:
+
+```bash
+uv run python -m hbw.import_products
+```
+
+Tests live with that repo's own: `tests/test_hbw_price_sheet.py`, `tests/test_hbw_import.py`
+(no credentials, no network). There is also an offline mode — `--dump-sheet-csv DIR` once with
+credentials, `--sheet-csv-dir DIR` forever after — which produces an identical plan.
+
+**Dry run is the default; `--commit` is required to write, and products are created `DRAFT`.**
+That is the safety lever: `getShopifyProducts()` queries `status:active`, so a DRAFT product
+is invisible to the storefront. Import everything, inspect it in the admin, and flipping to
+ACTIVE becomes the deliberate go-live step. ⚠️ `getShopifyProductByHandle()` does **not**
+filter on status, so a draft product's own URL still renders.
+
+**What it writes** is exactly what `src/lib/shopify.ts` reads: options named `Color` and
+`Size`; size values like `20mm` / `11.5mm` (`sizeToMm` strips all but digits and dots); the
+supplier colour code verbatim in `Color`; `hbw.material` as a JSON list drawn from
+buffalo/acacia/rosewood/mango/metal, with the sheet's `brass` mapped to `metal`;
+`hbw.in_stock` = `false`, since everything is made to order; `hbw.{name_ja, short_ja,
+lead_time_days}`; handle = the code lowercased; `productType` = the Category facet.
+
+**Idempotent per product code.** Updates never go through `productSet` — it is declarative and
+would delete any variant absent from the input, which is fatal while prices arrive in batches.
+Creates use `productSet`; updates diff, then use `productVariantsBulkCreate` / `BulkUpdate`.
+Media is diffed on the Shopify `alt`, which carries a content hash so a re-shot frame
+re-uploads. Stale variants are reported and deleted only with `--prune-variants`.
+
+Two API assumptions were **proven live** against the dev store rather than assumed:
+`productByHandle` still resolves on 2026-01 and through the 2027-01 RC, and
+`productVariantsBulkCreate` *does* create option **values** that don't yet exist on a product.
+The second is what makes "run 1 prices 20mm, run 2 adds 11.5mm" work at all.
+
+**Blocked on the owner, not on code.** `overrides.csv` holds all 45 codes with every value
+cell blank, so the default dry run skips all 45 for "no Category". Category is a live filter,
+so a missing one refuses the product rather than creating something unfilterable. Minimum per
+code: `title` and `category`. Note `title_ja` is **not rendered anywhere today**
+(`localizeProduct` is a deliberate no-op for names) and `short_ja` **replaces** the description
+on JA pages rather than supplementing it.
+
+#### How to run it safely — read this before `--commit`
+
+Ten rounds of adversarial review went into the sheet-reading rules, and they now refuse every
+mis-key family that was found: a product code that is not in `manifest.csv` or `overrides.csv`,
+a homoglyph or ditto mark or annotation in a code cell, a size header out of ascending order or
+outside its tab's set, a price outside 10–10,000 JPY, a wood species that disagrees with its
+colour, a price row pasted 1–5 columns off, and a variant moved between two codes. The real
+sheet parses clean through all of it: **45 codes, 60 priced colourways, 292 priced variants,
+zero findings**. 838 tests pass.
+
+Three operational rules matter more than any of those checks, because they cover what the
+checks cannot.
+
+1. **Never pass `--prune-variants` while prices are still arriving.** Every silent-deletion
+   shape found across all ten rounds needs that flag to destroy anything. Without it the worst
+   case is an extra variant or an extra DRAFT product, which the plan prints and which a later
+   run reconciles. The first run does not need it and neither does any run before the catalogue
+   is stable.
+2. **A non-zero exit does not mean nothing was written.** Refusals are per product code, so a
+   run can refuse one code, print the refusal, return 1, and still have applied the other 29 —
+   including a deletion on a code the refusal did not name. ⚠️ So `--commit --prune-variants`
+   in one shot is *not* protected by a refusal. Dry-run first, read the plan, then commit.
+3. **Read the plan, not the summary.** The dry run is honest: every write it would make is
+   printed per code on a `writes :` line, and the first-time-pricing notices name both codes
+   when a colourway looks like it moved. At most a handful of lines. That is the last line of
+   defence and it works, but only if someone reads it.
+
+Known limits, deliberately not closed, all documented in the importer's own README:
+
+- A price-cell digit transposition inside the plausibility window — a digit swapped, say 456
+  keyed as 465 — is
+  undetectable. Nothing in the importer knows what a button should cost.
+- A wood species **and** its colour swapped consistently across two rows is undetectable; the
+  check is a bijection, so a consistent swap leaves it nothing to disagree with.
+- A price row pasted six or more columns off (on a seven-size row) leaves one corroborating
+  price, and accepting one would convict a colourway keyed at a single size, which is ordinary
+  work. The trade was taken deliberately.
+- On the **first** run only, against an empty store, a one-column paste shift cannot be caught
+  on the six priced grid codes that have no sibling colourway to compare against: `WBT-3580`,
+  `WBT-3585`, `WBT-3588`, `HTB-3581`, `HTB-3592`, `HTB-3601`. Read those six rows' ladders
+  before the first commit. From the second run on, the live store covers them.
+- A mis-key combined with a second edit in the same batch — pricing the waiting codes, or
+  tidying away the duplicate blank row the mis-key leaves behind — is **reported** by the
+  first-time-pricing notice rather than refused. See rule 3.
+
+The highest-value change still outstanding is a policy flip rather than another check: **make
+any refusal abort the whole run instead of skipping one code.** That alone makes rule 2
+unnecessary, and unlike a detection heuristic it cannot produce a false positive — the cost is
+that the operator fixes the sheet and runs again, which is what they should be doing anyway.
+
+#### Three storefront items gate publishing
+
+All pre-existing; none are the importer's to fix.
+
+1. **`TradeOrderPanel` cannot order a sparse Color × Size matrix — LATENT, not current.** It
+   seeds `sizeMm` from the product-wide `sizesMm[0]` and renders that same union as chips, so on
+   a product where one colour lacks a size another colour has, the panel can land on a variant
+   that does not exist and sit on 「計算中」 forever with add-to-cart disabled. ⚠️ **Corrected
+   2026-10-04:** this was earlier described as hitting most colourways. Checked against the 30
+   products actually registered, **none has a sparse matrix** — every priced Standard colourway
+   carries all 7 sizes, Toggle both, and the metal codes are single-colour or uniform. It will
+   fire the first time a colour is priced at a size its siblings are not, so fix it before more
+   prices land. Fix: derive the offered sizes from the selected colour, and disable the rest.
+2. **`src/lib/colors.ts` is dead code** — zero importers; the wired normaliser is `baseColor()`,
+   which splits on `(`. So the real catalogue renders ~24 raw colour facet rows (`H2`,
+   `BOxDULL`, `H3xAG`, `AB`, `DO`, …), only 7 of which have dictionary labels. Fix: take `base`
+   from `filterColorOf(color, materials)` and add `hbw.material` to `PRODUCT_FIELDS`.
+3. **`hbw.{in_stock, name_ja, short_ja, lead_time_days}` have no metafield definition**, so no
+   admin dropdown and no pinned field. Writes still work because each sends an explicit type,
+   but `scripts/define-metafields.mjs` should be extended.
+
+#### Order of operations at cutover — load-bearing
+
+Import as DRAFT, flip at least one real product to ACTIVE, and **only then** delete the 23
+seeded products. Reversed, no product page prerenders and `guard-guest-html.mjs` fails every
+Vercel deploy.
+
+First real run should be `--commit --only MEA-0212` (1 colour, 1 size, 4 photographs). No
+mutation payload in this importer has ever hit Shopify.
+
+Unrelated finding from the same work: this repo defaults `SHOPIFY_API_VERSION` to `2025-07`,
+which is past sunset and is silently served by `2025-10` — which Shopify's own
+`publicApiVersions` reports as unsupported. Nothing is broken; the pin should be deliberate.
+
 ### 6. Clear test data
 
 4 customers (`buyer@example-standard.com`, `buyer@example-plus.com`, `taro@sniarti.fi`,

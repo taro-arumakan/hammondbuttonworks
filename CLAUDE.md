@@ -1,5 +1,13 @@
 # Hammond Button Works — Project Guide (for Claude Code)
 
+> **⚠️ Start with [STATUS.md](STATUS.md).** This guide describes how the project is *built*;
+> STATUS.md says where it currently *is* — what is done, what is blocked on the owner, what to
+> do next, and which traps have already cost a session. It also names the **private** tooling
+> repo at `/Users/taro/sc/hammondbuttonworks-tooling`, which holds the product importer and is
+> not discoverable from this repo. ⚠️ That repo depends on
+> `/Users/taro/sc/shopify_product_management`, which is **PUBLIC** — never put HBW pricing
+> there. Where this guide and STATUS.md disagree, STATUS.md is newer.
+
 A from-scratch **B2B pilot storefront** for **Hammond Button Works** — a maker of
 **handcrafted natural buttons** in **buffalo horn, wood, and metal** (uncoated, natural
 finish, made to order). Production is handcrafted in **Nepal/KTM** for a **Tokyo, Japan**
@@ -23,8 +31,10 @@ validates three B2B fundamentals before a full build.
 
 ## Stack
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Zod. **No database.**
-Auth is a self-rolled signed-token magic link (Web Crypto HMAC). Cart is **Snipcart**
-(test mode), behind a swappable abstraction. Email via **Resend** (console fallback in dev).
+Auth is a self-rolled signed-token magic link (Web Crypto HMAC). ⚠️ Cart is **no longer
+Snipcart** — `src/lib/cart.ts` was removed. The cart is localStorage selections
+(`src/lib/cart-client.ts`), priced through the gated `/api/cart/quote`, and checkout creates a
+Shopify **draft order** via `/api/checkout`. Email via **Resend** (console fallback in dev).
 Deploy target: **Vercel**.
 
 ## Run / build / verify
@@ -38,8 +48,11 @@ npm run typecheck
 Demo trade accounts (see `src/lib/allowlist.ts`), magic link prints to the **server console**
 when no Resend key is set:
 - `buyer@example-standard.com` (standard tier)
-- `buyer@example-volume.com` (volume tier)
-- `buyer@example-partner.com` (partner tier)
+- `buyer@example-plus.com` (plus tier)
+
+⚠️ The three-tier model (standard/volume/partner) is retired. Customer classes are now
+**`standard` ×1.00 / `plus5` ×1.05 / `plus10` ×1.10**, from the `hbw.pricing_segment`
+customer metafield (`src/lib/customer.ts`).
 
 ## Critical invariants — DO NOT BREAK
 1. **Guests must never receive price data.** Prices resolve **server-side** in
@@ -50,8 +63,12 @@ when no Resend key is set:
    leak was found and fixed once already — keep it fixed.)
 2. **Catalog & product pages are public for SEO** — only the *prices* are gated, not the
    pages. Don't move catalog behind auth.
-3. **Product JSON is the source of truth and is Zod-validated at build.** Bad data
-   (missing SKU, non-ascending price breaks, bad hex) **fails `next build`** on purpose.
+3. ~~**Product JSON is the source of truth and is Zod-validated at build.**~~ ⚠️ **NO LONGER
+   TRUE — the backend has been Shopify since 2026-07.** `ProductSchema` in `src/lib/schema.ts`
+   has **zero importers** and the six `content/products/*.json` files have **zero readers**
+   (verified 2026-10-04), so this invariant validates nothing and `next build` cannot fail on
+   it. The build-time guard that *does* exist is `scripts/guard-guest-html.mjs` (invariant #1).
+   The legacy model is dead code and should be deleted, not maintained.
 4. The **logo wordmark is an approximation** of a custom typeface (`src/components/Logo.tsx`,
    geometric font stack + dot-in-`o` accent). Swap in the real vector/font when the owner
    provides it.
