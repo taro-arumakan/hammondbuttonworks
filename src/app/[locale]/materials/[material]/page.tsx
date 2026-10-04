@@ -70,7 +70,7 @@ export default async function MaterialPage({
     <div>
       <Banner
         images={[{ name: MATERIAL_IMAGES[slug].banner, alt: item.imageAlt }]}
-        className="aspect-[3/1]"
+        className="aspect-[12/5]"
         priority
       />
 
