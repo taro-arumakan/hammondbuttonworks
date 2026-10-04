@@ -25,11 +25,13 @@ including **104 product pages (52 products × 2 locales) with 0 price strings**,
 0 `¥`/`￥`, and buyers read colour labels — `HBW-3584` shows "Dark Brown / Dull, White / Dull,
 Brown / Dull, Black / Dull" where it showed raw supplier codes that morning.
 
-⚠️ **The 23 seeded placeholder products are still ACTIVE too**, and they sort ahead of the real
-codes, so the catalog's first page is all dummies ("Anchor", "Bark", "Cadet", "Crest"). They also
-put five junk rows in the colour facet (`Beige (Mango)`, `Brown (Rosewood)`, …, the retired
-`Colour (Species)` convention) and are the *only* source of the Category facet. Removing them is
-now safe — the cutover rule was "at least one real product ACTIVE first" — and pending a decision.
+**The 23 seeded placeholder products were ARCHIVED on 2026-10-04** — reversible; flip a product's
+status back to restore it. Store state: 29 active (all real), 23 archived, 1 draft (`HBT-3577`).
+The live catalog is now 56 real colourway tiles with a clean colour facet
+(White · Beige · Brown · Dark Brown · Black · Metal), no Category facet since no real product has
+one, and every tile made to order. ⚠️ Archived and draft products are still reachable by direct
+URL — `getShopifyProductByHandle()` does not filter on status and the product page does not set
+`dynamicParams: false` — so `/en/catalog/dummy-anchor` still renders the old dummy, with a 200.
 
 ## The two repos
 
