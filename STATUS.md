@@ -115,6 +115,36 @@ intended state, because **the title is the 品番**.
   `--allow-missing-category`); **SKU = `{CODE}-{colour}-{size}`** with no `mm` suffix.
   `hbw.name_ja` is no longer written, and `title_ja` and `category` are retired columns.
 
+## Site pages (live 2026-10-04)
+
+Built from the owner's copy sheet, **HBW copies**
+(https://docs.google.com/spreadsheets/d/1LNpKZV7AQK3Fc0UWdju4lo-es29O5JXhNebpP7rTcD8/edit, one
+tab per page; Japanese used verbatim, English translated), and the 2026-09 shoot (shared Drive
+folder https://drive.google.com/drive/folders/142S2XcuNHAs2RvaIpFJWeUh0ukOVKkUh, 50 frames
+`0826_000719`–`785`). Owner's photo rule: **plain grid flat-lays for banners, close-ups inside,
+nothing styled with props** (flowers, thread cones, wooden trays). Images are pre-sized under
+`public/images/site` and served as a plain srcset — no next/image, so no optimisation cost.
+
+- **Home**: banner crossfading the owner's two LINE picks (wood grid `742`, horn grid `731`),
+  then a Material row. **About** and **別注/カタログ問い合わせ** (`/quote`) carry the new copy
+  under banners (`732` close-up, `722` metal grid).
+- **`/materials`**: index after Le Labo's fragrance index — one flat-lay per material, name over
+  the photo. **`/materials/<buffalo|wood|dyed|metal>`**: close-up banner, copy, then the catalog
+  **pre-filtered** to that material (the same static `CatalogBrowser` as `/catalog`; robots
+  disallows its facet params the same way).
+- **Membership is derived in `src/lib/materials.ts`**, never stored: wood/metal from the
+  variant's `hbw.material` (now read by the product query); buffalo splits on the colour value
+  — a horn code (BO, H2…) is natural horn, a colour word (black, gray…) is the **piece-dyed**
+  series, because nothing in the data marks "dyed" on its own. All 56 live colourways landed
+  on exactly one page (buffalo 31, wood 6, metal 19). **dyed shows a "準備中" state until
+  BT-3579 / BT-3605 are priced and imported.**
+- **Metal has no owner copy** — its page is title + products. Ask for a paragraph.
+- The owner's own copy and sample cards name `BO` **OFF WHITE** and spell **GRAY**; the site
+  labels say White / Grey. Fold into the colour-label pass when the confirmation sheet returns.
+- ⚠️ **Preview deployments have no Shopify env vars** (`SHOPIFY_*` and `AUTH_SECRET` are
+  Production-only), so previews build an empty catalog, and they sit behind Vercel login (use
+  the deployment's Share link for outsiders).
+
 ## Blocked on the owner — the list to show them
 
 **It has been shown to them, as [HBW オーナー確認シート](https://docs.google.com/spreadsheets/d/1fVRi4vkPw_RpGFfwZoMCH0lpHmbHmrJfLqTfGG9OMoI/edit)**
