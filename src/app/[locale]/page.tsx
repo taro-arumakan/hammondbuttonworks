@@ -45,7 +45,7 @@ export default async function HomePage({
     .slice(0, 8)
     .map((p) => localizeProduct(p, locale));
   const tiles = products
-    .map((p) => toColorways([p])[0])
+    .map((p) => toColorways([p], dict.labels.color)[0])
     .filter((cw): cw is NonNullable<typeof cw> => !!cw);
 
   return (
@@ -110,6 +110,7 @@ export default async function HomePage({
               name={cw.product.name}
               category={cw.product.category}
               color={cw.color}
+              colorLabel={cw.colorLabel}
               image={cw.image}
               sizesMm={cw.variants.map((v) => v.sizeMm)}
               locale={locale}

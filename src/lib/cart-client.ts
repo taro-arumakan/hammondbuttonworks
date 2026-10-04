@@ -16,7 +16,10 @@ export type CartItem = {
   slug: string;
   sku: string;
   name: string; // display only — server re-resolves authoritative data
-  color: string;
+  color: string; // exact option value
+  /** Display only, as labelled where it was added. Absent on carts saved
+   *  before colour labels existed — show `color` then. */
+  colorLabel?: string;
   sizeMm: number;
   qty: number;
   engraving: boolean;

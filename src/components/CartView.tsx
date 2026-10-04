@@ -168,7 +168,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
                 <div className="min-w-0 flex-1">
                   <p className="font-serif text-lg leading-tight text-foreground">{i.name}</p>
                   <p className="mt-0.5 text-xs uppercase tracking-wide text-stone-500">
-                    {i.color} · {i.sizeMm}mm · {i.sku}
+                    {i.colorLabel ?? i.color} · {i.sizeMm}mm · {i.sku}
                   </p>
                   {i.engraving && (
                     <p className="mt-0.5 text-xs text-accent">{t.engravingYes}</p>

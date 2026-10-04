@@ -139,12 +139,11 @@ intended state, because **the title is the 品番**.
 4. **First real import: `--commit --only MEA-0212`** (1 colour, 1 size, 4 photographs). No
    mutation payload in this importer has ever reached Shopify.
 5. **Storefront items that gate publishing.** All pre-existing, detailed in
-   [GO-LIVE.md](GO-LIVE.md) §5c. Briefly: `src/lib/colors.ts`
-   has zero importers so buyers see raw supplier codes like `H2xDULL` and `BOxDULL` on the
-   product page and in the order panel — confirmed on the real `HBW-3584` page, 2026-10-04; and `hbw.in_stock`, `lead_time_days` and the JA body have no
-   metafield definitions. Also one line: [ProductCard.tsx:66](src/components/ProductCard.tsx:66)
-   renders `{categoryLabel} ·` unconditionally, so an empty category shows a stray middot on
-   all 60 tiles.
+   [GO-LIVE.md](GO-LIVE.md) §5c. Briefly: `hbw.in_stock`, `lead_time_days` and the JA body
+   have no metafield definitions. Fixed 2026-10-04: buyers now read colour labels
+   ("Dark Brown / Dull"), not supplier codes (`H2xDULL`) — the metal finish names still need
+   the owner's confirmation, see §5c item 2 — and an empty Category no longer shows a blank
+   spec row, a stray middot on every tile, or a sidebar heading with no options.
 
 ## Two operational facts worth knowing
 

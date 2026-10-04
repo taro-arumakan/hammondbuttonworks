@@ -1,5 +1,6 @@
 import type { ShopifyProduct, ShopifyVariant } from "./shopify";
 import type { Locale } from "./i18n-config";
+import { FILTER_COLORS, colorLabels, filterColorOf } from "./colors";
 
 /**
  * Catalog filtering / sorting / pagination — pure helpers (Sterling-style
@@ -34,15 +35,35 @@ export type Availability = "in" | "mto";
 export type CatalogQuery = {
   categories: string[]; // lowercased productType tokens
   sizes: number[]; // mm
-  colors: string[]; // base color tokens, e.g. "Brown" from "Brown (Rosewood)"
+  colors: string[]; // facet tokens (see `facetColor`), e.g. "dark brown" for H2 and HB01
   stock: Availability[];
   sort: SortKey;
   page: number; // 1-based
 };
 
-/** "Brown (Rosewood)" → "Brown" — the display color, without the species. */
-export function baseColor(colorValue: string): string {
-  return colorValue.split("(")[0].trim();
+/**
+ * The colour facet token for a Color option value: its filter colour, called
+ * with NO materials — exactly what the importer's admission gate checks
+ * (`storefront_filter_color`), so every colour it lets in resolves here, and
+ * PRODUCT_FIELDS never needs to fetch `hbw.material`. An unmapped value (only
+ * the seeded placeholders have any) stays its own token, so it shows in the
+ * sidebar as a visible gap rather than dropping out of the colour filter.
+ */
+export function facetColor(colorValue: string): string {
+  return filterColorOf(colorValue, []) ?? colorValue.trim();
+}
+
+/**
+ * Display labels for every colour a product shows, keyed by exact option
+ * value — the one call every colour-showing surface goes through, so the
+ * no-two-colourways-alike rule (see `colorLabels`) holds on all of them.
+ * `names` is the locale's `dict.labels.color`.
+ */
+export function productColorLabels(
+  p: Pick<ShopifyProduct, "slug" | "colors" | "variants">,
+  names: Readonly<Record<string, string>>,
+): Record<string, string> {
+  return colorLabels([...p.colors, ...p.variants.map((v) => v.color)], names, p.slug);
 }
 
 // --- Colourways ------------------------------------------------------------------
@@ -51,14 +72,21 @@ export function baseColor(colorValue: string): string {
 export type Colorway = {
   key: string; // `${slug}::${color}` — stable React key
   product: ShopifyProduct;
-  color: string; // exact option value, e.g. "Brown (Rosewood)"
-  base: string; // facet token, e.g. "Brown"
+  color: string; // exact option value, e.g. "H2xDULL" — an identity, never relabelled
+  filterColor: string; // facet token, e.g. "dark brown"
+  colorLabel: string; // what the buyer reads, e.g. "Dark Brown / Dull"
   image?: string; // that colour's variant image, else the product's featured photo
   variants: ShopifyVariant[]; // the sizes available in this colour
 };
 
-/** Explode products into one entry per colour, preserving the declared order. */
-export function toColorways(products: ShopifyProduct[]): Colorway[] {
+/**
+ * Explode products into one entry per colour, preserving the declared order.
+ * `colorNames` is the locale's `dict.labels.color`, for each tile's label.
+ */
+export function toColorways(
+  products: ShopifyProduct[],
+  colorNames: Readonly<Record<string, string>>,
+): Colorway[] {
   const out: Colorway[] = [];
   for (const p of products) {
     const byColor = new Map<string, ShopifyVariant[]>();
@@ -69,9 +97,18 @@ export function toColorways(products: ShopifyProduct[]): Colorway[] {
     }
     if (byColor.size === 0) {
       // Defensive: a product with no variants still gets one tile.
-      out.push({ key: p.slug, product: p, color: "", base: "", image: p.image, variants: [] });
+      out.push({
+        key: p.slug,
+        product: p,
+        color: "",
+        filterColor: "",
+        colorLabel: "",
+        image: p.image,
+        variants: [],
+      });
       continue;
     }
+    const labels = productColorLabels(p, colorNames);
     const order = p.colors.length ? p.colors : [...byColor.keys()];
     for (const color of order) {
       const variants = byColor.get(color);
@@ -80,7 +117,8 @@ export function toColorways(products: ShopifyProduct[]): Colorway[] {
         key: `${p.slug}::${color}`,
         product: p,
         color,
-        base: baseColor(color),
+        filterColor: facetColor(color),
+        colorLabel: labels[color] ?? color,
         image: variants.find((v) => v.image)?.image ?? p.image,
         variants,
       });
@@ -105,10 +143,11 @@ export type CatalogTile = {
   key: string; // `${slug}::${color}`
   slug: string;
   name: string;
-  color: string; // exact option value, e.g. "Brown (Rosewood)"
-  base: string; // facet token, e.g. "Brown"
+  color: string; // exact option value, e.g. "H2xDULL" — an identity, never relabelled
+  filterColor: string; // facet token, e.g. "dark brown"
+  colorLabel: string; // what the buyer reads, e.g. "Dark Brown / Dull"
   image?: string;
-  category: string; // productType (display case; compared lowercased)
+  category: string; // productType (display case; compared lowercased; may be empty)
   createdAt: string; // ISO, for "newest"
   currency: string;
   sizesMm: number[]; // sizes available in this colour
@@ -123,7 +162,8 @@ export function toTiles(colorways: Colorway[]): CatalogTile[] {
     slug: cw.product.slug,
     name: cw.product.name,
     color: cw.color,
-    base: cw.base,
+    filterColor: cw.filterColor,
+    colorLabel: cw.colorLabel,
     image: cw.image,
     category: cw.product.category,
     createdAt: cw.product.createdAt,
@@ -179,7 +219,7 @@ function matchesDimension(t: CatalogTile, q: CatalogQuery, dim: Dimension): bool
     case "colors":
       // Exact: a colour filter matches the tile's own colour, not "the product
       // has some variant in this colour".
-      return q.colors.length === 0 || q.colors.includes(t.base);
+      return q.colors.length === 0 || q.colors.includes(t.filterColor);
     case "stock":
       return (
         q.stock.length === 0 ||
@@ -218,11 +258,14 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
   const forColors = crossFiltered(tiles, q, "colors");
   const forStock = crossFiltered(tiles, q, "stock");
 
+  // An empty productType is not a category — real products deliberately have
+  // none yet — so it gets no (blank) option; with none at all the dimension
+  // has no options and the sidebar hides it.
   const categories = new Map<string, number>();
-  for (const t of tiles) categories.set(t.category.toLowerCase(), 0);
+  for (const t of tiles) if (t.category.trim()) categories.set(t.category.toLowerCase(), 0);
   for (const t of forCategories) {
     const k = t.category.toLowerCase();
-    categories.set(k, (categories.get(k) ?? 0) + 1);
+    if (categories.has(k)) categories.set(k, (categories.get(k) ?? 0) + 1);
   }
 
   const sizes = new Map<number, number>();
@@ -232,8 +275,15 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
   }
 
   const colors = new Map<string, number>();
-  for (const t of tiles) if (!colors.has(t.base)) colors.set(t.base, 0);
-  for (const t of forColors) colors.set(t.base, (colors.get(t.base) ?? 0) + 1);
+  for (const t of tiles) if (t.filterColor && !colors.has(t.filterColor)) colors.set(t.filterColor, 0);
+  for (const t of forColors) {
+    if (colors.has(t.filterColor)) colors.set(t.filterColor, (colors.get(t.filterColor) ?? 0) + 1);
+  }
+  // FILTER_COLORS order (light → dark, metal last); unmapped tokens after it.
+  const colorRank = (c: string) => {
+    const i = (FILTER_COLORS as readonly string[]).indexOf(c);
+    return i === -1 ? FILTER_COLORS.length : i;
+  };
 
   const stock: Record<Availability, number> = { in: 0, mto: 0 };
   for (const t of forStock) {
@@ -247,7 +297,7 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
       .sort((a, b) => a[0] - b[0])
       .map(([value, count]) => ({ value: String(value), count })),
     colors: [...colors.entries()]
-      .sort((a, b) => a[0].localeCompare(b[0]))
+      .sort((a, b) => colorRank(a[0]) - colorRank(b[0]) || a[0].localeCompare(b[0]))
       .map(([value, count]) => ({ value, count })),
     stock,
   };

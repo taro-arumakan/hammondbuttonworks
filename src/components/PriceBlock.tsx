@@ -26,6 +26,7 @@ export function PriceBlock({
   slug,
   leadTimeDays,
   colors,
+  colorLabels,
   sizesMm,
   variants,
   productName,
@@ -35,6 +36,8 @@ export function PriceBlock({
   slug: string;
   leadTimeDays: number;
   colors: string[];
+  /** Display label per exact colour value (price-free; see productColorLabels). */
+  colorLabels: Record<string, string>;
   sizesMm: number[];
   variants: VariantView[];
   productName: string;
@@ -85,6 +88,7 @@ export function PriceBlock({
       slug={slug}
       leadTimeDays={leadTimeDays}
       colors={colors}
+      colorLabels={colorLabels}
       initialColor={initialColor || undefined}
       sizesMm={sizesMm}
       locale={locale}

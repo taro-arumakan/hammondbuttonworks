@@ -22,6 +22,9 @@ type Props = {
   slug: string;
   leadTimeDays: number;
   colors: string[];
+  /** Display label per exact colour value. Chips SHOW the label; state, the
+   *  `?color=` preselect and the variant match all stay on the value. */
+  colorLabels: Record<string, string>;
   /** Preselected colour, from the catalog tile's `?color=` link. */
   initialColor?: string;
   sizesMm: number[];
@@ -46,6 +49,7 @@ export function TradeOrderPanel({
   slug,
   leadTimeDays,
   colors,
+  colorLabels,
   initialColor,
   sizesMm,
   variants,
@@ -111,7 +115,7 @@ export function TradeOrderPanel({
         <div className="mt-2 flex flex-wrap gap-2">
           {colors.map((c) => (
             <button key={c} type="button" onClick={() => setColor(c)} className={chip(c === color)}>
-              {c}
+              {colorLabels[c] ?? c}
             </button>
           ))}
         </div>
@@ -204,6 +208,7 @@ export function TradeOrderPanel({
             sku: selected.sku,
             name: productName,
             color: selected.color,
+            colorLabel: colorLabels[selected.color] ?? selected.color,
             sizeMm: selected.sizeMm,
             qty,
             engraving,

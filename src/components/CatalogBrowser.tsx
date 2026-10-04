@@ -170,16 +170,23 @@ export function CatalogBrowser({
   const facets = useMemo(() => facetCounts(tiles, query), [tiles, query]);
   const f = dict.catalog.filters;
   const groups: FilterGroup[] = [
-    {
-      key: "category",
-      title: f.category,
-      options: facets.categories.map(({ value, count }) => ({
-        value,
-        label: dict.labels.category[value] ?? value,
-        count,
-        active: query.categories.includes(value),
-      })),
-    },
+    // No product has a category yet (productType is deliberately empty until
+    // the owner classifies the range), and facetCounts gives an empty one no
+    // option — so the whole dimension hides rather than showing a bare heading.
+    ...(facets.categories.length
+      ? [
+          {
+            key: "category",
+            title: f.category,
+            options: facets.categories.map(({ value, count }) => ({
+              value,
+              label: dict.labels.category[value] ?? value,
+              count,
+              active: query.categories.includes(value),
+            })),
+          },
+        ]
+      : []),
     {
       key: "size",
       title: f.size,
@@ -285,6 +292,7 @@ export function CatalogBrowser({
                 name={t.name}
                 category={t.category}
                 color={t.color}
+                colorLabel={t.colorLabel}
                 image={t.image}
                 sizesMm={t.sizesMm}
                 locale={locale}

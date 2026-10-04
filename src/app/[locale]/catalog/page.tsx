@@ -55,7 +55,7 @@ export default async function CatalogPage({
   // The grid's unit is the colourway (product × colour) — each tile carries that
   // colour's own photo. `toTiles` strips variants/prices: what crosses into the
   // client payload here must never include a price (invariant #1).
-  const tiles = toTiles(toColorways(products));
+  const tiles = toTiles(toColorways(products, dict.labels.color));
 
   // Plain listing — no heading/description/guest banner (owner direction,
   // 2026-07); the per-card "Trade pricing — sign in" tag carries the hint.

@@ -240,8 +240,19 @@ const en = {
       "dark brown": "Dark Brown",
       indigo: "Indigo",
       military: "Military",
-      // Dyed buffalo (BT-3579 / BT-3605). Shown with the qualifier, but they
-      // filter as the plain colour — see displayColorKey in lib/colors.ts.
+      // Finishes (FINISHES in lib/colors.ts): a metal code shows its finish
+      // alone ("Antique Brass"); a horn code with a suffix shows both
+      // ("Dark Brown / Dull", "Brown / Antique Gold") — see colorLabels.
+      "antique nickel": "Antique Nickel",
+      "antique silver": "Antique Silver",
+      "dark oxidised": "Dark Oxidised",
+      brass: "Brass",
+      "bright silver": "Bright Silver",
+      "antique gold": "Antique Gold",
+      dull: "Dull",
+      // Dyed buffalo (BT-3579 / BT-3605). Not shown yet: the qualifier belongs
+      // to the product (its category, still undecided), never to the colour
+      // value — they display and filter as the plain colour until then.
       "dyed-black": "Dyed Black",
       "dyed-brown": "Dyed Brown",
       "dyed-beige": "Dyed Beige",

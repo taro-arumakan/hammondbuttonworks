@@ -7,6 +7,7 @@ import { localizeProduct } from "@/lib/localize";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
 import { localeAlternates } from "@/lib/seo";
+import { productColorLabels } from "@/lib/catalog";
 import { PriceBlock } from "@/components/PriceBlock";
 
 // Static + ISR: no session reads in the render path. Guests/crawlers hit the
@@ -78,9 +79,15 @@ export default async function ProductPage({
   if (!base) notFound();
   const product = localizeProduct(base, locale);
 
-  const categoryLabel = dict.labels.category[product.category?.toLowerCase()] ?? product.category;
+  const category = product.category?.trim();
+  const categoryLabel = category ? (dict.labels.category[category.toLowerCase()] ?? category) : "";
   const sizes = product.sizesMm.map((s) => `${s}mm`).join(", ");
-  const colors = product.colors.join(locale === "ja" ? "・" : ", ");
+  // Labels are display-only, keyed by the exact option value (an identity the
+  // order panel and /api/price still compare) — see productColorLabels.
+  const colorLabels = productColorLabels(product, dict.labels.color);
+  const colors = product.colors
+    .map((c) => colorLabels[c] ?? c)
+    .join(locale === "ja" ? "・" : ", ");
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -108,7 +115,9 @@ export default async function ProductPage({
 
           <h2 className="mt-8 text-lg font-semibold">{dict.product.specs}</h2>
           <dl className="mt-2">
-            <Spec label={dict.product.category} value={categoryLabel} />
+            {/* productType is deliberately empty until the owner classifies
+                the range — no row beats a row with a blank value. */}
+            {categoryLabel && <Spec label={dict.product.category} value={categoryLabel} />}
             <Spec label={dict.product.sizes} value={sizes} />
             <Spec label={dict.product.colors} value={colors} />
             <Spec
@@ -140,6 +149,7 @@ export default async function ProductPage({
               productName={product.name}
               leadTimeDays={product.leadTimeDays}
               colors={product.colors}
+              colorLabels={colorLabels}
               sizesMm={product.sizesMm}
               variants={product.variants.map((v) => ({
                 sku: v.sku,

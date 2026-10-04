@@ -271,10 +271,24 @@ All pre-existing; none are the importer's to fix.
    carries all 7 sizes, Toggle both, and the metal codes are single-colour or uniform. It will
    fire the first time a colour is priced at a size its siblings are not, so fix it before more
    prices land. Fix: derive the offered sizes from the selected colour, and disable the rest.
-2. **`src/lib/colors.ts` is dead code** — zero importers; the wired normaliser is `baseColor()`,
-   which splits on `(`. So the real catalogue renders ~24 raw colour facet rows (`H2`,
-   `BOxDULL`, `H3xAG`, `AB`, `DO`, …), only 7 of which have dictionary labels. Fix: take `base`
-   from `filterColorOf(color, materials)` and add `hbw.material` to `PRODUCT_FIELDS`.
+2. ~~**`src/lib/colors.ts` is dead code**~~ **Fixed 2026-10-04.** `baseColor()` is gone. The
+   colour facet groups by `filterColorOf(color, [])` — with NO materials, deliberately: that is
+   the exact call the importer's admission gate makes (`storefront_filter_color`), so every
+   colour it admits resolves, and `PRODUCT_FIELDS` does not fetch `hbw.material`. What a buyer
+   reads comes from `colorLabels()` — `H2xDULL` → "Dark Brown / Dull", `AB` → "Antique Brass",
+   `H3xAG` → "Brown / Antique Gold" — on the product page, the order-panel chips, the catalog
+   tiles and the cart. Two colourways of one product never share a label: a collision gets the
+   code appended ("Dark Brown (H2)" beside "Dark Brown (HB01)"), and one that survives that
+   throws. ⚠️ That throw **fails a deploy** — but during the hourly ISR refresh it fails
+   **silently**: Next keeps serving the last good catalog page, so newly activated or archived
+   products simply stop appearing and nobody is alerted, and a product page rendered on demand
+   returns a 500. It can only arise from a colour value typed by hand in the Shopify admin,
+   since the importer refuses any colour that does not resolve. The colour **value** is untouched everywhere it is an
+   identity (`/api/price`, `?color=`, the cart). ⚠️ **Owner to confirm the metal finish names**,
+   read off the photographs: only AB = antique brass was recorded; AN antique nickel, AS
+   antique silver, DO dark oxidised and B brass are inferred; SP bright silver and AG antique
+   gold are low confidence (the 15mm `H3xAG` COMBI sample looks like an AS piece). The JA colour
+   labels are still English (parked).
 3. **`hbw.{in_stock, name_ja, short_ja, lead_time_days}` have no metafield definition**, so no
    admin dropdown and no pinned field. Writes still work because each sends an explicit type,
    but `scripts/define-metafields.mjs` should be extended.

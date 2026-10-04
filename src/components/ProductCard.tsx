@@ -21,6 +21,7 @@ export function ProductCard({
   name,
   category,
   color,
+  colorLabel,
   image,
   sizesMm,
   locale,
@@ -29,15 +30,22 @@ export function ProductCard({
   slug: string;
   name: string;
   category: string;
-  color: string;
+  color: string; // exact option value — the identity the link carries
+  colorLabel: string; // what the buyer reads (see productColorLabels)
   image?: string;
   sizesMm: number[]; // sizes available in THIS colour
   locale: Locale;
   dict: Dictionary;
 }) {
   const minMm = sizesMm.length ? Math.min(...sizesMm) : 0;
-  const categoryLabel = dict.labels.category[category?.toLowerCase()] ?? category;
-  const colorLabel = dict.labels.color[color.toLowerCase()] ?? color;
+  const categoryLabel = category?.trim()
+    ? (dict.labels.category[category.toLowerCase()] ?? category)
+    : "";
+  // Colour leads the meta line — it's what distinguishes sibling tiles. An
+  // empty category is skipped, not rendered as a stray "·".
+  const meta = [color ? colorLabel : "", categoryLabel, `${dict.catalog.fromLigne} ${minMm}mm`]
+    .filter(Boolean)
+    .join(" · ");
   const href = color
     ? `/${locale}/catalog/${slug}?color=${encodeURIComponent(color)}`
     : `/${locale}/catalog/${slug}`;
@@ -47,7 +55,7 @@ export function ProductCard({
       <div className="aspect-square overflow-hidden bg-stone-100">
         {image ? (
           <img
-            alt={color ? `${name} — ${color}` : name}
+            alt={color ? `${name} — ${colorLabel}` : name}
             src={image}
             className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />
@@ -61,10 +69,8 @@ export function ProductCard({
         <h3 className="font-serif text-[17px] leading-tight tracking-[0.09em] text-foreground">
           {name}
         </h3>
-        {/* Colour leads the meta line — it's what distinguishes sibling tiles. */}
         <p className="mt-[10px] text-[11px] uppercase tracking-[0.08em] text-stone-600">
-          {color ? `${colorLabel} · ` : ""}
-          {categoryLabel} · {dict.catalog.fromLigne} {minMm}mm
+          {meta}
         </p>
         <TilePrice
           slug={slug}
