@@ -14,12 +14,22 @@ the `README.md` in the tooling repo named below.
 
 ## Where the project is
 
-The storefront is **live** at https://hammondbutton.works and contains **no real products** —
-the 23 products in Shopify are seeded placeholders. The current job is registering the real
-catalogue: **45 product codes, 60 priced colourways, 292 priced variants.**
+**29 real products are ACTIVE on https://hammondbutton.works** as of 2026-10-04 — every priced
+code except `HBT-3577`, whose `BO` sample was never photographed, so it stays DRAFT rather than
+show another colour's button on that tile. They went live **without descriptions**, deliberately
+(owner decision): the live pages show the owner exactly what is missing. The other 15 codes have
+no prices yet and are not registered.
 
-An importer for that exists and has been reviewed hard. What is holding up a first real import
-is **owner-supplied prose, not code.**
+Verified on the live site after the deploy: the build's `guard-guest-html` scanned 232 files
+including **104 product pages (52 products × 2 locales) with 0 price strings**, guest HTML carries
+0 `¥`/`￥`, and buyers read colour labels — `HBW-3584` shows "Dark Brown / Dull, White / Dull,
+Brown / Dull, Black / Dull" where it showed raw supplier codes that morning.
+
+⚠️ **The 23 seeded placeholder products are still ACTIVE too**, and they sort ahead of the real
+codes, so the catalog's first page is all dummies ("Anchor", "Bark", "Cadet", "Crest"). They also
+put five junk rows in the colour facet (`Beige (Mango)`, `Brown (Rosewood)`, …, the retired
+`Colour (Species)` convention) and are the *only* source of the Category facet. Removing them is
+now safe — the cutover rule was "at least one real product ACTIVE first" — and pending a decision.
 
 ## The two repos
 
