@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Marcellus, Zen_Old_Mincho } from "next/font/google";
+import { Hanken_Grotesk, Marcellus, Zen_Old_Mincho } from "next/font/google";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
 import { siteUrl } from "@/lib/seo";
@@ -34,6 +34,18 @@ const jp = Zen_Old_Mincho({
   variable: "--font-jp",
   display: "swap",
   preload: false,
+});
+
+// English body text (2026-10): a grotesque under Marcellus, as niceness.jp sets
+// Basis Grotesque under its serif. Marcellus stays single-weight for display;
+// the weights (medium for buttons/labels, semibold for prices) come from here.
+// Variable font, so every weight ships in one file. Japanese pages never use it:
+// the [lang="ja"] rule in globals.css puts Zen Old Mincho first for body text,
+// Latin included, so Mincho kana are never set beside grotesque Latin.
+const body = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
 });
 
 export function generateStaticParams() {
@@ -84,7 +96,7 @@ export default async function LocaleLayout({
   // driven by the display-hint cookie (see lib/hint-cookie.ts).
 
   return (
-    <html lang={locale} className={`${display.variable} ${jp.variable}`}>
+    <html lang={locale} className={`${display.variable} ${jp.variable} ${body.variable}`}>
       <body className="min-h-screen flex flex-col">
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
           <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">

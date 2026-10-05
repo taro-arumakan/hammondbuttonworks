@@ -22,6 +22,8 @@
      The sans stack CANNOT use the same trick — ui-sans-serif/system-ui DO cover
      Japanese (system Gothic) and would intercept it — so JA body is handled by
      the `[lang="ja"]` override below instead. */
+  /* --font-sans: Hanken Grotesk on English pages (--font-body, next/font in
+     [locale]/layout.tsx); the system sans only if that variable is missing. */
   --font-sans: var(--font-body, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
   --font-serif: var(--font-display, ui-serif, Georgia, "Times New Roman"), var(--font-jp), serif;
 }
@@ -34,8 +36,11 @@ html {
    to Mincho instead of the system Gothic that ui-sans-serif/system-ui supply.
    Overriding the custom property on the <html lang="ja"> ancestor cascades to
    `body` and every `font-sans` element. Mincho's own text-weight Latin covers
-   the occasional Latin word/number in JA body. (Headings use --font-serif, which
-   already resolves Marcellus→Mincho, so this only needs to fix sans.) */
+   the occasional Latin word/number in JA body — deliberately NOT Hanken Grotesk:
+   Japanese typesetting pairs Mincho with serif Latin, and grotesque capitals and
+   numerals beside Mincho kana (BLACK（HT01）, 20mm) read as a mismatch.
+   (Headings use --font-serif, which already resolves Marcellus→Mincho, so this
+   only needs to fix sans.) */
 [lang="ja"] {
   --font-sans: var(--font-jp), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }

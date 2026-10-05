@@ -146,7 +146,10 @@ Zen Old Mincho reaches Japanese two ways: (1) it's the **CJK fallback on `--font
 — `ui-sans-serif`/`system-ui` themselves cover Japanese (system Gothic) and intercept it —
 so a `[lang="ja"]` rule in globals.css **overrides `--font-sans` to lead with Zen Old
 Mincho** on Japanese pages (cascades to `body` + every `font-sans` element). Net: EN pages
-= Marcellus headings/nav + sans body; JA pages = Mincho throughout (incl. body/About).
+= Marcellus headings/nav + **Hanken Grotesk** body (`--font-body`, variable, since 2026-10 —
+niceness sets Basis Grotesque under its serif; the weights for buttons/prices live here, so
+Marcellus stays one weight); JA pages = Mincho throughout (incl. body/About and the Latin
+inside it — Mincho kana beside grotesque Latin is the one mix to avoid).
 Menu links use `font-serif` (serif nav, like niceness) in the desktop layout and `MobileNav`. A **double-line frame** motif (`.frame-double`) mirrors
 the logo. Product listing is a **flat, gridline-separated grid** (FreshService-style):
 container draws top/left edge, each cell draws right/bottom. Footer carries the circular
