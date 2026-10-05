@@ -244,7 +244,12 @@ construction corrections to `hbw/overrides.csv` and HBWProductMaster column E.
 
 ## Unverified — do not claim these work
 
-- **No `--commit` has ever run.** No mutation payload in the importer has reached Shopify.
+- ~~No `--commit` has ever run.~~ Superseded 2026-10-04: the first real import registered 30
+  products (Jira OT-19, closed).
+- ⚠️ **Customer price classes were never migrated** to `standard` / `plus5` / `plus10`
+  (2026-09-04). `taro@sniarti.fi`, `taro.rmkn@gmail.com` and `buyer@example-plus.com` still
+  hold `plus`, which `resolveTradeAccount` treats as "no access" — they cannot log in. Set each
+  to `plus5` or `plus10` in Shopify. Tracked in Jira OT-24 with the runbook refresh.
 - **Cart → `/api/checkout` → draft order has never been run end to end on the current Vercel
   project.** The `write_draft_orders` scope is granted; the path is unproven.
 - The 請求書 Order Printer template is referenced in the staff runbook but has never been
