@@ -128,7 +128,7 @@ export default async function LocaleLayout({
 
         <footer className="border-t border-line mt-16">
           {/* The site's pages again, for every screen size: on phones the header
-              collapses to the ☰ menu, so without this the About (Craft) page
+              collapses to the ☰ menu, so without this the About page
               had no link anywhere on the page itself. */}
           <nav
             aria-label={dict.footer.navLabel}

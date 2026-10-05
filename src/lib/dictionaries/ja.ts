@@ -6,12 +6,13 @@ const ja = {
   langName: "日本語",
 
   nav: {
-    // Menu keeps the English display words for Product/Craft (brand voice),
-    // Japanese for the inquiry/login items — per owner direction. 別注 and
-    // catalog inquiries share one contact form.
+    // Menu keeps English display words for Product/Material/About (brand
+    // voice), Japanese for the inquiry/login items — per owner direction. 別注
+    // and catalog inquiries share one contact form. About was labelled "Craft"
+    // until 2026-10-05; renamed to match the page's own ABOUT heading.
     catalog: "Product",
     materials: "Material",
-    about: "Craft",
+    about: "About",
     quote: "別注/カタログ問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",

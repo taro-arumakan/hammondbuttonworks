@@ -9,7 +9,7 @@ const en = {
   nav: {
     catalog: "Product",
     materials: "Material",
-    about: "Craft",
+    about: "About",
     quote: "Custom & Catalog Inquiry",
     login: "Login",
     cartPrefix: "Cart",
