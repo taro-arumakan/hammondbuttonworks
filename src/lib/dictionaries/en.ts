@@ -271,7 +271,7 @@ const en = {
       ["We also offer brand-name engraving, sample making and laser work."],
       ["To discuss a project, email us or contact your account representative."],
     ],
-    bannerAlt: "Engraved metal buttons laid out in rows on a black ground",
+    bannerAlt: "Close-up of buffalo horn buttons, some engraved HAMMOND H.B.W., scattered on a black ground",
     inquiryTitle: "Inquiry",
     subtitleCatalog:
       "Considering doing business with us? Our product catalog is available on request — send your company name and contact person via this form and we'll follow up with the catalog and trade details.",

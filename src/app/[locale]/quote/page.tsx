@@ -39,7 +39,7 @@ export default async function QuotePage({
   return (
     <div>
       <Banner
-        images={[{ name: "banner-metal-grid", alt: dict.quote.bannerAlt }]}
+        images={[{ name: "quote-horn-closeup", alt: dict.quote.bannerAlt }]}
         className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"
         priority
       />

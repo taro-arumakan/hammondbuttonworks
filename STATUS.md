@@ -127,7 +127,7 @@ nothing styled with props** (flowers, thread cones, wooden trays). Images are pr
 
 - **Home**: banner crossfading the owner's two LINE picks (wood grid `742`, horn grid `731`),
   then a Material row. **About** and **別注/カタログ問い合わせ** (`/quote`) carry the new copy
-  under banners (`732` close-up, `722` metal grid).
+  under banners (`732` close-up; the quote page uses the owner's own 16:9 crop of `732`, rotated ~5.6° and lifted, as `quote-horn-closeup`).
 - **`/materials`**: index after Le Labo's fragrance index — one flat-lay per material, name over
   the photo. **`/materials/<buffalo|wood|dyed|metal>`**: close-up banner, copy, then the catalog
   **pre-filtered** to that material (the same static `CatalogBrowser` as `/catalog`; robots
