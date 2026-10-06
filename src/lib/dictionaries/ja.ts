@@ -117,8 +117,10 @@ const ja = {
     // read awkwardly, so headlines/section titles use the English original.
     eyebrow: "Handcrafted natural buttons · Buffalo · Wood · Metal",
     title: "Buttons of horn, wood & metal — handcrafted, made to order.",
+    // Owner copy, verbatim (2026-10). Line breaks are the owner's; the hero
+    // renders them with whitespace-pre-line.
     subtitle:
-      "アパレルメーカー様向けの、天然水牛ホーン・ウッド・メタルボタン。手仕上げ・無塗装で、小ロット・サイズ別注に対応します。",
+      "アパレルブランドのモノづくりを支える、オリジナルボタンの企画・生産。\n水牛、ウッド、メタル、それぞれの素材が持つ表情を生かし、手仕事で丁寧に仕上げます。\n小ロットの生産からサイズ別注まで、柔軟に対応。ブランドの意図をくみ取り、ご希望の仕様や数量に合わせたボタンをご提供いたします。",
     browse: "カタログを見る",
     requestQuote: "見積もりを依頼",
     props: [
