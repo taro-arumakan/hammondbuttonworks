@@ -132,7 +132,7 @@ const ja = {
     guestLogin: "取引先ログイン",
     guestOr: "または",
     guestAccess: "アクセスを申請",
-    bannerAlt: "黒い背景に整然と並ぶウッドボタンと水牛ボタン",
+    bannerAlt: "黒い背景に整然と並ぶメタルボタンと水牛ボタン",
     materialsTitle: "Material",
     materialsMore: "素材について →",
   },

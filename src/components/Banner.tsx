@@ -8,10 +8,10 @@
  * `<name>-2400.jpg`), served as a plain srcset rather than through next/image,
  * so a page view costs no image-optimisation invocations.
  *
- * One image, or two that crossfade (CSS only, `.banner-fade` in globals.css):
- * the first sits still underneath and the second fades in and out over it, so
- * the first is also what prefers-reduced-motion gets. Two is a type-level
- * limit on purpose — the keyframes are written for exactly two slides.
+ * One image, or two or three that crossfade (CSS only, `.banner-fade*` in
+ * globals.css): the first sits still underneath and the others fade in over it
+ * in turn, so the first is also what prefers-reduced-motion gets. Three is a
+ * type-level limit on purpose — the keyframes are written per slide count.
  *
  * The owner's shots centre the buttons on a plain black ground, so
  * `object-cover` + centre crop keeps the subject in frame at every aspect —
@@ -19,13 +19,19 @@
  */
 export type BannerImage = { name: string; alt: string };
 
+/** The fade class for slide `i` (0-based) of `n`; the first slide never fades. */
+function fadeClass(i: number, n: number) {
+  if (i === 0) return "";
+  return n === 2 ? "banner-fade" : `banner-fade-${i + 1}of3`;
+}
+
 export function Banner({
   images,
   className = "aspect-square sm:aspect-[16/9] lg:aspect-[21/9]",
   sizes = "100vw",
   priority = false,
 }: {
-  images: [BannerImage] | [BannerImage, BannerImage];
+  images: [BannerImage] | [BannerImage, BannerImage] | [BannerImage, BannerImage, BannerImage];
   className?: string;
   /** The rendered width, for srcset; full-bleed by default. */
   sizes?: string;
@@ -40,10 +46,10 @@ export function Banner({
           srcSet={`/images/site/${img.name}-1200.jpg 1200w, /images/site/${img.name}-2400.jpg 2400w`}
           sizes={sizes}
           alt={i === 0 ? img.alt : ""}
-          // The first image is the LCP candidate; the second waits.
+          // The first image is the LCP candidate; the others wait.
           loading={priority && i === 0 ? "eager" : "lazy"}
           fetchPriority={priority && i === 0 ? "high" : undefined}
-          className={`absolute inset-0 h-full w-full object-cover ${i > 0 ? "banner-fade" : ""}`}
+          className={`absolute inset-0 h-full w-full object-cover ${fadeClass(i, images.length)}`}
         />
       ))}
     </div>

@@ -133,7 +133,7 @@ const en = {
     guestLogin: "Trade login",
     guestOr: "or",
     guestAccess: "request access",
-    bannerAlt: "Wood and buffalo horn buttons laid out in rows on a black ground",
+    bannerAlt: "Metal and buffalo horn buttons laid out in rows on a black ground",
     materialsTitle: "Material",
     materialsMore: "About our materials →",
   },
