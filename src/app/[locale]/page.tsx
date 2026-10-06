@@ -104,7 +104,7 @@ export default async function HomePage({
       {/* Materials row — one close-up per material, each linking to that
           material's own page (see lib/materials.ts for the images). */}
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="flex items-end justify-between">
+        <div className="flex items-baseline justify-between gap-4">
           <h2 className="font-serif text-3xl tracking-tight">{dict.home.materialsTitle}</h2>
           <Link href={`/${locale}/materials`} className="text-sm text-accent hover:underline">
             {dict.home.materialsMore}
@@ -125,7 +125,10 @@ export default async function HomePage({
                     className="w-full transition duration-300 group-hover:scale-[1.02]"
                   />
                 </div>
-                <h3 className="mt-3 font-serif text-sm uppercase tracking-[0.2em] group-hover:text-accent sm:text-base">
+                {/* Tracking steps down at lg so the longest name ("Piece-dyed
+                    Buffalo Horn") stays on one line in the 4-up row; on the
+                    2-up grid it can't fit, so it wraps with tight leading. */}
+                <h3 className="mt-3 font-serif text-sm uppercase leading-snug tracking-[0.15em] group-hover:text-accent sm:text-base lg:text-[15px] lg:tracking-[0.1em] xl:text-base xl:tracking-[0.15em]">
                   {m.name}
                 </h3>
               </Link>
