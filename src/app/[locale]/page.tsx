@@ -101,7 +101,7 @@ export default async function HomePage({
           three props stacked on the right. Japanese copy breaks at each 。 so
           every sentence sits on its own line. Photos are the owner's catalog
           shots 0826_000706 (pouch) and 0826_000707 (sample card). */}
-      <section className="pb-14 lg:grid lg:grid-cols-[3fr_2fr] lg:items-center lg:py-14">
+      <section className="pb-14 lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-[3fr_2fr] lg:items-center lg:px-4 lg:py-14">
         <div className="grid grid-cols-2">
           {FEATURE_IMAGES.map((src, i) => (
             <img
@@ -115,7 +115,7 @@ export default async function HomePage({
             />
           ))}
         </div>
-        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:mx-0 lg:space-y-10 lg:px-12 lg:pt-0 xl:px-16">
+        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:mx-0 lg:space-y-10 lg:pl-12 lg:pr-0 lg:pt-0 xl:pl-16">
           {dict.home.props.map((b) => (
             <div key={b.t}>
               <h3 className="font-serif text-2xl sm:text-3xl">{b.t}</h3>
