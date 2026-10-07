@@ -52,7 +52,7 @@ export default async function QuotePage({
           <CopyBlocks blocks={dict.quote.customBlocks} locale={locale} className="mt-5 space-y-4 leading-relaxed text-stone-700" />
         </section>
 
-        <section className="mt-14 border-t border-line pt-10">
+        <section id="inquiry" className="mt-14 scroll-mt-20 border-t border-line pt-10">
           <h2 className="font-serif text-2xl tracking-tight">{dict.quote.inquiryTitle}</h2>
           <p className="mt-3 text-stone-600">{dict.quote.subtitleCatalog}</p>
 

@@ -2,6 +2,8 @@
  * Japanese UI dictionary. Mirrors the shape of en.ts (enforced where the two
  * are combined in i18n.ts). B2B / heritage-workwear tone.
  */
+import type { GuideCopy } from "../guide";
+
 const ja = {
   langName: "日本語",
 
@@ -12,12 +14,27 @@ const ja = {
     // until 2026-10-05; renamed to match the page's own ABOUT heading.
     catalog: "Product",
     materials: "Material",
+    printCatalog: "Catalog",
     about: "About",
     quote: "別注/カタログ問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
     home: "ホーム",
+  },
+
+  printCatalog: {
+    // Owner's caption (2026-10-07): 「カタログ請求の依頼はこちらより問い合わせください。」
+    heading: "Catalog",
+    requestBefore: "カタログ請求の依頼は",
+    requestLink: "こちら",
+    requestAfter: "より問い合わせください。",
+    metaDescription:
+      "水牛・ウッド・メタルのボタンを綿のサンプルカードに収めた、Hammond Button Works の商品カタログです。お取引先様へご請求に応じてお送りしております。",
+    pageAlt: "カタログ {n} / {total} ページ",
+    coverAlt: "カタログ表紙",
+    backAlt: "カタログ裏表紙",
+    cta: "カタログを請求する",
   },
 
   about: {
@@ -34,8 +51,77 @@ const ja = {
       "そのものづくりを支えるのは、雄大なヒマラヤを望む国・ネパールのファクトリーが、長年にわたり大切に受け継いできた手仕事の技術。職人の手によって形づくられる表情と、天然素材がもたらす奥行きが、一つひとつに存在感を与えています。",
       "これからも、ここでしか生み出せないデザインと技術を通じて、愛着が深まるものづくりを続けていきます。",
     ],
-    bannerAlt: "黒い背景に並ぶ水牛ボタンのアップ。HAMMOND H.B.W. の刻印入り",
+    bannerAlt: "木の器に集めた青・緑・グレー・ベージュのボタン",
+    nepalAlts: [
+      "朝靄に包まれたネパールの谷と朝日",
+      "ヒマラヤの雪山を背に揺れるネパールの国旗",
+      "ボートが並ぶフェワ湖のほとりを歩く、柄物のショールをまとった女性",
+    ],
   },
+
+  guide: {
+    // Owner copy (thread "create a /guide page", 2026-10-07), with login,
+    // registration and payment lines corrected to match the site (Taro, same day).
+    eyebrow: "Guide",
+    title: "発注・ご購入の前に",
+    description:
+      "はじめてご利用の方・メーカー様へ。会員登録、価格の表示、商品の選択、お支払い、別注のご依頼についてのご案内です。",
+    sections: [
+      {
+        heading: "はじめてご利用の方・メーカー様へ",
+        blocks: [
+          { kind: "p", text: ["ご利用にあたり、", { text: "利用規約", link: "terms" }, "をお読みください。"] },
+          {
+            kind: "p",
+            text: [
+              "当ウェブサイトで商品をご購入いただくには、会員登録が必要です。",
+              { text: "新規会員登録画面", link: "register" },
+              "よりお手続きください。",
+            ],
+          },
+          { kind: "p", text: ["アカウントの設定が完了しましたら、ご登録のメールアドレス宛に登録完了メールをお送りいたします。"] },
+          { kind: "note", text: ["※パスワードは不要です。ログインの際は、ご登録のメールアドレス宛にお送りするログイン用リンクをご利用ください。"] },
+        ],
+      },
+      {
+        heading: "価格の表示について",
+        blocks: [
+          {
+            kind: "p",
+            text: [
+              { text: "ログイン画面", link: "login" },
+              "にて、ご登録のメールアドレスを入力してください。お送りするメールのリンクからログインいただくと、商品の価格が表示されます。",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "商品の選択",
+        blocks: [
+          { kind: "p", text: ["商品詳細ページでカラー・サイズを選択し、「カートに入れる」ボタンをクリックしてください。"] },
+          {
+            kind: "note",
+            text: [
+              "※商品は原則として在庫を持たず、受注生産にて承っております。お届けまでの目安は、ご注文から約30日です。デザイン・仕様により納期が異なりますので、あらかじめご了承ください。",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "お支払いについて",
+        blocks: [
+          { kind: "p", text: ["お支払いは、銀行振込（請求書に基づくお支払い）にて承っております。"] },
+        ],
+      },
+      {
+        heading: "別注・オリジナルデザインのご依頼について",
+        blocks: [
+          { kind: "p", text: ["別注やオリジナルデザインのご依頼・ご相談は、下記メールアドレスまでお問い合わせください。"] },
+          { kind: "p", text: [{ text: "info@hammondbutton.works", link: "email" }] },
+        ],
+      },
+    ],
+  } satisfies GuideCopy as GuideCopy,
 
   // Owner copy, verbatim ("HBW copies" sheet, one tab per material, 2026-10).
   // Names stay English (brand/display voice); titles are the sheet's own.
