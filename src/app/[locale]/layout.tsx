@@ -98,7 +98,7 @@ export default async function LocaleLayout({
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
           <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
             <Link href={home} aria-label="Hammond Button Works — home">
-              <Logo variant="compact" className="h-7 w-auto text-foreground" />
+              <Logo variant="compact" className="h-[33px] w-auto text-foreground" />
             </Link>
             <div className="flex items-center gap-4 sm:gap-5">
               {/* Desktop inline nav — Libre Baskerville menu (Japanese labels
