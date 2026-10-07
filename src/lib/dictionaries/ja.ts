@@ -405,7 +405,6 @@ const ja = {
   footer: {
     // オーナーのモック（2026-10-07）準拠。リンク名はヘッダー同様に英語表記。
     navLabel: "サイト内のページ",
-    wordmark: "hammond button works",
     links: {
       home: "Home",
       product: "Product",
