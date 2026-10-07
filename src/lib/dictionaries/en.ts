@@ -129,6 +129,7 @@ const en = {
       { t: "Handcrafted", d: "Cut and finished by hand; no two pieces are exactly alike." },
       { t: "Made to order", d: "Any size, finish, or engraving — from small quantities up." },
     ],
+    propsImageAlts: ["Canvas pouch printed with the Hammond Button Works logo", "Button sample card of buffalo horn and wood buttons"],
     rangeTitle: "The range",
     viewAll: "View all →",
     guestNote: "Prices are visible to approved trade accounts.",

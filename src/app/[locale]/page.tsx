@@ -12,6 +12,11 @@ import { Banner } from "@/components/Banner";
 import { MATERIAL_IMAGES, MATERIAL_SLUGS } from "@/lib/materials";
 import { localeAlternates } from "@/lib/seo";
 
+const FEATURE_IMAGES = [
+  "/images/site/feature-pouch-720.jpg",
+  "/images/site/feature-sample-card-720.jpg",
+] as const;
+
 // Static + ISR: no session reads in the render path (prices hydrate client-side
 // through the gated API), so guests and crawlers are served from the page
 // cache. Catalog data refreshes hourly; prices are always live via the API.
@@ -92,13 +97,35 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Value props */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-8 sm:grid-cols-3">
+      {/* Value props — owner's layout (2026-10): two photos on the left, the
+          three props stacked on the right. Japanese copy breaks at each 。 so
+          every sentence sits on its own line. Photos are placeholders cropped
+          from the owner's mockup until the originals are supplied. */}
+      <section className="pb-14 lg:grid lg:grid-cols-[3fr_2fr] lg:items-center lg:py-14">
+        <div className="grid grid-cols-2">
+          {FEATURE_IMAGES.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={dict.home.propsImageAlts[i]}
+              width={720}
+              height={720}
+              loading="lazy"
+              className="aspect-square w-full object-cover"
+            />
+          ))}
+        </div>
+        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:mx-0 lg:space-y-10 lg:px-12 lg:pt-0 xl:px-16">
           {dict.home.props.map((b) => (
             <div key={b.t}>
-              <h3 className="font-serif text-xl">{b.t}</h3>
-              <p className="mt-1 text-sm text-stone-600">{b.d}</p>
+              <h3 className="font-serif text-2xl sm:text-3xl">{b.t}</h3>
+              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base">
+                {b.d.split(/(?<=。)/).map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </p>
             </div>
           ))}
         </div>

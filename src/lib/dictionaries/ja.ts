@@ -130,6 +130,7 @@ const ja = {
       { t: "Handcrafted", d: "一つひとつ手作業で削り・仕上げ。同じものはひとつとしてありません。" },
       { t: "Made to order", d: "サイズ・仕上げ・刻印まで別注対応。小ロットから承ります。" },
     ],
+    propsImageAlts: ["Hammond Button Works のロゴ入りキャンバスポーチ", "水牛・ウッドボタンのサンプルカード"],
     rangeTitle: "The range",
     viewAll: "すべて見る →",
     guestNote: "価格は承認済みの取引先アカウントに表示されます。",
