@@ -431,6 +431,7 @@ const en = {
       material: "Material",
       catalog: "Catalog",
       about: "About",
+      guide: "Guide",
       custom: "Custom Orders",
       contact: "Contact",
       privacy: "Privacy",

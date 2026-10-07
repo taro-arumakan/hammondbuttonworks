@@ -23,6 +23,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
     { href: `${home}/materials`, label: f.links.material },
     { href: `${home}/print-catalog`, label: f.links.catalog },
     { href: `${home}/about`, label: f.links.about },
+    { href: `${home}/guide`, label: f.links.guide },
     { href: `${home}/quote`, label: f.links.custom },
     { href: `mailto:${f.contact}`, label: f.links.contact },
     { href: `${home}/privacy`, label: f.links.privacy },
