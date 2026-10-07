@@ -11,12 +11,29 @@ const en = {
   nav: {
     catalog: "Product",
     materials: "Material",
+    printCatalog: "Catalog",
     about: "About",
     quote: "Custom & Catalog Inquiry",
     login: "Login",
     cartPrefix: "Cart",
     signout: "Sign out",
     home: "Home",
+  },
+
+  printCatalog: {
+    // The printed sample catalog (owner's photos, 2026-10-07). The Japanese
+    // caption is the owner's; English is ours.
+    heading: "Catalog",
+    // Rendered as: {before}<link to the inquiry form>{link}</link>{after}
+    requestBefore: "To request a printed catalog, please contact us ",
+    requestLink: "via our inquiry form",
+    requestAfter: ".",
+    metaDescription:
+      "Our printed sample catalog: buffalo horn, wood and metal buttons mounted on cotton sample cards. Available to trade customers on request.",
+    pageAlt: "Catalog page {n} of {total}",
+    coverAlt: "Catalog cover",
+    backAlt: "Catalog back cover",
+    cta: "Request a catalog",
   },
 
   about: {
@@ -32,7 +49,13 @@ const en = {
       "Our work is supported by the handcraft skills that our factory in Nepal, a country in view of the majestic Himalayas, has carefully preserved and passed down over many years. The expression shaped by the artisans' hands and the depth of natural materials give each button a presence of its own.",
       "We will continue to create pieces that grow more cherished with time, through design and craftsmanship found nowhere else.",
     ],
-    bannerAlt: "Close-up of buffalo horn buttons, some engraved HAMMOND H.B.W., on a black ground",
+    bannerAlt: "Buttons in blue, green, grey and beige gathered in a dark wooden bowl",
+    // Shown after the Nepal factory paragraph (NEPAL_PARAGRAPH in the page).
+    nepalAlts: [
+      "Sunrise over a misty valley in the Nepalese hills",
+      "The flag of Nepal with the snow-capped Himalaya behind",
+      "A woman in a patterned shawl walking by Phewa Lake, boats moored on the shore",
+    ],
   },
 
   guide: {

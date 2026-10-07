@@ -14,12 +14,27 @@ const ja = {
     // until 2026-10-05; renamed to match the page's own ABOUT heading.
     catalog: "Product",
     materials: "Material",
+    printCatalog: "Catalog",
     about: "About",
     quote: "別注/カタログ問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
     home: "ホーム",
+  },
+
+  printCatalog: {
+    // Owner's caption (2026-10-07): 「カタログ請求の依頼はこちらより問い合わせください。」
+    heading: "Catalog",
+    requestBefore: "カタログ請求の依頼は",
+    requestLink: "こちら",
+    requestAfter: "より問い合わせください。",
+    metaDescription:
+      "水牛・ウッド・メタルのボタンを綿のサンプルカードに収めた、Hammond Button Works の商品カタログです。お取引先様へご請求に応じてお送りしております。",
+    pageAlt: "カタログ {n} / {total} ページ",
+    coverAlt: "カタログ表紙",
+    backAlt: "カタログ裏表紙",
+    cta: "カタログを請求する",
   },
 
   about: {
@@ -36,7 +51,12 @@ const ja = {
       "そのものづくりを支えるのは、雄大なヒマラヤを望む国・ネパールのファクトリーが、長年にわたり大切に受け継いできた手仕事の技術。職人の手によって形づくられる表情と、天然素材がもたらす奥行きが、一つひとつに存在感を与えています。",
       "これからも、ここでしか生み出せないデザインと技術を通じて、愛着が深まるものづくりを続けていきます。",
     ],
-    bannerAlt: "黒い背景に並ぶ水牛ボタンのアップ。HAMMOND H.B.W. の刻印入り",
+    bannerAlt: "木の器に集めた青・緑・グレー・ベージュのボタン",
+    nepalAlts: [
+      "朝靄に包まれたネパールの谷と朝日",
+      "ヒマラヤの雪山を背に揺れるネパールの国旗",
+      "ボートが並ぶフェワ湖のほとりを歩く、柄物のショールをまとった女性",
+    ],
   },
 
   guide: {

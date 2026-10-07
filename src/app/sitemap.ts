@@ -36,6 +36,7 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: "daily" |
     changeFrequency: "weekly" as const,
   })),
   { path: "/quote", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/print-catalog", priority: 0.5, changeFrequency: "monthly" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
   { path: "/guide", priority: 0.5, changeFrequency: "monthly" },
 ];

@@ -88,6 +88,9 @@ export function MobileNav({ home, dict }: { home: string; dict: Dictionary }) {
             <Link href={`${home}/materials`} onClick={close} className={linkClass}>
               {dict.nav.materials}
             </Link>
+            <Link href={`${home}/print-catalog`} onClick={close} className={linkClass}>
+              {dict.nav.printCatalog}
+            </Link>
             <Link href={`${home}/about`} onClick={close} className={linkClass}>
               {dict.nav.about}
             </Link>
