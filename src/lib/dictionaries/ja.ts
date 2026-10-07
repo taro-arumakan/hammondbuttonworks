@@ -249,7 +249,6 @@ const ja = {
       category: "カテゴリー",
       size: "サイズ",
       sizeGroups: { buffalo: "水牛", wood: "ウッド", toggle: "トグル", metal: "メタル" },
-      allSizes: "全サイズ",
       color: "色",
       availability: "在庫状況",
       inStock: "在庫あり",
