@@ -13,8 +13,8 @@ import { MATERIAL_IMAGES, MATERIAL_SLUGS } from "@/lib/materials";
 import { localeAlternates } from "@/lib/seo";
 
 const FEATURE_IMAGES = [
-  "/images/site/feature-pouch-720.jpg",
-  "/images/site/feature-sample-card-720.jpg",
+  "/images/site/feature-pouch-1200.jpg",
+  "/images/site/feature-sample-card-1200.jpg",
 ] as const;
 
 // Static + ISR: no session reads in the render path (prices hydrate client-side
@@ -99,8 +99,8 @@ export default async function HomePage({
 
       {/* Value props — owner's layout (2026-10): two photos on the left, the
           three props stacked on the right. Japanese copy breaks at each 。 so
-          every sentence sits on its own line. Photos are placeholders cropped
-          from the owner's mockup until the originals are supplied. */}
+          every sentence sits on its own line. Photos are the owner's catalog
+          shots 0826_000706 (pouch) and 0826_000707 (sample card). */}
       <section className="pb-14 lg:grid lg:grid-cols-[3fr_2fr] lg:items-center lg:py-14">
         <div className="grid grid-cols-2">
           {FEATURE_IMAGES.map((src, i) => (
@@ -108,8 +108,8 @@ export default async function HomePage({
               key={src}
               src={src}
               alt={dict.home.propsImageAlts[i]}
-              width={720}
-              height={720}
+              width={1200}
+              height={1200}
               loading="lazy"
               className="aspect-square w-full object-cover"
             />
