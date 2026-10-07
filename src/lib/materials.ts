@@ -53,12 +53,14 @@ export function materialGroupsOf(color: string, materials: readonly string[]): M
  *   grid   — the plain flat-lay on the /materials index (`-1200`/`-2400`),
  *            trimmed to 12:5 around the buttons, one framing scale for all four
  *   banner — the top of the material's own page (`-1200`/`-2400`), trimmed 12:5
- *   card   — the home page's Material row (`-1200` only, 3:2)
+ *   card   — the home page's Material row (`-1200` only, 3:2). Cropped from
+ *            the owner's home-page mockup (2026-10-07); dyed and metal are
+ *            styled shots on wood, so their alt text is `cardAlt`, not imageAlt
  * The files are cut to the aspect they display at, so nothing is cropped in
  * CSS: the index tile and the page banner both render `aspect-[12/5]`.
  * The owner's direction (2026-10): plain grid layouts for banners, close-ups
  * inside; nothing styled with props such as flowers. Metal has no close-up in
- * the shoot, so its page banner IS its index tile and its card is a crop.
+ * the shoot, so its page banner IS its index tile.
  */
 export const MATERIAL_IMAGES: Record<MaterialSlug, { grid: string; banner: string; card: string }> = {
   buffalo: { grid: "materials-grid-buffalo", banner: "materials-banner-buffalo", card: "material-buffalo" },

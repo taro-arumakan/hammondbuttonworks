@@ -121,7 +121,7 @@ export default async function HomePage({
                 <div className="overflow-hidden bg-[#141312]">
                   <img
                     src={`/images/site/${MATERIAL_IMAGES[slug].card}-1200.jpg`}
-                    alt={m.imageAlt}
+                    alt={m.cardAlt}
                     width={1200}
                     height={800}
                     loading="lazy"
