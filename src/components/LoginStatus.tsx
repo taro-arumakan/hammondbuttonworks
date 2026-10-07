@@ -36,6 +36,11 @@ export function LoginStatus({ locale, dict }: { locale: Locale; dict: Dictionary
       }`}
     >
       {message.text}
+      {/* Console-link hint is for `next dev` only (NODE_ENV is inlined at build,
+          so production and preview bundles never contain the condition's body). */}
+      {status === "sent" && process.env.NODE_ENV === "development" && (
+        <span className="mt-1 block text-xs opacity-75">{dict.login.msgSentDev}</span>
+      )}
       {status === "notfound" && (
         <>
           {" "}

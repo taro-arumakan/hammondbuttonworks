@@ -64,11 +64,11 @@ export default async function LoginPage({
       </form>
 
       <p className="mt-6 text-xs text-stone-500">
-        {dict.login.notTrade}{" "}
+        {dict.login.notTrade}
         <Link href={`/${locale}/quote`} className="underline">
           {dict.login.requestAccess}
         </Link>
-        .
+        {dict.login.notTradeEnd}
       </p>
     </div>
   );
