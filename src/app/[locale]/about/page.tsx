@@ -3,7 +3,6 @@ import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n-config";
 import { localeAlternates } from "@/lib/seo";
 import { Banner } from "@/components/Banner";
-import { Logo } from "@/components/Logo";
 
 export async function generateMetadata({
   params,
@@ -29,12 +28,13 @@ export default async function AboutPage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const { about } = getDictionary(locale);
 
-  // Banner: the owner asked for close-up shots on About (2026-10); the plain
-  // grid layouts are kept for the home page banner.
+  // Banner: the owner's pick (2026-10), 0826_000765 from the 0901 shoot —
+  // buttons in a dark wooden bowl. The horn close-up it replaced now heads
+  // /quote.
   return (
     <div>
       <Banner
-        images={[{ name: "about-horn-closeup", alt: about.bannerAlt }]}
+        images={[{ name: "about-bowl", alt: about.bannerAlt }]}
         className="aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"
         priority
       />
@@ -52,10 +52,6 @@ export default async function AboutPage({
           {about.paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
-        </div>
-
-        <div className="mt-16 flex justify-center">
-          <Logo variant="stamp" className="h-16 w-16 text-foreground/70" />
         </div>
       </div>
     </div>
