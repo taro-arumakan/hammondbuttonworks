@@ -5,11 +5,11 @@ import { Logo } from "@/components/Logo";
 import { FooterLanguageSwitch } from "@/components/FooterLanguageSwitch";
 
 /**
- * Site footer, per the owner's mockup (2026-10-07): black band with the
- * wordmark on the left, the site links and language switch in the middle,
- * and the white lockup with the copyright on the right. Arimo throughout,
- * except the serif wordmark and copyright line. The mockup's newsletter
- * sign-up was dropped at the owner's request (2026-10-07).
+ * Site footer, per the owner's mockup (2026-10-07): black band with the site
+ * links and language switch on the left and the white lockup with the
+ * copyright on the right. Arimo throughout, except the serif copyright line.
+ * The mockup's newsletter sign-up and text wordmark were dropped at the
+ * owner's request (2026-10-07); the lockup already carries the name.
  *
  * Server component with one small client island (the language switch, which
  * needs the current path), so the layout stays static.
@@ -30,11 +30,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
   return (
     <footer className="mt-16 bg-black font-code text-white">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1.2fr)] md:gap-10 md:py-20">
-        <div>
-          <p className="font-serif text-xl">{f.wordmark}</p>
-        </div>
-
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-2 md:gap-10 md:py-20">
         <div>
           <nav aria-label={f.navLabel}>
             <ul className="space-y-2.5 text-[15px] uppercase tracking-[0.08em]">

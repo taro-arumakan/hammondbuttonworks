@@ -421,11 +421,10 @@ const en = {
   },
 
   footer: {
-    // Footer layout per the owner's mockup (2026-10-07): wordmark, site
-    // links, then the white lockup and copyright on black. The link labels
+    // Footer layout per the owner's mockup (2026-10-07): site links, then
+    // the white lockup and copyright on black. The link labels
     // stay English on both locales (brand voice, like the header menu).
     navLabel: "Site pages",
-    wordmark: "hammond button works",
     links: {
       home: "Home",
       product: "Product",
