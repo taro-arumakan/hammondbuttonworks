@@ -2,17 +2,17 @@ import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n-config";
 import { Logo } from "@/components/Logo";
-import { NewsletterForm } from "@/components/NewsletterForm";
 import { FooterLanguageSwitch } from "@/components/FooterLanguageSwitch";
 
 /**
  * Site footer, per the owner's mockup (2026-10-07): black band with the
- * newsletter sign-up on the left, the site links and language switch in the
- * middle, and the white lockup with the copyright on the right. Arimo
- * throughout, except the serif wordmark and copyright line.
+ * wordmark on the left, the site links and language switch in the middle,
+ * and the white lockup with the copyright on the right. Arimo throughout,
+ * except the serif wordmark and copyright line. The mockup's newsletter
+ * sign-up was dropped at the owner's request (2026-10-07).
  *
- * Server component with two small client islands (the form and the language
- * switch, which needs the current path), so the layout stays static.
+ * Server component with one small client island (the language switch, which
+ * needs the current path), so the layout stays static.
  */
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const home = `/${locale}`;
@@ -33,7 +33,6 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
       <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1.2fr)] md:gap-10 md:py-20">
         <div>
           <p className="font-serif text-xl">{f.wordmark}</p>
-          <NewsletterForm t={f.newsletter} privacyHref={`${home}/privacy`} locale={locale} />
         </div>
 
         <div>

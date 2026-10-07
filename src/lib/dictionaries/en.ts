@@ -317,9 +317,9 @@ const en = {
   },
 
   footer: {
-    // Footer layout per the owner's mockup (2026-10-07): newsletter sign-up,
-    // site links, then the white lockup and copyright on black. The link
-    // labels stay English on both locales (brand voice, like the header menu).
+    // Footer layout per the owner's mockup (2026-10-07): wordmark, site
+    // links, then the white lockup and copyright on black. The link labels
+    // stay English on both locales (brand voice, like the header menu).
     navLabel: "Site pages",
     wordmark: "hammond button works",
     links: {
@@ -333,18 +333,6 @@ const en = {
       privacy: "Privacy",
     },
     contact: "info@hammondbutton.works",
-    newsletter: {
-      label: "Newsletter",
-      placeholder: "Enter your e-mail",
-      // Rendered as: {consentBefore}<link to /privacy>{consentLink}</link>{consentAfter}
-      consentBefore: "I confirm that I have read and understood the ",
-      consentLink: "Privacy Policy",
-      consentAfter: "",
-      submit: "Sign up",
-      sending: "Signing up…",
-      success: "Thank you. You are now subscribed to our newsletter.",
-      error: "Sorry, we could not sign you up. Please try again.",
-    },
     copy: "© Hammond Button Works. All rights reserved",
   },
 
@@ -353,7 +341,7 @@ const en = {
     // to a real page. Needs the owner's review before launch.
     heading: "Privacy Policy",
     metaDescription:
-      "How Hammond Button Works collects, uses and protects the personal information of trade customers and newsletter subscribers.",
+      "How Hammond Button Works collects, uses and protects the personal information of trade customers and visitors.",
     updated: "Last updated: 7 October 2026",
     intro:
       "Hammond Button Works respects the privacy of everyone who visits this site, contacts us, or trades with us. This policy explains what personal information we collect, why we collect it, and how we look after it.",
@@ -362,7 +350,6 @@ const en = {
         title: "Information we collect",
         body: [
           "When you send an inquiry, request a catalog or open a trade account: your name, company name, e-mail address, phone number and the details of your request.",
-          "When you sign up for our newsletter: your e-mail address and the date you gave consent.",
           "When you place an order: the information needed to fulfil it, such as shipping address and order contents.",
           "When you browse the site: a sign-in cookie for trade customers, a display cookie that remembers your sign-in state, and your cart selections, which are stored in your own browser.",
         ],
@@ -372,7 +359,6 @@ const en = {
         body: [
           "To answer inquiries, send catalogs and samples, and provide quotes.",
           "To process orders and communicate with you about them.",
-          "To send our newsletter, only if you have signed up for it.",
           "To keep the site secure and prevent abuse.",
         ],
       },
@@ -380,12 +366,6 @@ const en = {
         title: "Service providers",
         body: [
           "We use trusted providers to run this site: Shopify (customer and order records), Vercel (hosting), Resend (sending e-mail) and Google Workspace (receiving e-mail). They process information only on our behalf. We do not sell or rent your personal information to anyone.",
-        ],
-      },
-      {
-        title: "Newsletter",
-        body: [
-          "You can unsubscribe at any time by using the link in any newsletter, or by e-mailing us.",
         ],
       },
       {
