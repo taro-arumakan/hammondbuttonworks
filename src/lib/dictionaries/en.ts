@@ -411,11 +411,14 @@ const en = {
     emailLabel: "Work email",
     emailPlaceholder: "you@yourbrand.com",
     submit: "Email me a sign-in link",
-    notTrade: "Not a trade customer yet?",
+    // trailing space separates it from the link (JA runs on with none)
+    notTrade: "Not a trade customer yet? ",
     requestAccess: "Request trade access",
+    notTradeEnd: ".",
     requestQuoteLink: "Request a quote →",
     msgSent:
-      "Check your inbox — we've emailed you a sign-in link (valid for 15 minutes). In local dev with no email key set, the link is printed in the server console.",
+      "Check your inbox — we've emailed you a sign-in link (valid for 15 minutes).",
+    msgSentDev: "(Local dev with no email key set: the link is printed in the server console.)",
     msgNotfound:
       "That email isn't on our approved trade list yet. Request a quote and we'll set you up with an account.",
     msgInvalid: "That sign-in link is invalid or has expired. Please request a new one.",
