@@ -27,6 +27,7 @@ const PAGES = [
   "en/quote", "ja/quote",
   "en/cart", "ja/cart",
   "en/about", "ja/about",
+  "en/print-catalog", "ja/print-catalog",
   "en/materials", "ja/materials",
   // One per material — each embeds a CatalogBrowser tile set, like en/catalog.
   ...["buffalo", "wood", "dyed", "metal"].flatMap((m) => [`en/materials/${m}`, `ja/materials/${m}`]),
