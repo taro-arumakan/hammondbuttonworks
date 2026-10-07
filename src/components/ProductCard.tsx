@@ -38,11 +38,11 @@ export function ProductCard({
   dict: Dictionary;
 }) {
   const minMm = sizesMm.length ? Math.min(...sizesMm) : 0;
-  // "from"/"最小" only means something when this colour comes in several
-  // sizes; a single-size colourway (most metal designs) shows the bare size
-  // and price.
-  const fromLabel = sizesMm.length > 1 ? dict.catalog.fromLigne : "";
-  const sizeLabel = sizesMm.length ? [fromLabel, `${minMm}mm`].filter(Boolean).join(" ") : "";
+  // A trailing "~" ("10mm~", "¥118~") marks a minimum when this colour comes
+  // in several sizes; a single-size colourway (most metal designs) shows the
+  // bare size and price. Same mark in both locales.
+  const ranged = sizesMm.length > 1;
+  const sizeLabel = sizesMm.length ? `${minMm}mm${ranged ? "~" : ""}` : "";
   const categoryLabel = category?.trim()
     ? (dict.labels.category[category.toLowerCase()] ?? category)
     : "";
@@ -80,7 +80,7 @@ export function ProductCard({
         <TilePrice
           slug={slug}
           color={color}
-          fromLabel={fromLabel}
+          ranged={ranged}
           tradeLabel={dict.catalog.cardTradePricing}
         />
       </div>

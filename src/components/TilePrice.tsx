@@ -18,13 +18,13 @@ import { formatMoney } from "@/lib/money";
 export function TilePrice({
   slug,
   color,
-  fromLabel,
+  ranged,
   tradeLabel,
 }: {
   slug: string;
   color: string;
-  /** dict.catalog.fromLigne — "From"; empty for a single-size colourway */
-  fromLabel: string;
+  /** the colourway comes in several sizes, so the price is a minimum ("¥118~") */
+  ranged: boolean;
   /** dict.catalog.cardTradePricing — the guest tag */
   tradeLabel: string;
 }) {
@@ -48,7 +48,8 @@ export function TilePrice({
   if (price) {
     return (
       <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-foreground">
-        {fromLabel ? `${fromLabel} ` : ""}{formatMoney(price.amount, price.currency)}
+        {formatMoney(price.amount, price.currency)}
+        {ranged ? "~" : ""}
       </p>
     );
   }

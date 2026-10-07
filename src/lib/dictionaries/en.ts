@@ -258,7 +258,6 @@ const en = {
     guestBanner: "You're browsing as a guest — prices are hidden.",
     guestBannerLogin: "Trade login",
     guestBannerSuffix: "to see pricing.",
-    fromLigne: "from",
     cardTradePricing: "Trade pricing — sign in",
     perUnit: "/",
     results: "{count} items",

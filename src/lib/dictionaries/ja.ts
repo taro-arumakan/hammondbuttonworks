@@ -241,7 +241,6 @@ const ja = {
     guestBanner: "ゲストとして閲覧中です — 価格は非表示です。",
     guestBannerLogin: "取引先ログイン",
     guestBannerSuffix: "で価格を表示。",
-    fromLigne: "最小",
     cardTradePricing: "取引価格 — ログイン",
     perUnit: "/",
     results: "{count}件",
