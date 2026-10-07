@@ -18,15 +18,17 @@ const en = {
   },
 
   about: {
-    // Owner copy, 2026-10 ("HBW copies" sheet, about tab), translated.
+    // Owner copy, 2026-10 ("HBW copies" sheet, about tab), translated;
+    // revised after the owner's review, 2026-10-06.
     eyebrow: "About",
     heading: "Hammond Button Works",
-    lead: "We began designing and making original buttons in 2008.",
+    lead: "Since 2008, we have been designing and making original buttons.",
     paragraphs: [
-      "With handcraft at the core, we create buttons of our own that bring out the texture only handwork can give and the character of each material.",
-      "Working with clients in Japan, New York and beyond, we pursue products that draw on each partner's skills and background. We care about every detail, from choosing the material to shaping and finishing, to make pieces that are loved for years.",
-      "Over the years we have collaborated with many brands and developed buttons for them, proposing designs for fashion and a wide range of other fields.",
-      "We will keep bringing a wide range of products to life, through design and craft that can only come from here.",
+      "Rooted in handcraft, we create distinctive buttons that bring out the texture only handwork can achieve and the individual character of each material.",
+      "We have worked alongside clients across Japan, in New York and in many other places, pursuing products that draw on each partner's expertise and background. Attentive to every detail, from selecting materials through shaping and finishing, we make pieces that are cherished for years.",
+      "Over the years, we have collaborated with many brands and developed buttons for them, offering designs to fashion and a broad range of other fields.",
+      "Our work is supported by the handcraft skills that our factory in Nepal, a country in view of the majestic Himalayas, has carefully preserved and passed down over many years. The expression shaped by the artisans' hands and the depth of natural materials give each button a presence of its own.",
+      "We will continue to create pieces that grow more cherished with time, through design and craftsmanship found nowhere else.",
     ],
     bannerAlt: "Close-up of buffalo horn buttons, some engraved HAMMOND H.B.W., on a black ground",
   },
