@@ -129,7 +129,7 @@ export default async function ProductPage({
 
         {/* Title, copy, pricing/order */}
         <div>
-          <h1 className="font-serif text-4xl tracking-tight">{product.name}</h1>
+          <h1 className="font-code text-4xl tracking-tight">{product.name}</h1>
 
           {locale === "ja" && product.shortJa ? (
             <p className="mt-4 leading-relaxed text-stone-600">{product.shortJa}</p>

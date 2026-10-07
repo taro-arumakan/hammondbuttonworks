@@ -166,7 +166,7 @@ export function CartView({ locale, dict }: { locale: Locale; dict: Dictionary })
             return (
               <li key={`${i.sku}-${i.engraving}`} className="flex flex-wrap items-center gap-4 px-4 py-4">
                 <div className="min-w-0 flex-1">
-                  <p className="font-serif text-lg leading-tight text-foreground">{i.name}</p>
+                  <p className="font-code text-lg leading-tight text-foreground">{i.name}</p>
                   <p className="mt-0.5 text-xs uppercase tracking-wide text-stone-500">
                     {i.colorLabel ?? i.color} · {i.sizeMm}mm · {i.sku}
                   </p>

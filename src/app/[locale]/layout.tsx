@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Hanken_Grotesk, Marcellus, Zen_Old_Mincho } from "next/font/google";
+import { Arimo, Libre_Baskerville, Zen_Kaku_Gothic_New } from "next/font/google";
 import { getDictionary } from "@/lib/i18n";
 import { DEFAULT_LOCALE, LOCALES, isLocale } from "@/lib/i18n-config";
 import { siteUrl } from "@/lib/seo";
@@ -11,40 +11,36 @@ import { MobileNav } from "@/components/MobileNav";
 import { HeaderAccount } from "@/components/HeaderAccount";
 import "../globals.css";
 
-// Inscriptional low-contrast Roman serif — chosen to align with niceness.jp's
-// custom "NICENESS Serif" (owner reference, 2026-07): wide open caps, near-
-// monolinear strokes, fine sharp serifs. Marcellus ships a single 400 weight,
-// which matches how the reference uses one weight; no bold serif exists in the
-// UI (verified), so headings/nav/product-names all resolve through --font-display.
-const display = Marcellus({
-  weight: "400",
+// Site typefaces per the owner's spec (2026-10), all Google Fonts:
+//   Libre Baskerville — main English text and the header menu
+//   Arimo             — button product numbers and the footer
+//   Zen Kaku Gothic New — Japanese
+// None of the Latin faces carry CJK glyphs, so stacking --font-jp after them in
+// globals.css makes Japanese characters fall through to Zen Kaku Gothic New.
+
+// Libre Baskerville ships 400 and 700 only: medium (500) renders at 400 and
+// semibold (600) at 700, which is how the UI's buttons and prices resolve.
+const display = Libre_Baskerville({
+  weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
-// Japanese companion face, matching niceness.jp's pairing (their Latin "NICENESS
-// Serif" + Zen Old Mincho for 日本語). Marcellus has no CJK glyphs, so stacking
-// Zen Old Mincho after it in --font-serif / --font-sans makes every Japanese
-// character fall through to Mincho automatically — no unicode-range needed.
 // preload:false because CJK is large; swap avoids blocking on the download.
-const jp = Zen_Old_Mincho({
-  weight: ["400", "500"],
+const jp = Zen_Kaku_Gothic_New({
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-jp",
   display: "swap",
   preload: false,
 });
 
-// English body text (2026-10): a grotesque under Marcellus, as niceness.jp sets
-// Basis Grotesque under its serif. Marcellus stays single-weight for display;
-// the weights (medium for buttons/labels, semibold for prices) come from here.
-// Variable font, so every weight ships in one file. Japanese pages never use it:
-// the [lang="ja"] rule in globals.css puts Zen Old Mincho first for body text,
-// Latin included, so Mincho kana are never set beside grotesque Latin.
-const body = Hanken_Grotesk({
+// Variable font, so every weight ships in one file. Exposed as the `font-code`
+// utility (globals.css).
+const code = Arimo({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-arimo",
   display: "swap",
 });
 
@@ -96,7 +92,7 @@ export default async function LocaleLayout({
   // driven by the display-hint cookie (see lib/hint-cookie.ts).
 
   return (
-    <html lang={locale} className={`${display.variable} ${jp.variable} ${body.variable}`}>
+    <html lang={locale} className={`${display.variable} ${jp.variable} ${code.variable}`}>
       <body className="min-h-screen flex flex-col">
         <header className="border-b border-line bg-surface/85 backdrop-blur sticky top-0 z-10">
           <nav className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
@@ -104,8 +100,8 @@ export default async function LocaleLayout({
               <Logo variant="compact" className="h-7 w-auto text-foreground" />
             </Link>
             <div className="flex items-center gap-4 sm:gap-5">
-              {/* Desktop inline nav — serif menu (Marcellus/Zen Old Mincho),
-                  matching niceness.jp's serif navigation. */}
+              {/* Desktop inline nav — Libre Baskerville menu (Japanese labels
+                  fall through to Zen Kaku Gothic New). */}
               <div className="hidden items-center gap-5 font-serif text-[15px] tracking-[0.02em] sm:flex">
                 <Link href={`${home}/catalog`} className="hover:text-accent">
                   {dict.nav.catalog}
@@ -138,13 +134,13 @@ export default async function LocaleLayout({
 
         <main className="flex-1">{children}</main>
 
-        <footer className="border-t border-line mt-16">
+        <footer className="border-t border-line mt-16 font-code">
           {/* The site's pages again, for every screen size: on phones the header
               collapses to the ☰ menu, so without this the About page
               had no link anywhere on the page itself. */}
           <nav
             aria-label={dict.footer.navLabel}
-            className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-3 border-b border-line px-4 py-6 font-serif text-[15px] tracking-[0.02em]"
+            className="mx-auto flex max-w-6xl flex-wrap gap-x-6 gap-y-3 border-b border-line px-4 py-6 text-[15px] tracking-[0.02em]"
           >
             <Link href={`${home}/catalog`} className="hover:text-accent">
               {dict.nav.catalog}
@@ -163,7 +159,7 @@ export default async function LocaleLayout({
             <div className="flex items-center gap-4">
               <Logo variant="stamp" className="h-14 w-14 text-foreground shrink-0" />
               <div>
-                <p className="font-serif text-base text-foreground">{dict.footer.brand}</p>
+                <p className="text-base text-foreground">{dict.footer.brand}</p>
                 <p className="mt-0.5 text-xs uppercase tracking-wide text-stone-400">
                   {dict.footer.handcraft}
                 </p>
