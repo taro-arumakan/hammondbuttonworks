@@ -77,11 +77,10 @@ export function productColorLabels(
  * ever becomes unfilterable. Metal sizes vary per design (7–24mm, mostly one
  * product each), so metal is one option with no sizes under it.
  *
- * TOGGLE IS INFERRED FROM SIZE: nothing in Shopify marks the shape yet (the
- * tooling's product master records `construction`, but it is not written to
- * the store). Every toggle is 35mm or larger and no other button is, so a
- * size of 35mm+ is filed under Toggle whatever its material. If a
- * construction metafield is ever added, read it in `sizeGroupOf` instead.
+ * TOGGLE comes from the product's `hbw.construction` metafield, which the
+ * tooling importer writes from its product master (since 2026-10-07). A
+ * product with none set falls back to size: every toggle is 35mm or larger
+ * and no other button is, so 35mm+ still lands under Toggle.
  */
 export const SIZE_GROUPS = [
   { key: "buffalo", sizes: [10, 11.5, 13, 15, 18, 20, 23, 25, 30] },
@@ -94,8 +93,13 @@ export type SizeGroup = (typeof SIZE_GROUPS)[number]["key"];
 const TOGGLE_MIN_MM = 35;
 
 /** Which size-filter group one variant belongs to; undefined without a material. */
-export function sizeGroupOf(sizeMm: number, materials: readonly string[]): SizeGroup | undefined {
-  if (sizeMm >= TOGGLE_MIN_MM) return "toggle";
+export function sizeGroupOf(
+  sizeMm: number,
+  materials: readonly string[],
+  construction: string,
+): SizeGroup | undefined {
+  if (construction === "toggle") return "toggle";
+  if (!construction && sizeMm >= TOGGLE_MIN_MM) return "toggle";
   // "dyed" is buffalo horn too; a buffalo + metal combination files under buffalo.
   const groups = materialGroupsOf("", materials);
   if (groups.includes("wood")) return "wood";
@@ -105,8 +109,12 @@ export function sizeGroupOf(sizeMm: number, materials: readonly string[]): SizeG
 }
 
 /** The filter key for one variant: "buffalo-11.5", "toggle-45", or just "metal". */
-export function sizeKeyOf(sizeMm: number, materials: readonly string[]): string | undefined {
-  const group = sizeGroupOf(sizeMm, materials);
+export function sizeKeyOf(
+  sizeMm: number,
+  materials: readonly string[],
+  construction: string,
+): string | undefined {
+  const group = sizeGroupOf(sizeMm, materials, construction);
   if (!group) return undefined;
   return group === "metal" ? "metal" : `${group}-${sizeMm}`;
 }
@@ -233,7 +241,7 @@ export function toTiles(colorways: Colorway[]): CatalogTile[] {
     currency: cw.product.currency,
     sizesMm: [...new Set(cw.variants.map((v) => v.sizeMm))].sort((a, b) => a - b),
     sizeKeys: [
-      ...new Set(cw.variants.flatMap((v) => sizeKeyOf(v.sizeMm, v.materials) ?? [])),
+      ...new Set(cw.variants.flatMap((v) => sizeKeyOf(v.sizeMm, v.materials, cw.product.construction) ?? [])),
     ],
     hasStock: cw.variants.some((v) => v.inStock),
     hasMto: cw.variants.some((v) => !v.inStock),

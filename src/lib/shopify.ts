@@ -179,6 +179,8 @@ export type ShopifyProduct = {
   image?: string;
   images: string[];
   leadTimeDays: number;
+  /** `hbw.construction` (2-hole / 4-hole / shank / toggle / tack), "" when unset. */
+  construction: string;
   colors: string[];
   sizesMm: number[];
   currency: string;
@@ -217,6 +219,7 @@ const PRODUCT_FIELDS = `
   nameJa: metafield(namespace: "hbw", key: "name_ja") { value }
   shortJa: metafield(namespace: "hbw", key: "short_ja") { value }
   lead: metafield(namespace: "hbw", key: "lead_time_days") { value }
+  construction: metafield(namespace: "hbw", key: "construction") { value }
   options { name optionValues { name } }
   variants(first: 100) {
     nodes {
@@ -254,6 +257,7 @@ type RawProduct = {
   nameJa: { value: string } | null;
   shortJa: { value: string } | null;
   lead: { value: string } | null;
+  construction: { value: string } | null;
   options: { name: string; optionValues: { name: string }[] }[];
   variants: { nodes: RawVariant[] };
 };
@@ -307,6 +311,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     image,
     images,
     leadTimeDays: p.lead ? Number(p.lead.value) : 30,
+    construction: p.construction?.value ?? "",
     colors: colorOpt?.optionValues.map((v) => v.name) ?? [],
     sizesMm: (sizeOpt?.optionValues.map((v) => sizeToMm(v.name)) ?? []).sort((a, b) => a - b),
     currency,
