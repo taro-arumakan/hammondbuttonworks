@@ -35,7 +35,7 @@ export type Availability = "in" | "mto";
 
 export type CatalogQuery = {
   categories: string[]; // lowercased productType tokens
-  sizes: string[]; // size-filter keys (see `sizeKeyOf`), e.g. "buffalo-20", "toggle-45", "metal"
+  sizes: string[]; // size-filter keys (see `sizeKeyOf`), e.g. "buffalo-20", "toggle-45", "metal-19"
   colors: string[]; // facet tokens (see `facetColor`), e.g. "dark brown" for H2 and HB01
   stock: Availability[];
   sort: SortKey;
@@ -72,23 +72,19 @@ export function productColorLabels(
 /**
  * The size filter is grouped by kind of button (owner request, 2026-10-07): a
  * flat list put one metal 19mm next to dozens of buffalo 20mm and suggested the
- * two were comparable. Each group lists the sizes the owner named; a size
- * that turns up in the data but not in the list is appended, so no colourway
- * ever becomes unfilterable. Metal sizes vary per design (7–24mm, mostly one
- * product each), so metal is one option with no sizes under it.
+ * two were comparable. The sizes under each group come from the catalogue
+ * itself (the variants' Size option in Shopify), never a fixed list, so a size
+ * added in Shopify appears in the filter on the next build. A group with no
+ * products is hidden.
  *
  * TOGGLE comes from the product's `hbw.construction` metafield, which the
  * tooling importer writes from its product master (since 2026-10-07). A
  * product with none set falls back to size: every toggle is 35mm or larger
  * and no other button is, so 35mm+ still lands under Toggle.
  */
-export const SIZE_GROUPS = [
-  { key: "buffalo", sizes: [10, 11.5, 13, 15, 18, 20, 23, 25, 30] },
-  { key: "wood", sizes: [10, 11.5, 13, 15, 18, 20, 23, 25, 30] },
-  { key: "toggle", sizes: [35, 45, 55] },
-  { key: "metal", sizes: [] },
-] as const satisfies readonly { key: string; sizes: readonly number[] }[];
-export type SizeGroup = (typeof SIZE_GROUPS)[number]["key"];
+/** Sidebar order. */
+export const SIZE_GROUPS = ["buffalo", "wood", "toggle", "metal"] as const;
+export type SizeGroup = (typeof SIZE_GROUPS)[number];
 
 const TOGGLE_MIN_MM = 35;
 
@@ -108,20 +104,18 @@ export function sizeGroupOf(
   return undefined;
 }
 
-/** The filter key for one variant: "buffalo-11.5", "toggle-45", or just "metal". */
+/** The filter key for one variant: "buffalo-11.5", "toggle-45", "metal-19". */
 export function sizeKeyOf(
   sizeMm: number,
   materials: readonly string[],
   construction: string,
 ): string | undefined {
   const group = sizeGroupOf(sizeMm, materials, construction);
-  if (!group) return undefined;
-  return group === "metal" ? "metal" : `${group}-${sizeMm}`;
+  return group ? `${group}-${sizeMm}` : undefined;
 }
 
-function parseSizeKey(key: string): { group: SizeGroup; mm?: number } | undefined {
-  if (key === "metal") return { group: "metal" };
-  const m = /^(buffalo|wood|toggle)-(\d+(?:\.\d+)?)$/.exec(key);
+function parseSizeKey(key: string): { group: SizeGroup; mm: number } | undefined {
+  const m = /^(buffalo|wood|toggle|metal)-(\d+(?:\.\d+)?)$/.exec(key);
   return m ? { group: m[1] as SizeGroup, mm: parseFloat(m[2]) } : undefined;
 }
 
@@ -343,28 +337,21 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
     if (categories.has(k)) categories.set(k, (categories.get(k) ?? 0) + 1);
   }
 
-  // Every listed size shows, even at 0 (greyed), so the buyer sees the full
-  // range the owner offers; sizes only the data has are appended in order.
+  // Options are every size that exists in the catalogue (over ALL tiles, so
+  // one picked elsewhere greys out rather than vanishing), grouped and sorted.
   const sizeCounts = new Map<string, number>();
   for (const t of forSizes) for (const k of t.sizeKeys) sizeCounts.set(k, (sizeCounts.get(k) ?? 0) + 1);
-  const present = new Set(tiles.flatMap((t) => t.sizeKeys));
-  const sizes = SIZE_GROUPS.map((g) => {
-    const mm = new Set<number>(g.sizes);
-    for (const k of present) {
-      const p = parseSizeKey(k);
-      if (p?.group === g.key && p.mm !== undefined) mm.add(p.mm);
-    }
-    const keys =
-      g.key === "metal" ? ["metal"] : [...mm].sort((a, b) => a - b).map((n) => `${g.key}-${n}`);
-    return {
-      group: g.key as SizeGroup,
-      options: keys.map((value) => ({
-        value,
-        mm: parseSizeKey(value)?.mm,
-        count: sizeCounts.get(value) ?? 0,
-      })),
-    };
+  const present = [...new Set(tiles.flatMap((t) => t.sizeKeys))].flatMap((k) => {
+    const p = parseSizeKey(k);
+    return p ? [{ value: k, ...p }] : [];
   });
+  const sizes = SIZE_GROUPS.map((group) => ({
+    group,
+    options: present
+      .filter((p) => p.group === group)
+      .sort((a, b) => a.mm - b.mm)
+      .map(({ value, mm }) => ({ value, mm, count: sizeCounts.get(value) ?? 0 })),
+  })).filter((g) => g.options.length > 0);
 
   const colors = new Map<string, number>();
   for (const t of tiles) if (t.filterColor && !colors.has(t.filterColor)) colors.set(t.filterColor, 0);

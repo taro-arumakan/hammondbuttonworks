@@ -266,7 +266,6 @@ const en = {
       category: "Category",
       size: "Size",
       sizeGroups: { buffalo: "Buffalo horn", wood: "Wood", toggle: "Toggle", metal: "Metal" },
-      allSizes: "All sizes",
       color: "Color",
       availability: "Availability",
       inStock: "In stock",

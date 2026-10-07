@@ -190,11 +190,11 @@ export function CatalogBrowser({
     {
       key: "size",
       title: f.size,
-      // Grouped by kind of button (see SIZE_GROUPS); metal is one option.
+      // Grouped by kind of button (see SIZE_GROUPS), sizes from the catalogue.
       options: facets.sizes.flatMap(({ group, options }) =>
         options.map(({ value, mm, count }) => ({
           value,
-          label: mm === undefined ? f.allSizes : `${mm}mm`,
+          label: `${mm}mm`,
           count,
           active: query.sizes.includes(value),
           section: f.sizeGroups[group],
