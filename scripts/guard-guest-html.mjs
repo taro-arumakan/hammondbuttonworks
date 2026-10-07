@@ -27,6 +27,7 @@ const PAGES = [
   "en/quote", "ja/quote",
   "en/cart", "ja/cart",
   "en/about", "ja/about",
+  "en/privacy", "ja/privacy",
   "en/guide", "ja/guide",
   "en/print-catalog", "ja/print-catalog",
   "en/materials", "ja/materials",

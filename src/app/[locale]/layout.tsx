@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MobileNav } from "@/components/MobileNav";
 import { HeaderAccount } from "@/components/HeaderAccount";
+import { Footer } from "@/components/Footer";
 import "../globals.css";
 
 // Site typefaces per the owner's spec (2026-10), all Google Fonts:
