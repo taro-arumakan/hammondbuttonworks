@@ -31,6 +31,12 @@ const en = {
       "We will continue to create pieces that grow more cherished with time, through design and craftsmanship found nowhere else.",
     ],
     bannerAlt: "Buttons in blue, green, grey and beige gathered in a dark wooden bowl",
+    // Shown after the Nepal factory paragraph (NEPAL_PARAGRAPH in the page).
+    nepalAlts: [
+      "Sunrise over a misty valley in the Nepalese hills",
+      "The flag of Nepal with the snow-capped Himalaya behind",
+      "A woman in a patterned shawl walking by Phewa Lake, boats moored on the shore",
+    ],
   },
 
   // The by-material pages: /materials (index) and /materials/<id>. Owner copy,
