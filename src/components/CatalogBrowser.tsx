@@ -221,6 +221,14 @@ export function CatalogBrowser({
     },
   ];
 
+  // A size group's own checkbox: select every size under it, or clear them.
+  // Only the size filter has sections today.
+  const onToggleSection = (groupKey: string, values: string[], select: boolean) => {
+    if (groupKey !== "size") return;
+    const rest = query.sizes.filter((s) => !values.includes(s));
+    update({ ...query, sizes: select ? [...rest, ...values] : rest, page: 1 });
+  };
+
   const onToggle = (groupKey: string, value: string) => {
     switch (groupKey) {
       case "category":
@@ -269,6 +277,7 @@ export function CatalogBrowser({
         clearLabel={f.clear}
         hasActive={hasActiveFilters(query)}
         onToggle={onToggle}
+        onToggleSection={onToggleSection}
         onClear={onClear}
       />
 

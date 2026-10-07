@@ -24,12 +24,32 @@ export type FilterGroup = {
   options: FilterOption[];
 };
 
+/** A checkbox square: filled when on, a bar when some (not all) are on. */
+function Box({ state }: { state: "on" | "some" | "off" }) {
+  return (
+    <span
+      aria-hidden
+      className={`relative inline-block h-3 w-3 shrink-0 border ${
+        state === "on"
+          ? "border-accent bg-accent"
+          : state === "some"
+            ? "border-accent bg-surface"
+            : "border-stone-400 bg-surface group-hover:border-stone-600"
+      }`}
+    >
+      {state === "some" && <span className="absolute inset-x-0.5 top-1/2 h-px -translate-y-1/2 bg-accent" />}
+    </span>
+  );
+}
+
 function FilterRows({
   groups,
   onToggle,
+  onToggleSection,
 }: {
   groups: FilterGroup[];
   onToggle: (groupKey: string, value: string) => void;
+  onToggleSection: (groupKey: string, values: string[], select: boolean) => void;
 }) {
   return (
     <div className="space-y-6">
@@ -41,29 +61,38 @@ function FilterRows({
           <ul className="mt-2 space-y-1 border-t border-line pt-2">
             {g.options.map((o, i) => (
               <li key={o.value}>
-                {o.section && o.section !== g.options[i - 1]?.section && (
-                  <p className={`pb-0.5 text-xs uppercase tracking-[0.12em] text-stone-500 ${i > 0 ? "pt-3" : ""}`}>
-                    {o.section}
-                  </p>
-                )}
+                {o.section && o.section !== g.options[i - 1]?.section && (() => {
+                  // Section checkbox: selects (or clears) every option under it.
+                  const members = g.options.filter((m) => m.section === o.section);
+                  const on = members.filter((m) => m.active).length;
+                  const state = on === 0 ? "off" : on === members.length ? "on" : "some";
+                  return (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        onToggleSection(g.key, members.map((m) => m.value), state !== "on")
+                      }
+                      aria-pressed={state === "some" ? "mixed" : state === "on"}
+                      className={`group flex w-full items-center gap-2 pb-0.5 text-left text-xs uppercase tracking-[0.12em] text-stone-500 hover:text-foreground ${i > 0 ? "pt-3" : ""}`}
+                    >
+                      <Box state={state} />
+                      <span className={state === "off" ? "" : "text-foreground"}>{o.section}</span>
+                    </button>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={() => onToggle(g.key, o.value)}
                   aria-pressed={o.active}
                   className={`group flex w-full items-center gap-2 py-0.5 text-left text-sm transition-colors ${
+                    o.section ? "pl-5" : ""
+                  } ${
                     o.count === 0 && !o.active
                       ? "text-stone-400"
                       : "text-stone-600 hover:text-foreground"
                   }`}
                 >
-                  <span
-                    aria-hidden
-                    className={`inline-block h-3 w-3 shrink-0 border ${
-                      o.active
-                        ? "border-accent bg-accent"
-                        : "border-stone-400 bg-surface group-hover:border-stone-600"
-                    }`}
-                  />
+                  <Box state={o.active ? "on" : "off"} />
                   <span className={o.active ? "font-medium text-foreground" : ""}>{o.label}</span>
                   <span className="ml-auto text-xs tabular-nums text-stone-400">{o.count}</span>
                 </button>
@@ -82,6 +111,7 @@ export function CatalogFilters({
   clearLabel,
   hasActive,
   onToggle,
+  onToggleSection,
   onClear,
 }: {
   groups: FilterGroup[];
@@ -89,6 +119,7 @@ export function CatalogFilters({
   clearLabel: string;
   hasActive: boolean;
   onToggle: (groupKey: string, value: string) => void;
+  onToggleSection: (groupKey: string, values: string[], select: boolean) => void;
   onClear: () => void;
 }) {
   const clear = hasActive && (
@@ -112,7 +143,7 @@ export function CatalogFilters({
           </span>
         </summary>
         <div className="border-t border-line px-4 py-4">
-          <FilterRows groups={groups} onToggle={onToggle} />
+          <FilterRows groups={groups} onToggle={onToggle} onToggleSection={onToggleSection} />
           {clear && <div className="mt-4">{clear}</div>}
         </div>
       </details>
@@ -124,7 +155,7 @@ export function CatalogFilters({
           {clear}
         </div>
         <div className="mt-4">
-          <FilterRows groups={groups} onToggle={onToggle} />
+          <FilterRows groups={groups} onToggle={onToggle} onToggleSection={onToggleSection} />
         </div>
       </aside>
     </>
