@@ -332,7 +332,7 @@ const en = {
       contact: "Contact",
       privacy: "Privacy",
     },
-    contact: "info@alvana.jp",
+    contact: "info@hammondbutton.works",
     newsletter: {
       label: "Newsletter",
       placeholder: "Enter your e-mail",
@@ -396,7 +396,7 @@ const en = {
       },
       {
         title: "Contact",
-        body: ["For any privacy question or request, please e-mail info@alvana.jp."],
+        body: ["For any privacy question or request, please e-mail info@hammondbutton.works."],
       },
     ],
   },

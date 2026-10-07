@@ -330,7 +330,7 @@ const ja = {
       contact: "Contact",
       privacy: "Privacy",
     },
-    contact: "info@alvana.jp",
+    contact: "info@hammondbutton.works",
     newsletter: {
       label: "ニュースレター",
       placeholder: "メールアドレスを入力",
@@ -392,7 +392,7 @@ const ja = {
       },
       {
         title: "お問い合わせ窓口",
-        body: ["個人情報に関するご質問・ご請求は info@alvana.jp までメールでお問い合わせください。"],
+        body: ["個人情報に関するご質問・ご請求は info@hammondbutton.works までメールでお問い合わせください。"],
       },
     ],
   },
