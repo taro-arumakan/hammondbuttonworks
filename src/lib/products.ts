@@ -49,9 +49,11 @@ export async function getAllProducts(revalidate?: number): Promise<ShopifyProduc
 export async function getProductBySlug(
   slug: string,
   revalidate?: number,
+  /** How many media frames to fetch; the product page passes GALLERY_MEDIA. */
+  mediaFirst?: number,
 ): Promise<ShopifyProduct | null> {
   if (!shopifyConfigured()) return null;
-  return getShopifyProductByHandle(slug, revalidate);
+  return getShopifyProductByHandle(slug, revalidate, mediaFirst);
 }
 
 export function getVariantBySku(

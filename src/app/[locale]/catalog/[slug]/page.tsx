@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +8,9 @@ import { DEFAULT_LOCALE, fmt, isLocale } from "@/lib/i18n-config";
 import { localeAlternates } from "@/lib/seo";
 import { productColorLabels } from "@/lib/catalog";
 import { PriceBlock } from "@/components/PriceBlock";
+import { ProductGallery } from "@/components/ProductGallery";
+import { productGallery } from "@/lib/gallery";
+import { GALLERY_MEDIA } from "@/lib/shopify";
 
 // Static + ISR: no session reads in the render path. Guests/crawlers hit the
 // page cache; the ordering panel is a client island that fetches this buyer's
@@ -35,7 +37,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, slug } = await params;
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
-  const base = await getProductBySlug(slug, PAGE_REVALIDATE);
+  // Same args as the page render, so the two share one deduped fetch.
+  const base = await getProductBySlug(slug, PAGE_REVALIDATE, GALLERY_MEDIA);
   if (!base) return {};
   const product = localizeProduct(base, locale);
   const description = locale === "ja" ? product.shortJa : undefined;
@@ -75,7 +78,7 @@ export default async function ProductPage({
   // here — reading searchParams would force this page dynamic. The PriceBlock
   // client island reads it from location.search after mount.
 
-  const base = await getProductBySlug(slug, PAGE_REVALIDATE);
+  const base = await getProductBySlug(slug, PAGE_REVALIDATE, GALLERY_MEDIA);
   if (!base) notFound();
   const product = localizeProduct(base, locale);
 
@@ -100,18 +103,12 @@ export default async function ProductPage({
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         {/* Gallery + specs */}
-        <div>
-          <div className="overflow-hidden rounded-2xl bg-stone-50">
-            {product.image ? (
-              <img
-                src={product.image}
-                alt={product.name}
-                className="aspect-square w-full object-cover"
-              />
-            ) : (
-              <div className="aspect-square w-full bg-stone-100" />
-            )}
-          </div>
+        <div className="min-w-0">
+          <ProductGallery
+            images={productGallery(base)}
+            name={product.name}
+            colorLabels={colorLabels}
+          />
 
           <h2 className="mt-8 text-lg font-semibold">{dict.product.specs}</h2>
           <dl className="mt-2">
