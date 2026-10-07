@@ -19,7 +19,7 @@ export function FooterLanguageSwitch({ current }: { current: Locale }) {
     return parts.join("/") || `/${loc}`;
   }
   return (
-    <p className="mt-10 flex items-center gap-2 text-[15px] tracking-[0.04em]">
+    <p className="mt-8 flex items-center gap-2 text-[13px] tracking-[0.04em]">
       {ORDER.map(({ loc, label }, i) => (
         <span key={loc} className="flex items-center gap-2">
           {i > 0 && <span aria-hidden="true">/</span>}
@@ -27,7 +27,7 @@ export function FooterLanguageSwitch({ current }: { current: Locale }) {
             href={pathFor(loc)}
             lang={loc}
             aria-current={loc === current ? "true" : undefined}
-            className={loc === current ? "text-white" : "text-white/55 hover:text-white"}
+            className={loc === current ? "text-foreground" : "text-stone-500 hover:text-accent"}
           >
             {label}
           </Link>
