@@ -23,7 +23,7 @@ export function TilePrice({
 }: {
   slug: string;
   color: string;
-  /** dict.catalog.fromLigne — "From" */
+  /** dict.catalog.fromLigne — "From"; empty for a single-size colourway */
   fromLabel: string;
   /** dict.catalog.cardTradePricing — the guest tag */
   tradeLabel: string;
@@ -48,7 +48,7 @@ export function TilePrice({
   if (price) {
     return (
       <p className="mt-1.5 text-[11px] uppercase tracking-[0.08em] text-foreground">
-        {fromLabel} {formatMoney(price.amount, price.currency)}
+        {fromLabel ? `${fromLabel} ` : ""}{formatMoney(price.amount, price.currency)}
       </p>
     );
   }

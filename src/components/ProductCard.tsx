@@ -38,12 +38,17 @@ export function ProductCard({
   dict: Dictionary;
 }) {
   const minMm = sizesMm.length ? Math.min(...sizesMm) : 0;
+  // "from"/"最小" only means something when this colour comes in several
+  // sizes; a single-size colourway (most metal designs) shows the bare size
+  // and price.
+  const fromLabel = sizesMm.length > 1 ? dict.catalog.fromLigne : "";
+  const sizeLabel = sizesMm.length ? [fromLabel, `${minMm}mm`].filter(Boolean).join(" ") : "";
   const categoryLabel = category?.trim()
     ? (dict.labels.category[category.toLowerCase()] ?? category)
     : "";
   // Colour leads the meta line — it's what distinguishes sibling tiles. An
   // empty category is skipped, not rendered as a stray "·".
-  const meta = [color ? colorLabel : "", categoryLabel, `${dict.catalog.fromLigne} ${minMm}mm`]
+  const meta = [color ? colorLabel : "", categoryLabel, sizeLabel]
     .filter(Boolean)
     .join(" · ");
   const href = color
@@ -75,7 +80,7 @@ export function ProductCard({
         <TilePrice
           slug={slug}
           color={color}
-          fromLabel={dict.catalog.fromLigne}
+          fromLabel={fromLabel}
           tradeLabel={dict.catalog.cardTradePricing}
         />
       </div>
