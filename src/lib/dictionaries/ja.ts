@@ -12,12 +12,27 @@ const ja = {
     // until 2026-10-05; renamed to match the page's own ABOUT heading.
     catalog: "Product",
     materials: "Material",
+    printCatalog: "Catalog",
     about: "About",
     quote: "別注/カタログ問い合わせ",
     login: "ログイン",
     cartPrefix: "カート",
     signout: "ログアウト",
     home: "ホーム",
+  },
+
+  printCatalog: {
+    // Owner's caption (2026-10-07): 「カタログ請求の依頼はこちらより問い合わせください。」
+    heading: "Catalog",
+    requestBefore: "カタログ請求の依頼は",
+    requestLink: "こちら",
+    requestAfter: "より問い合わせください。",
+    metaDescription:
+      "水牛・ウッド・メタルのボタンを綿のサンプルカードに収めた、Hammond Button Works の商品カタログです。お取引先様へご請求に応じてお送りしております。",
+    pageAlt: "カタログ {n} / {total} ページ",
+    coverAlt: "カタログ表紙",
+    backAlt: "カタログ裏表紙",
+    cta: "カタログを請求する",
   },
 
   about: {
