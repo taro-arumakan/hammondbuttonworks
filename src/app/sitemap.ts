@@ -37,6 +37,7 @@ const STATIC_PATHS: { path: string; priority: number; changeFrequency: "daily" |
   })),
   { path: "/quote", priority: 0.7, changeFrequency: "monthly" },
   { path: "/about", priority: 0.5, changeFrequency: "monthly" },
+  { path: "/guide", priority: 0.5, changeFrequency: "monthly" },
 ];
 
 /** One entry per locale, each cross-linking the others via hreflang. */

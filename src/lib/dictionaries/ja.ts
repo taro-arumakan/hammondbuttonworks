@@ -2,6 +2,8 @@
  * Japanese UI dictionary. Mirrors the shape of en.ts (enforced where the two
  * are combined in i18n.ts). B2B / heritage-workwear tone.
  */
+import type { GuideCopy } from "../guide";
+
 const ja = {
   langName: "日本語",
 
@@ -36,6 +38,70 @@ const ja = {
     ],
     bannerAlt: "黒い背景に並ぶ水牛ボタンのアップ。HAMMOND H.B.W. の刻印入り",
   },
+
+  guide: {
+    // Owner copy, verbatim (thread "create a /guide page", 2026-10-07).
+    eyebrow: "Guide",
+    title: "発注・ご購入の前に",
+    description:
+      "はじめてご利用の方・メーカー様へ。会員登録、価格の表示、商品の選択、お支払い、別注のご依頼についてのご案内です。",
+    sections: [
+      {
+        heading: "はじめてご利用の方・メーカー様へ",
+        blocks: [
+          { kind: "p", text: ["ご利用にあたり、", { text: "利用規約", link: "terms" }, "をお読みください。"] },
+          {
+            kind: "p",
+            text: [
+              "当ウェブサイトで商品をご購入いただくには、会員登録が必要です。",
+              { text: "新規会員登録画面", link: "register" },
+              "よりお手続きください。",
+            ],
+          },
+          { kind: "p", text: ["登録完了後、ご登録のメールアドレス宛に登録完了メールをお送りいたします。"] },
+          { kind: "note", text: ["※パスワードは、第三者に推測されにくいものを設定し、大切に管理してください。"] },
+        ],
+      },
+      {
+        heading: "価格の表示について",
+        blocks: [
+          {
+            kind: "p",
+            text: [
+              { text: "ログイン画面", link: "login" },
+              "にて、ご登録のメールアドレスとパスワードを入力してください。ログイン後、商品の価格が表示されます。",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "商品の選択",
+        blocks: [
+          { kind: "p", text: ["商品詳細ページでカラー・サイズを選択し、「カートに入れる」ボタンをクリックしてください。"] },
+          {
+            kind: "note",
+            text: [
+              "※商品は原則として在庫を持たず、受注生産にて承っております。お届けまでの目安は、ご注文から約30日です。デザイン・仕様により納期が異なりますので、あらかじめご了承ください。",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "お支払いについて",
+        blocks: [
+          { kind: "p", text: ["お支払い方法は、以下よりお選びいただけます。"] },
+          { kind: "list", items: ["銀行振込（請求書に基づくお支払い）", "代金引換"] },
+        ],
+      },
+      {
+        heading: "別注・オリジナルデザインのご依頼について",
+        blocks: [
+          { kind: "p", text: ["別注やオリジナルデザインのご依頼・ご相談は、下記メールアドレスまでお問い合わせください。"] },
+          { kind: "p", text: [{ text: "info@hammondbutton.works", link: "email" }] },
+        ],
+      },
+    ],
+  } satisfies GuideCopy as GuideCopy,
 
   // Owner copy, verbatim ("HBW copies" sheet, one tab per material, 2026-10).
   // Names stay English (brand/display voice); titles are the sheet's own.
