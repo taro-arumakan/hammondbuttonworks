@@ -140,7 +140,7 @@ export default async function HomePage({
             {dict.home.materialsMore}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-x-8 lg:gap-y-12">
+        <div className="mt-6 grid grid-cols-2 gap-x-2 gap-y-8 lg:gap-y-12">
           {MATERIAL_SLUGS.map((slug) => {
             const m = dict.materials.items.find((i) => i.id === slug)!;
             return (
@@ -155,9 +155,17 @@ export default async function HomePage({
                     className="w-full transition duration-300 group-hover:scale-[1.02]"
                   />
                 </div>
-                <h3 className="mt-3 font-serif text-sm uppercase leading-snug tracking-[0.2em] group-hover:text-accent sm:text-base">
-                  {m.name}
-                </h3>
+                {/* The whole card is the link, so "View more" is a styled span
+                    rather than a nested <a>. It wraps under the name on the
+                    narrow mobile cards. */}
+                <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <h3 className="font-serif text-sm uppercase leading-snug tracking-[0.2em] group-hover:text-accent sm:text-base">
+                    {m.name}
+                  </h3>
+                  <span className="font-serif text-[11px] uppercase tracking-[0.1em] text-stone-600 underline underline-offset-4 group-hover:text-accent sm:text-xs">
+                    {dict.home.materialsViewMore}
+                  </span>
+                </div>
               </Link>
             );
           })}
