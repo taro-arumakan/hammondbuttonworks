@@ -121,7 +121,7 @@ const en = {
     eyebrow: "Handcrafted natural buttons · Buffalo · Wood · Metal",
     title: "Buttons of horn, wood & metal — handcrafted, made to order.",
     subtitle:
-      "Natural buffalo-horn, hardwood, and solid-metal buttons for apparel makers. Hand-finished and uncoated, in small quantities and any size to order.",
+      "We plan and produce original buttons that support the craftsmanship of apparel brands.\nBuffalo horn, wood, and metal, each finished carefully by hand to bring out the character of its material.\nFrom small production runs to custom sizes, we work flexibly, taking in each brand's intent and delivering buttons to the specifications and quantities you need.",
     browse: "Browse the catalog",
     requestQuote: "Request a quote",
     props: [

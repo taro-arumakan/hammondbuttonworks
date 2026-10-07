@@ -68,10 +68,12 @@ export default async function HomePage({
           <p className="font-serif text-sm uppercase tracking-[0.2em] text-accent">
             {dict.home.eyebrow}
           </p>
-          <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-tight tracking-tight sm:text-5xl">
+          <h1 className="mt-4 max-w-3xl font-serif text-3xl leading-tight tracking-tight sm:text-4xl">
             {dict.home.title}
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-stone-600">{dict.home.subtitle}</p>
+          <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-relaxed text-stone-600">
+            {dict.home.subtitle}
+          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={`/${locale}/catalog`}
