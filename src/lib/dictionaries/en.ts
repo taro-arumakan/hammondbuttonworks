@@ -247,6 +247,7 @@ const en = {
     bannerAlt: "Metal and buffalo horn buttons laid out in rows on a black ground",
     materialsTitle: "Material",
     materialsMore: "About our materials →",
+    materialsViewMore: "View more",
   },
 
   catalog: {
