@@ -30,7 +30,13 @@ const en = {
       "Our work is supported by the handcraft skills that our factory in Nepal, a country in view of the majestic Himalayas, has carefully preserved and passed down over many years. The expression shaped by the artisans' hands and the depth of natural materials give each button a presence of its own.",
       "We will continue to create pieces that grow more cherished with time, through design and craftsmanship found nowhere else.",
     ],
-    bannerAlt: "Close-up of buffalo horn buttons, some engraved HAMMOND H.B.W., on a black ground",
+    bannerAlt: "Buttons in blue, green, grey and beige gathered in a dark wooden bowl",
+    // Shown after the Nepal factory paragraph (NEPAL_PARAGRAPH in the page).
+    nepalAlts: [
+      "Sunrise over a misty valley in the Nepalese hills",
+      "The flag of Nepal with the snow-capped Himalaya behind",
+      "A woman in a patterned shawl walking by Phewa Lake, boats moored on the shore",
+    ],
   },
 
   // The by-material pages: /materials (index) and /materials/<id>. Owner copy,
