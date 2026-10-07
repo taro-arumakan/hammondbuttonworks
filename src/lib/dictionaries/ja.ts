@@ -40,7 +40,8 @@ const ja = {
   },
 
   guide: {
-    // Owner copy, verbatim (thread "create a /guide page", 2026-10-07).
+    // Owner copy (thread "create a /guide page", 2026-10-07), with login,
+    // registration and payment lines corrected to match the site (Taro, same day).
     eyebrow: "Guide",
     title: "発注・ご購入の前に",
     description:
@@ -58,8 +59,8 @@ const ja = {
               "よりお手続きください。",
             ],
           },
-          { kind: "p", text: ["登録完了後、ご登録のメールアドレス宛に登録完了メールをお送りいたします。"] },
-          { kind: "note", text: ["※パスワードは、第三者に推測されにくいものを設定し、大切に管理してください。"] },
+          { kind: "p", text: ["アカウントの設定が完了しましたら、ご登録のメールアドレス宛に登録完了メールをお送りいたします。"] },
+          { kind: "note", text: ["※パスワードは不要です。ログインの際は、ご登録のメールアドレス宛にお送りするログイン用リンクをご利用ください。"] },
         ],
       },
       {
@@ -69,7 +70,7 @@ const ja = {
             kind: "p",
             text: [
               { text: "ログイン画面", link: "login" },
-              "にて、ご登録のメールアドレスとパスワードを入力してください。ログイン後、商品の価格が表示されます。",
+              "にて、ご登録のメールアドレスを入力してください。お送りするメールのリンクからログインいただくと、商品の価格が表示されます。",
             ],
           },
         ],
@@ -89,8 +90,7 @@ const ja = {
       {
         heading: "お支払いについて",
         blocks: [
-          { kind: "p", text: ["お支払い方法は、以下よりお選びいただけます。"] },
-          { kind: "list", items: ["銀行振込（請求書に基づくお支払い）", "代金引換"] },
+          { kind: "p", text: ["お支払いは、銀行振込（請求書に基づくお支払い）にて承っております。"] },
         ],
       },
       {

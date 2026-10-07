@@ -59,11 +59,11 @@ const en = {
           },
           {
             kind: "p",
-            text: ["Once your registration is complete, we will send a confirmation email to your registered address."],
+            text: ["Once your account has been set up, we will send a confirmation email to your registered address."],
           },
           {
             kind: "note",
-            text: ["Please choose a password that others cannot easily guess, and keep it secure."],
+            text: ["No password is needed: you sign in with a link we send to your registered email address."],
           },
         ],
       },
@@ -73,9 +73,9 @@ const en = {
           {
             kind: "p",
             text: [
-              "Enter your registered email address and password on the ",
+              "Enter your registered email address on the ",
               { text: "login", link: "login" },
-              " page. Prices are shown once you are signed in.",
+              " page, then sign in with the link we email to you. Prices are shown once you are signed in.",
             ],
           },
         ],
@@ -98,8 +98,7 @@ const en = {
       {
         heading: "Payment",
         blocks: [
-          { kind: "p", text: ["The following payment methods are available:"] },
-          { kind: "list", items: ["Bank transfer (payment against invoice)", "Cash on delivery"] },
+          { kind: "p", text: ["Payment is by bank transfer, against our invoice."] },
         ],
       },
       {
