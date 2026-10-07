@@ -217,7 +217,7 @@ const en = {
         cardAlt: "Metal buttons with engraved and embossed faces on a wooden board",
       },
     ],
-    rangeTitle: "The range",
+    rangeTitle: "Products",
     empty:
       "This series is not in the online catalog yet. For samples or custom orders, please get in touch.",
     emptyCta: "Contact us →",
@@ -238,7 +238,7 @@ const en = {
       { t: "Made to order", d: "Any size, finish, or engraving — from small quantities up." },
     ],
     propsImageAlts: ["Canvas pouch printed with the Hammond Button Works logo", "Button sample card of buffalo horn and wood buttons"],
-    rangeTitle: "The range",
+    rangeTitle: "Products",
     viewAll: "View all →",
     guestNote: "Prices are visible to approved trade accounts.",
     guestLogin: "Trade login",
