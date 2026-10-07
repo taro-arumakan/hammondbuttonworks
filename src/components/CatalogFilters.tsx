@@ -148,8 +148,12 @@ export function CatalogFilters({
         </div>
       </details>
 
-      {/* Desktop: always-visible sidebar */}
-      <aside className="hidden w-52 shrink-0 lg:block">
+      {/* Desktop: always-visible sidebar. Sticky under the site header with
+          its own scroll, so a long filter list never pushes the grid out of
+          view: the page scrolls the products, the pane scrolls the filters.
+          self-start stops the flex row stretching it, which would defeat
+          sticky. */}
+      <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] w-52 shrink-0 self-start overflow-y-auto overscroll-contain pb-4 pr-2 lg:block">
         <div className="flex items-baseline justify-between">
           <h2 className="font-serif text-sm uppercase tracking-[0.15em] text-stone-500">{title}</h2>
           {clear}
