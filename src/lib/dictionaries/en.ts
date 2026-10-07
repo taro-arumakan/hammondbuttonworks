@@ -44,7 +44,7 @@ const en = {
   materials: {
     title: "Material",
     description:
-      "Buffalo horn, Himalayan wood, piece-dyed buffalo horn and metal: the materials behind Hammond Button Works.",
+      "Buffalo horn, Himalayan wood, dyed buffalo horn and metal: the materials behind Hammond Button Works.",
     items: [
       {
         id: "buffalo",
@@ -63,6 +63,7 @@ const en = {
         ],
         imageAlt: "Close-up of buffalo horn buttons and toggles on a black ground",
         gridAlt: "Buffalo horn buttons in four colours laid out in rows on a black ground",
+        cardAlt: "Buffalo horn buttons and toggles on a black ground",
       },
       {
         id: "wood",
@@ -80,11 +81,12 @@ const en = {
         ],
         imageAlt: "Close-up of wood buttons and toggles on a black ground",
         gridAlt: "Wood buttons and toggles laid out in rows on a black ground",
+        cardAlt: "Wood buttons and toggles on a black ground",
       },
       {
         id: "dyed",
-        name: "Piece-dyed Buffalo Horn",
-        title: "Piece-dyed buffalo horn buttons",
+        name: "Dyed Buffalo Horn",
+        title: "Dyed buffalo horn buttons",
         blocks: [
           [
             "A newly developed series of buffalo horn buttons, dyed after they are made.",
@@ -96,8 +98,9 @@ const en = {
             "For custom orders, please feel free to get in touch.",
           ],
         ],
-        imageAlt: "Close-up of piece-dyed buffalo horn buttons in six colours on a black ground",
-        gridAlt: "Piece-dyed buffalo horn buttons in six colours laid out in rows on a black ground",
+        imageAlt: "Close-up of dyed buffalo horn buttons in six colours on a black ground",
+        gridAlt: "Dyed buffalo horn buttons in six colours laid out in rows on a black ground",
+        cardAlt: "Dyed buffalo horn buttons in several colours in a wooden dish",
       },
       {
         // No owner copy for metal yet — the page shows its title and products.
@@ -107,6 +110,7 @@ const en = {
         blocks: [] as string[][],
         imageAlt: "Metal buttons with engraved and embossed faces on a black ground",
         gridAlt: "Metal buttons laid out in rows on a black ground",
+        cardAlt: "Metal buttons with engraved and embossed faces on a wooden board",
       },
     ],
     rangeTitle: "The range",

@@ -140,7 +140,7 @@ export default async function HomePage({
             {dict.home.materialsMore}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-x-8 lg:gap-y-12">
           {MATERIAL_SLUGS.map((slug) => {
             const m = dict.materials.items.find((i) => i.id === slug)!;
             return (
@@ -148,17 +148,14 @@ export default async function HomePage({
                 <div className="overflow-hidden bg-[#141312]">
                   <img
                     src={`/images/site/${MATERIAL_IMAGES[slug].card}-1200.jpg`}
-                    alt={m.imageAlt}
+                    alt={m.cardAlt}
                     width={1200}
                     height={800}
                     loading="lazy"
                     className="w-full transition duration-300 group-hover:scale-[1.02]"
                   />
                 </div>
-                {/* Tracking steps down at lg so the longest name ("Piece-dyed
-                    Buffalo Horn") stays on one line in the 4-up row; on the
-                    2-up grid it can't fit, so it wraps with tight leading. */}
-                <h3 className="mt-3 font-serif text-sm uppercase leading-snug tracking-[0.15em] group-hover:text-accent sm:text-base lg:text-[15px] lg:tracking-[0.1em] xl:text-base xl:tracking-[0.15em]">
+                <h3 className="mt-3 font-serif text-sm uppercase leading-snug tracking-[0.2em] group-hover:text-accent sm:text-base">
                   {m.name}
                 </h3>
               </Link>
