@@ -5,11 +5,10 @@ import { Logo } from "@/components/Logo";
 import { FooterLanguageSwitch } from "@/components/FooterLanguageSwitch";
 
 /**
- * Site footer, per the owner's mockup (2026-10-07): black band with the site
- * links and language switch on the left and the white lockup with the
- * copyright on the right. Arimo throughout, except the serif copyright line.
- * The mockup's newsletter sign-up and text wordmark were dropped at the
- * owner's request (2026-10-07); the lockup already carries the name.
+ * Site footer, per the owner's "plan B" mock (2026-10-07): a very light gray
+ * band with the site links in two columns and the language switch on the
+ * left, and the black lockup with the copyright on the right. Arimo
+ * throughout, except the serif copyright line.
  *
  * Server component with one small client island (the language switch, which
  * needs the current path), so the layout stays static.
@@ -29,34 +28,39 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
     { href: `${home}/privacy`, label: f.links.privacy },
   ];
 
+  // Two menu columns, split as in the owner's mock: site sections, then
+  // ordering/help pages.
+  const columns = [links.slice(0, 5), links.slice(5)];
+
   return (
-    <footer className="mt-16 bg-black font-code text-white">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:px-6 md:grid-cols-2 md:gap-10 md:py-20">
+    <footer className="mt-16 bg-[#f7f7f6] font-code text-foreground">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 md:grid-cols-2 md:items-center md:py-12">
         <div>
-          <nav aria-label={f.navLabel}>
-            <ul className="space-y-2.5 text-[15px] uppercase tracking-[0.08em]">
-              {links.map((l) => (
-                <li key={l.label}>
-                  {l.href.startsWith("mailto:") ? (
-                    <a href={l.href} className="hover:text-white/60">
-                      {l.label}
-                    </a>
-                  ) : (
-                    <Link href={l.href} className="hover:text-white/60">
-                      {l.label}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
+          <nav aria-label={f.navLabel} className="flex gap-12 sm:gap-20">
+            {columns.map((col, i) => (
+              <ul key={i} className="space-y-2 text-[13px] uppercase tracking-[0.04em]">
+                {col.map((l) => (
+                  <li key={l.label}>
+                    {l.href.startsWith("mailto:") ? (
+                      <a href={l.href} className="hover:text-accent">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <Link href={l.href} className="hover:text-accent">
+                        {l.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ))}
           </nav>
           <FooterLanguageSwitch current={locale} />
         </div>
 
-        <div className="flex flex-col items-start gap-6 md:items-center md:justify-center">
-          {/* The lockup is black artwork; invert renders it white on the band. */}
-          <Logo variant="full" className="h-auto w-48 invert md:w-56" />
-          <p className="font-serif text-xs uppercase tracking-[0.02em] md:text-center lg:whitespace-nowrap">
+        <div className="flex flex-col items-start gap-4 md:items-center">
+          <Logo variant="full" className="h-auto w-36 md:w-40" />
+          <p className="font-serif text-[11px] uppercase tracking-[0.02em] md:text-center lg:whitespace-nowrap">
             {f.copy}
           </p>
         </div>

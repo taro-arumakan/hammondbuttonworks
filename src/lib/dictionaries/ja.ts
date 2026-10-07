@@ -414,7 +414,7 @@ const ja = {
       catalog: "Catalog",
       about: "About",
       guide: "Guide",
-      custom: "Custom Orders",
+      custom: "Custom Order",
       contact: "Contact",
       privacy: "Privacy",
     },
