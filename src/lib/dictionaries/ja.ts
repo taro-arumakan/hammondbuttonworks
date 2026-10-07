@@ -81,7 +81,7 @@ const ja = {
       },
       {
         id: "dyed",
-        name: "Piece-dyed Buffalo Horn",
+        name: "Dyed Buffalo Horn",
         title: "水牛製品染めボタンについて",
         blocks: [
           [

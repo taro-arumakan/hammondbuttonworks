@@ -44,7 +44,7 @@ const en = {
   materials: {
     title: "Material",
     description:
-      "Buffalo horn, Himalayan wood, piece-dyed buffalo horn and metal: the materials behind Hammond Button Works.",
+      "Buffalo horn, Himalayan wood, dyed buffalo horn and metal: the materials behind Hammond Button Works.",
     items: [
       {
         id: "buffalo",
@@ -83,8 +83,8 @@ const en = {
       },
       {
         id: "dyed",
-        name: "Piece-dyed Buffalo Horn",
-        title: "Piece-dyed buffalo horn buttons",
+        name: "Dyed Buffalo Horn",
+        title: "Dyed buffalo horn buttons",
         blocks: [
           [
             "A newly developed series of buffalo horn buttons, dyed after they are made.",
@@ -96,8 +96,8 @@ const en = {
             "For custom orders, please feel free to get in touch.",
           ],
         ],
-        imageAlt: "Close-up of piece-dyed buffalo horn buttons in six colours on a black ground",
-        gridAlt: "Piece-dyed buffalo horn buttons in six colours laid out in rows on a black ground",
+        imageAlt: "Close-up of dyed buffalo horn buttons in six colours on a black ground",
+        gridAlt: "Dyed buffalo horn buttons in six colours laid out in rows on a black ground",
       },
       {
         // No owner copy for metal yet — the page shows its title and products.
