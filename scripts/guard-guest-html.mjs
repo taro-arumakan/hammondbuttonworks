@@ -27,6 +27,7 @@ const PAGES = [
   "en/quote", "ja/quote",
   "en/cart", "ja/cart",
   "en/about", "ja/about",
+  "en/guide", "ja/guide",
   "en/print-catalog", "ja/print-catalog",
   "en/materials", "ja/materials",
   // One per material — each embeds a CatalogBrowser tile set, like en/catalog.

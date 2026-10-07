@@ -3,6 +3,8 @@
  * (see i18n.ts); `ja.ts` must mirror it. Strings with `{placeholders}` are
  * filled via `fmt()` from i18n-config.
  */
+import type { GuideCopy } from "../guide";
+
 const en = {
   langName: "English",
 
@@ -55,6 +57,85 @@ const en = {
       "A woman in a patterned shawl walking by Phewa Lake, boats moored on the shore",
     ],
   },
+
+  guide: {
+    // Owner copy (thread "create a /guide page", 2026-10-07), translated.
+    eyebrow: "Guide",
+    title: "Before You Order",
+    description:
+      "For first-time customers and manufacturers: registration, viewing prices, choosing products, payment and custom orders.",
+    sections: [
+      {
+        heading: "For First-Time Customers and Manufacturers",
+        blocks: [
+          {
+            kind: "p",
+            text: ["Before using this site, please read our ", { text: "Terms of Use", link: "terms" }, "."],
+          },
+          {
+            kind: "p",
+            text: [
+              "A registered account is required to purchase products on this site. Please apply through the ",
+              { text: "new account registration", link: "register" },
+              " page.",
+            ],
+          },
+          {
+            kind: "p",
+            text: ["Once your account has been set up, we will send a confirmation email to your registered address."],
+          },
+          {
+            kind: "note",
+            text: ["No password is needed: you sign in with a link we send to your registered email address."],
+          },
+        ],
+      },
+      {
+        heading: "Viewing Prices",
+        blocks: [
+          {
+            kind: "p",
+            text: [
+              "Enter your registered email address on the ",
+              { text: "login", link: "login" },
+              " page, then sign in with the link we email to you. Prices are shown once you are signed in.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Choosing Products",
+        blocks: [
+          {
+            kind: "p",
+            text: ["On a product page, choose a colour and size, then click the “Add to cart” button."],
+          },
+          {
+            kind: "note",
+            text: [
+              "As a rule, we do not hold stock: every order is made to order. Delivery takes approximately 30 days from the date of your order, and lead times vary with the design and specification.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Payment",
+        blocks: [
+          { kind: "p", text: ["Payment is by bank transfer, against our invoice."] },
+        ],
+      },
+      {
+        heading: "Custom Orders and Original Designs",
+        blocks: [
+          {
+            kind: "p",
+            text: ["For custom orders, original designs or any related enquiries, please contact us at the address below."],
+          },
+          { kind: "p", text: [{ text: "info@hammondbutton.works", link: "email" }] },
+        ],
+      },
+    ],
+  } satisfies GuideCopy as GuideCopy,
 
   // The by-material pages: /materials (index) and /materials/<id>. Owner copy,
   // 2026-10 ("HBW copies" sheet, one tab per material), translated. `id` is the
