@@ -52,12 +52,13 @@ export default async function HomePage({
 
   return (
     <div>
-      {/* Banner: the owner's own picks for the main banner (2026-10, LINE) —
-          the plain grid layouts, nothing styled with props such as flowers. */}
+      {/* Banner: the owner's three picks for the main banner (2026-10-06,
+          Drive "top page banner source images"), in the folder's file order. */}
       <Banner
         images={[
-          { name: "banner-wood-grid", alt: dict.home.bannerAlt },
-          { name: "banner-horn-grid", alt: dict.home.bannerAlt },
+          { name: "banner-metal-rows", alt: dict.home.bannerAlt },
+          { name: "banner-horn-rows", alt: dict.home.bannerAlt },
+          { name: "banner-horn-diagonal", alt: dict.home.bannerAlt },
         ]}
         priority
       />
