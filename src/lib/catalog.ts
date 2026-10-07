@@ -46,7 +46,7 @@ export type CatalogQuery = {
  * The colour facet token for a Color option value: its filter colour, called
  * with NO materials — exactly what the importer's admission gate checks
  * (`storefront_filter_color`), so every colour it lets in resolves here, and
- * PRODUCT_FIELDS never needs to fetch `hbw.material`. An unmapped value (only
+ * productFields never needs to fetch `hbw.material`. An unmapped value (only
  * the seeded placeholders have any) stays its own token, so it shows in the
  * sidebar as a visible gap rather than dropping out of the colour filter.
  */

@@ -6,6 +6,7 @@ import type { Dictionary } from "@/lib/i18n";
 import { type Locale, fmt } from "@/lib/i18n-config";
 import { addToCart } from "@/lib/cart-client";
 import { dropAccountHint } from "@/lib/account-hint";
+import { COLOR_EVENT } from "./ProductGallery";
 
 /**
  * Logged-in ordering panel. Prices come from the gated /api/price endpoint
@@ -61,6 +62,10 @@ export function TradeOrderPanel({
     initialColor && colors.includes(initialColor) ? initialColor : (colors[0] ?? ""),
   );
   const [sizeMm, setSizeMm] = useState(sizesMm[0] ?? 0);
+  // Tell the photo gallery (a sibling island) to show this colour.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent(COLOR_EVENT, { detail: color }));
+  }, [color]);
   const [qty, setQty] = useState(1);
   const [engraving, setEngraving] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);

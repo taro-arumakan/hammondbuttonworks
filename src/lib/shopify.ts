@@ -178,6 +178,10 @@ export type ShopifyProduct = {
   descriptionHtml: string;
   image?: string;
   images: string[];
+  /** Every product media frame with its alt — the importer's alt encodes
+   *  code/colour/size/angle (see lib/gallery.ts). Full set on the product
+   *  page query only; the listing query caps it (LIST_MEDIA). */
+  media: { url: string; alt: string }[];
   leadTimeDays: number;
   /** `hbw.construction` (2-hole / 4-hole / shank / toggle / tack), "" when unset. */
   construction: string;
@@ -205,7 +209,16 @@ export async function shopCurrency(revalidate?: number): Promise<string> {
   return currencyCache;
 }
 
-const PRODUCT_FIELDS = `
+// The importer uploads every frame of every colour × size × angle, so a design
+// easily carries 20+ media. The listing only needs the featured shot (variant
+// images come separately), so it keeps a small cap; the product page's gallery
+// asks for Shopify's per-product ceiling. ⚠️ Only the page: /api/price looks
+// up to 40 products in parallel per catalog view, and 250 media apiece would
+// multiply the query cost into Shopify's throttle.
+const LIST_MEDIA = 12;
+export const GALLERY_MEDIA = 250;
+
+const productFields = (mediaFirst: number) => `
   id
   handle
   status
@@ -215,7 +228,7 @@ const PRODUCT_FIELDS = `
   updatedAt
   descriptionHtml
   featuredMedia { preview { image { url } } }
-  media(first: 12) { nodes { preview { image { url } } } }
+  media(first: ${mediaFirst}) { nodes { alt preview { image { url } } } }
   nameJa: metafield(namespace: "hbw", key: "name_ja") { value }
   shortJa: metafield(namespace: "hbw", key: "short_ja") { value }
   lead: metafield(namespace: "hbw", key: "lead_time_days") { value }
@@ -253,7 +266,7 @@ type RawProduct = {
   updatedAt: string;
   descriptionHtml: string;
   featuredMedia: { preview: { image: { url: string } | null } | null } | null;
-  media: { nodes: { preview: { image: { url: string } | null } | null }[] };
+  media: { nodes: { alt: string | null; preview: { image: { url: string } | null } | null }[] };
   nameJa: { value: string } | null;
   shortJa: { value: string } | null;
   lead: { value: string } | null;
@@ -280,7 +293,10 @@ function sizeToMm(size: string): number {
 function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
   const colorOpt = p.options.find((o) => o.name.toLowerCase() === "color");
   const sizeOpt = p.options.find((o) => o.name.toLowerCase() === "size");
-  const images = p.media.nodes.map((n) => n.preview?.image?.url).filter((u): u is string => !!u);
+  const media = p.media.nodes.flatMap((n) =>
+    n.preview?.image?.url ? [{ url: n.preview.image.url, alt: n.alt ?? "" }] : [],
+  );
+  const images = media.map((m) => m.url);
   const image = p.featuredMedia?.preview?.image?.url ?? images[0];
 
   const variants: ShopifyVariant[] = p.variants.nodes.map((v) => {
@@ -310,6 +326,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     descriptionHtml: p.descriptionHtml,
     image,
     images,
+    media,
     leadTimeDays: p.lead ? Number(p.lead.value) : 30,
     construction: p.construction?.value ?? "",
     colors: colorOpt?.optionValues.map((v) => v.name) ?? [],
@@ -330,7 +347,7 @@ export async function getShopifyProducts(revalidate?: number): Promise<ShopifyPr
         `query($cursor: String) {
            products(first: 50, after: $cursor, sortKey: TITLE, query: "status:active") {
              pageInfo { hasNextPage endCursor }
-             nodes { ${PRODUCT_FIELDS} }
+             nodes { ${productFields(LIST_MEDIA)} }
            }
          }`,
         { cursor },
@@ -345,10 +362,11 @@ export async function getShopifyProducts(revalidate?: number): Promise<ShopifyPr
 export async function getShopifyProductByHandle(
   handle: string,
   revalidate?: number,
+  mediaFirst: number = LIST_MEDIA,
 ): Promise<ShopifyProduct | null> {
   const currency = await shopCurrency(revalidate);
   const d = await shopifyFetch<{ productByHandle: RawProduct | null }>(
-    `query($handle: String!) { productByHandle(handle: $handle) { ${PRODUCT_FIELDS} } }`,
+    `query($handle: String!) { productByHandle(handle: $handle) { ${productFields(mediaFirst)} } }`,
     { handle },
     revalidate,
   );
