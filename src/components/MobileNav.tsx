@@ -36,7 +36,7 @@ export function MobileNav({ home, dict }: { home: string; dict: Dictionary }) {
   };
   const toggle = () => (mounted ? close() : open());
 
-  // Serif menu (Marcellus/Zen Old Mincho), matching the desktop nav + niceness.jp.
+  // Libre Baskerville menu (Zen Kaku Gothic New for Japanese), matching the desktop nav.
   const linkClass =
     "block py-3 font-serif text-base tracking-[0.02em] text-foreground hover:text-accent border-b border-line/70";
 

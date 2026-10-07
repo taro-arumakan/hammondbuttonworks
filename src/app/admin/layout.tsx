@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Marcellus, Zen_Old_Mincho } from "next/font/google";
+import { Libre_Baskerville, Zen_Kaku_Gothic_New } from "next/font/google";
 import { staffSession } from "@/lib/auth";
 import "../globals.css";
 
@@ -11,9 +11,9 @@ import "../globals.css";
  *
  * Not locale-prefixed: this is an internal tool, Japanese only.
  */
-const display = Marcellus({ weight: "400", subsets: ["latin"], variable: "--font-display", display: "swap" });
-const jp = Zen_Old_Mincho({
-  weight: ["400", "500"],
+const display = Libre_Baskerville({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-display", display: "swap" });
+const jp = Zen_Kaku_Gothic_New({
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-jp",
   display: "swap",

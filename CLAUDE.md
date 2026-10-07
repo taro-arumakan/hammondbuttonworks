@@ -136,20 +136,15 @@ for guests.
 
 ## Branding / design system
 Heritage-minimal: background **white `#ffffff`** (niceness.jp-aligned), ink `#1a1714`,
-brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`). **Type follows
-niceness.jp's pairing: Latin = Marcellus, 日本語 = Zen Old Mincho** — both via `next/font`
-(`--font-display` + `--font-jp`). Marcellus is a low-contrast inscriptional Roman (matches
-their custom "NICENESS Serif"; was EB Garamond; one 400 weight, no bold serif in the UI).
-Zen Old Mincho reaches Japanese two ways: (1) it's the **CJK fallback on `--font-serif`**
-(Marcellus → Mincho per-glyph, since Marcellus & its generic fallbacks carry no CJK — no
-`unicode-range` needed); (2) for **body/`--font-sans` a per-glyph fallback does NOT work**
-— `ui-sans-serif`/`system-ui` themselves cover Japanese (system Gothic) and intercept it —
-so a `[lang="ja"]` rule in globals.css **overrides `--font-sans` to lead with Zen Old
-Mincho** on Japanese pages (cascades to `body` + every `font-sans` element). Net: EN pages
-= Marcellus headings/nav + **Hanken Grotesk** body (`--font-body`, variable, since 2026-10 —
-niceness sets Basis Grotesque under its serif; the weights for buttons/prices live here, so
-Marcellus stays one weight); JA pages = Mincho throughout (incl. body/About and the Latin
-inside it — Mincho kana beside grotesque Latin is the one mix to avoid).
+brass accent `#8a6d3b`, hairline `#e4e1da` (`src/app/globals.css`).
+**Type = the owner's spec (2026-10), all Google Fonts via `next/font`:** Libre Baskerville
+(`--font-display`, 400/700) for English text and the header menu; **Arimo** (`--font-arimo`
+→ the `font-code` utility) for button product numbers (tile/product/cart names) and the whole
+footer; **Zen Kaku Gothic New** (`--font-jp`) for Japanese. Latin faces carry no CJK, so
+`--font-jp` sits right after them and Japanese falls through per glyph — but never put
+`ui-sans-serif`/`system-ui` before `--font-jp` (they cover Japanese with the system Gothic
+and intercept it). On JA pages a `[lang="ja"]` rule makes `--font-sans` lead with Zen Kaku
+(Latin in JA body copy included); headings/menus stay Baskerville for Latin.
 Menu links use `font-serif` (serif nav, like niceness) in the desktop layout and `MobileNav`. A **double-line frame** motif (`.frame-double`) mirrors
 the logo. Product listing is a **flat, gridline-separated grid** (FreshService-style):
 container draws top/left edge, each cell draws right/bottom. Footer carries the circular
