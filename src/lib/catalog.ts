@@ -35,7 +35,7 @@ export type Availability = "in" | "mto";
 
 export type CatalogQuery = {
   categories: string[]; // lowercased productType tokens
-  sizes: number[]; // mm
+  sizes: string[]; // size-filter keys (see `sizeKeyOf`), e.g. "buffalo-20", "toggle-45", "metal"
   colors: string[]; // facet tokens (see `facetColor`), e.g. "dark brown" for H2 and HB01
   stock: Availability[];
   sort: SortKey;
@@ -65,6 +65,64 @@ export function productColorLabels(
   names: Readonly<Record<string, string>>,
 ): Record<string, string> {
   return colorLabels([...p.colors, ...p.variants.map((v) => v.color)], names, p.slug);
+}
+
+// --- Size filter -----------------------------------------------------------------
+
+/**
+ * The size filter is grouped by kind of button (owner request, 2026-10-07): a
+ * flat list put one metal 19mm next to dozens of buffalo 20mm and suggested the
+ * two were comparable. Each group lists the sizes the owner named; a size
+ * that turns up in the data but not in the list is appended, so no colourway
+ * ever becomes unfilterable. Metal sizes vary per design (7–24mm, mostly one
+ * product each), so metal is one option with no sizes under it.
+ *
+ * TOGGLE comes from the product's `hbw.construction` metafield, which the
+ * tooling importer writes from its product master (since 2026-10-07). A
+ * product with none set falls back to size: every toggle is 35mm or larger
+ * and no other button is, so 35mm+ still lands under Toggle.
+ */
+export const SIZE_GROUPS = [
+  { key: "buffalo", sizes: [10, 11.5, 13, 15, 18, 20, 23, 25, 30] },
+  { key: "wood", sizes: [10, 11.5, 13, 15, 18, 20, 23, 25, 30] },
+  { key: "toggle", sizes: [35, 45, 55] },
+  { key: "metal", sizes: [] },
+] as const satisfies readonly { key: string; sizes: readonly number[] }[];
+export type SizeGroup = (typeof SIZE_GROUPS)[number]["key"];
+
+const TOGGLE_MIN_MM = 35;
+
+/** Which size-filter group one variant belongs to; undefined without a material. */
+export function sizeGroupOf(
+  sizeMm: number,
+  materials: readonly string[],
+  construction: string,
+): SizeGroup | undefined {
+  if (construction === "toggle") return "toggle";
+  if (!construction && sizeMm >= TOGGLE_MIN_MM) return "toggle";
+  // "dyed" is buffalo horn too; a buffalo + metal combination files under buffalo.
+  const groups = materialGroupsOf("", materials);
+  if (groups.includes("wood")) return "wood";
+  if (groups.some((g) => g === "buffalo" || g === "dyed")) return "buffalo";
+  if (groups.includes("metal")) return "metal";
+  return undefined;
+}
+
+/** The filter key for one variant: "buffalo-11.5", "toggle-45", or just "metal". */
+export function sizeKeyOf(
+  sizeMm: number,
+  materials: readonly string[],
+  construction: string,
+): string | undefined {
+  const group = sizeGroupOf(sizeMm, materials, construction);
+  if (!group) return undefined;
+  return group === "metal" ? "metal" : `${group}-${sizeMm}`;
+}
+
+function parseSizeKey(key: string): { group: SizeGroup; mm?: number } | undefined {
+  if (key === "metal") return { group: "metal" };
+  const m = /^(buffalo|wood|toggle)-(\d+(?:\.\d+)?)$/.exec(key);
+  return m ? { group: m[1] as SizeGroup, mm: parseFloat(m[2]) } : undefined;
 }
 
 // --- Colourways ------------------------------------------------------------------
@@ -152,6 +210,7 @@ export type CatalogTile = {
   createdAt: string; // ISO, for "newest"
   currency: string;
   sizesMm: number[]; // sizes available in this colour
+  sizeKeys: string[]; // size-filter keys for those sizes (see `sizeKeyOf`)
   hasStock: boolean; // any variant in stock
   hasMto: boolean; // any variant made-to-order
 };
@@ -181,6 +240,9 @@ export function toTiles(colorways: Colorway[]): CatalogTile[] {
     createdAt: cw.product.createdAt,
     currency: cw.product.currency,
     sizesMm: [...new Set(cw.variants.map((v) => v.sizeMm))].sort((a, b) => a - b),
+    sizeKeys: [
+      ...new Set(cw.variants.flatMap((v) => sizeKeyOf(v.sizeMm, v.materials, cw.product.construction) ?? [])),
+    ],
     hasStock: cw.variants.some((v) => v.inStock),
     hasMto: cw.variants.some((v) => !v.inStock),
   }));
@@ -208,9 +270,10 @@ export function parseCatalogQuery(sp: SearchParams, allowPriceSort: boolean): Ca
 
   return {
     categories: csv(sp.category).map((c) => c.toLowerCase()),
+    // Unknown tokens (including the bare-mm keys of the old flat list) drop.
     sizes: csv(sp.size)
-      .map((s) => parseFloat(s))
-      .filter((n) => Number.isFinite(n) && n > 0),
+      .map((s) => s.toLowerCase())
+      .filter((s) => parseSizeKey(s) !== undefined),
     colors: csv(sp.color),
     stock: csv(sp.stock).filter((s): s is Availability => s === "in" || s === "mto"),
     sort,
@@ -227,7 +290,7 @@ function matchesDimension(t: CatalogTile, q: CatalogQuery, dim: Dimension): bool
     case "categories":
       return q.categories.length === 0 || q.categories.includes(t.category.toLowerCase());
     case "sizes":
-      return q.sizes.length === 0 || t.sizesMm.some((s) => q.sizes.includes(s));
+      return q.sizes.length === 0 || t.sizeKeys.some((k) => q.sizes.includes(k));
     case "colors":
       // Exact: a colour filter matches the tile's own colour, not "the product
       // has some variant in this colour".
@@ -280,11 +343,28 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
     if (categories.has(k)) categories.set(k, (categories.get(k) ?? 0) + 1);
   }
 
-  const sizes = new Map<number, number>();
-  for (const t of tiles) for (const s of t.sizesMm) if (!sizes.has(s)) sizes.set(s, 0);
-  for (const t of forSizes) {
-    for (const s of t.sizesMm) sizes.set(s, (sizes.get(s) ?? 0) + 1);
-  }
+  // Every listed size shows, even at 0 (greyed), so the buyer sees the full
+  // range the owner offers; sizes only the data has are appended in order.
+  const sizeCounts = new Map<string, number>();
+  for (const t of forSizes) for (const k of t.sizeKeys) sizeCounts.set(k, (sizeCounts.get(k) ?? 0) + 1);
+  const present = new Set(tiles.flatMap((t) => t.sizeKeys));
+  const sizes = SIZE_GROUPS.map((g) => {
+    const mm = new Set<number>(g.sizes);
+    for (const k of present) {
+      const p = parseSizeKey(k);
+      if (p?.group === g.key && p.mm !== undefined) mm.add(p.mm);
+    }
+    const keys =
+      g.key === "metal" ? ["metal"] : [...mm].sort((a, b) => a - b).map((n) => `${g.key}-${n}`);
+    return {
+      group: g.key as SizeGroup,
+      options: keys.map((value) => ({
+        value,
+        mm: parseSizeKey(value)?.mm,
+        count: sizeCounts.get(value) ?? 0,
+      })),
+    };
+  });
 
   const colors = new Map<string, number>();
   for (const t of tiles) if (t.filterColor && !colors.has(t.filterColor)) colors.set(t.filterColor, 0);
@@ -305,9 +385,7 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
 
   return {
     categories: [...categories.entries()].map(([value, count]) => ({ value, count })),
-    sizes: [...sizes.entries()]
-      .sort((a, b) => a[0] - b[0])
-      .map(([value, count]) => ({ value: String(value), count })),
+    sizes,
     colors: [...colors.entries()]
       .sort((a, b) => colorRank(a[0]) - colorRank(b[0]) || a[0].localeCompare(b[0]))
       .map(([value, count]) => ({ value, count })),

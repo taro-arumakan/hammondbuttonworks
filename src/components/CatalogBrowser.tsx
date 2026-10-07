@@ -190,12 +190,16 @@ export function CatalogBrowser({
     {
       key: "size",
       title: f.size,
-      options: facets.sizes.map(({ value, count }) => ({
-        value,
-        label: `${value}mm`,
-        count,
-        active: query.sizes.includes(parseFloat(value)),
-      })),
+      // Grouped by kind of button (see SIZE_GROUPS); metal is one option.
+      options: facets.sizes.flatMap(({ group, options }) =>
+        options.map(({ value, mm, count }) => ({
+          value,
+          label: mm === undefined ? f.allSizes : `${mm}mm`,
+          count,
+          active: query.sizes.includes(value),
+          section: f.sizeGroups[group],
+        })),
+      ),
     },
     {
       key: "color",
@@ -223,7 +227,7 @@ export function CatalogBrowser({
         update({ ...query, categories: toggled(query.categories, value), page: 1 });
         break;
       case "size":
-        update({ ...query, sizes: toggled(query.sizes, parseFloat(value)), page: 1 });
+        update({ ...query, sizes: toggled(query.sizes, value), page: 1 });
         break;
       case "color":
         update({ ...query, colors: toggled(query.colors, value), page: 1 });

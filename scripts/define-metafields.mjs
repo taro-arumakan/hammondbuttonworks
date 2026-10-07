@@ -76,6 +76,27 @@ const DEFINITIONS = [
     ],
     pin: true,
   },
+  {
+    name: "Construction",
+    namespace: "hbw",
+    key: "construction",
+    ownerType: "PRODUCT",
+    // One value: a button has one construction. The vocabulary is HOLE_TYPES
+    // in src/lib/schema.ts, mirrored by the tooling importer, which writes this
+    // from its product master. The catalog size filter reads it to list
+    // toggles under Toggle (lib/catalog.ts, sizeGroupOf).
+    type: "single_line_text_field",
+    description:
+      "How the button fastens. toggle puts it under Toggle in the catalog " +
+      "size filter; set it on every new toggle.",
+    validations: [
+      {
+        name: "choices",
+        value: JSON.stringify(["2-hole", "4-hole", "shank", "toggle", "tack"]),
+      },
+    ],
+    pin: true,
+  },
 ];
 
 /**

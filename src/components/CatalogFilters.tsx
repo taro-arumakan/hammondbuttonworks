@@ -14,6 +14,8 @@ export type FilterOption = {
   label: string;
   count: number;
   active: boolean;
+  /** Sub-heading the option sits under; a new value starts a new sub-list. */
+  section?: string;
 };
 
 export type FilterGroup = {
@@ -37,8 +39,13 @@ function FilterRows({
             {g.title}
           </h3>
           <ul className="mt-2 space-y-1 border-t border-line pt-2">
-            {g.options.map((o) => (
+            {g.options.map((o, i) => (
               <li key={o.value}>
+                {o.section && o.section !== g.options[i - 1]?.section && (
+                  <p className={`pb-0.5 text-xs uppercase tracking-[0.12em] text-stone-500 ${i > 0 ? "pt-3" : ""}`}>
+                    {o.section}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() => onToggle(g.key, o.value)}
