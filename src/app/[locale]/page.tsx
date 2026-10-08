@@ -97,44 +97,11 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Value props — owner's layout (2026-10): two photos on the left, the
-          three props stacked on the right, spread so the text block's top and
-          bottom line up with the photos' edges. Japanese copy breaks at each 。 so
-          every sentence sits on its own line. Photos are the owner's catalog
-          shots 0826_000706 (pouch) and 0826_000707 (sample card). */}
-      <section className="pb-14 xl:mx-auto xl:grid xl:max-w-[1600px] xl:grid-cols-[2fr_1fr] xl:px-6 xl:py-16">
-        <div className="grid grid-cols-2">
-          {FEATURE_IMAGES.map((src, i) => (
-            <img
-              key={src}
-              src={src}
-              alt={dict.home.propsImageAlts[i]}
-              width={1200}
-              height={1200}
-              loading="lazy"
-              className="aspect-square w-full object-cover"
-            />
-          ))}
-        </div>
-        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
-          {dict.home.props.map((b) => (
-            <div key={b.t} className="xl:last:-mb-2">
-              <h3 className="font-serif text-2xl sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
-              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base xl:mt-4">
-                {b.d.split(/(?<=。)/).map((line) => (
-                  <span key={line} className="block">
-                    {line}
-                  </span>
-                ))}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Materials row — one close-up per material, each linking to that
-          material's own page (see lib/materials.ts for the images). */}
-      <section className="mx-auto max-w-6xl px-4 pb-16">
+          material's own page (see lib/materials.ts for the images). Owner's
+          layout (2026-10): straight after the intro and wider than the text
+          column, on the same 1600px frame as the value props below. */}
+      <section className="mx-auto max-w-[1600px] px-4 pb-16 pt-14 xl:px-6">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="font-serif text-3xl tracking-tight">{dict.home.materialsTitle}</h2>
           <Link href={`/${locale}/materials`} className="text-sm text-accent hover:underline">
@@ -170,6 +137,41 @@ export default async function HomePage({
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* Value props — owner's layout (2026-10): two photos on the left, the
+          three props stacked on the right, spread so the text block's top and
+          bottom line up with the photos' edges. Japanese copy breaks at each 。 so
+          every sentence sits on its own line. Photos are the owner's catalog
+          shots 0826_000706 (pouch) and 0826_000707 (sample card). */}
+      <section className="pb-14 xl:mx-auto xl:grid xl:max-w-[1600px] xl:grid-cols-[2fr_1fr] xl:px-6 xl:py-16">
+        <div className="grid grid-cols-2">
+          {FEATURE_IMAGES.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={dict.home.propsImageAlts[i]}
+              width={1200}
+              height={1200}
+              loading="lazy"
+              className="aspect-square w-full object-cover"
+            />
+          ))}
+        </div>
+        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
+          {dict.home.props.map((b) => (
+            <div key={b.t} className="xl:last:-mb-2">
+              <h3 className="font-serif text-2xl sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
+              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base xl:mt-4">
+                {b.d.split(/(?<=。)/).map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
