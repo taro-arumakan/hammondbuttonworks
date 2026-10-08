@@ -132,7 +132,7 @@ const ja = {
     items: [
       {
         id: "buffalo",
-        name: "Buffalo Horn",
+        name: "Buffalo",
         title: "水牛ボタンについて",
         blocks: [
           [
@@ -169,7 +169,7 @@ const ja = {
       },
       {
         id: "dyed",
-        name: "Dyed Buffalo Horn",
+        name: "Dyed Buffalo",
         title: "水牛製品染めボタンについて",
         blocks: [
           [

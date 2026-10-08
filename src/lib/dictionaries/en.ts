@@ -152,7 +152,7 @@ const en = {
     items: [
       {
         id: "buffalo",
-        name: "Buffalo Horn",
+        name: "Buffalo",
         title: "Buffalo horn buttons",
         blocks: [
           [
@@ -189,7 +189,7 @@ const en = {
       },
       {
         id: "dyed",
-        name: "Dyed Buffalo Horn",
+        name: "Dyed Buffalo",
         title: "Dyed buffalo horn buttons",
         blocks: [
           [
@@ -265,7 +265,7 @@ const en = {
       title: "Refine",
       category: "Category",
       size: "Size",
-      sizeGroups: { buffalo: "Buffalo horn", wood: "Wood", toggle: "Toggle", metal: "Metal" },
+      sizeGroups: { buffalo: "Buffalo", wood: "Wood", toggle: "Toggle", metal: "Metal" },
       color: "Color",
       availability: "Availability",
       inStock: "In stock",
