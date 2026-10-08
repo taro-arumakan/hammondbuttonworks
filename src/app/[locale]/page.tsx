@@ -44,12 +44,12 @@ export default async function HomePage({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  // Home shows a taster of the range (2 rows of 4) — the full catalog lives
-  // behind "View all". Without the cap this would render all ~200 designs.
+  // Home shows a taster of the range (2 rows of 3 on desktop, 3 rows of 2 on
+  // mobile) — the full catalog lives behind "View all". Without the cap this would render all ~200 designs.
   // One tile per design here (its first colourway), not per colourway, so the
   // teaser shows breadth rather than colour repeats.
   const products = (await getAllProducts(PAGE_REVALIDATE))
-    .slice(0, 8)
+    .slice(0, 6)
     .map((p) => localizeProduct(p, locale));
   const tiles = products
     .map((p) => toColorways([p], dict.labels.color)[0])
@@ -181,7 +181,7 @@ export default async function HomePage({
             {dict.home.viewAll}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-[2px] lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-[2px] lg:grid-cols-3">
           {tiles.map((cw) => (
             <ProductCard
               key={cw.key}
