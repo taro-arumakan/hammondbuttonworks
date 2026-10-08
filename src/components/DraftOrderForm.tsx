@@ -152,7 +152,7 @@ export function DraftOrderForm() {
           </p>
           <p>
             合計：{new Intl.NumberFormat("ja-JP", { style: "currency", currency: result.currency, maximumFractionDigits: 0 }).format(result.total)}
-            （価格区分を反映済み・税別）
+            （価格区分を反映済み・税込）
           </p>
           <p>出荷予定：{result.expectedShipping}</p>
           <p className="text-xs text-green-800">
