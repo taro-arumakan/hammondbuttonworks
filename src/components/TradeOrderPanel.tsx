@@ -112,7 +112,7 @@ export function TradeOrderPanel({
 
   return (
     <div className="rounded-xl border border-stone-200 bg-white p-6">
-      <h2 className="text-lg font-semibold">{t.heading}</h2>
+      <h2 className="text-lg">{t.heading}</h2>
 
       {/* Color */}
       <fieldset className="mt-4">

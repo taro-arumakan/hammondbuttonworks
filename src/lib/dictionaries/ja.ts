@@ -285,6 +285,9 @@ const ja = {
     origin: "原産国",
     certifications: "認証",
     careLabel: "お手入れ:",
+    otherSizesBefore: "＊他のサイズをご希望の方は",
+    otherSizesLink: "問い合わせフォーム",
+    otherSizesAfter: "より問い合わせください",
     mockupNote: "実物サンプルの写真です。色・杢目は個体ごとに異なります。",
   },
 

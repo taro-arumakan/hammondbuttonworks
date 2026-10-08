@@ -55,7 +55,7 @@ export function PriceBlock({
   if (!account) {
     return (
       <div className="rounded-xl border border-dashed border-stone-300 bg-stone-50 p-6">
-        <h2 className="text-lg font-semibold">{dict.priceBlock.heading}</h2>
+        <h2 className="text-lg">{dict.priceBlock.heading}</h2>
         <p className="mt-2 text-sm text-stone-600">{dict.priceBlock.body}</p>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
