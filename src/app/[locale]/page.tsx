@@ -101,9 +101,8 @@ export default async function HomePage({
 
       {/* Materials row — one close-up per material, each linking to that
           material's own page (see lib/materials.ts for the images). Owner's
-          layout (2026-10): straight after the intro and wider than the text
-          column, on the same 1600px frame as the value props below. */}
-      <section className="mx-auto max-w-[1600px] px-4 pb-16 pt-14 xl:px-6">
+          layout (2026-10): straight after the intro, in the same text column. */}
+      <section className="mx-auto max-w-6xl px-4 pb-16 pt-14">
         <div className="flex items-baseline justify-between gap-4">
           <h2 className="font-serif text-3xl tracking-tight">{dict.home.materialsTitle}</h2>
           <Link href={`/${locale}/materials`} className="text-sm text-accent hover:underline">
