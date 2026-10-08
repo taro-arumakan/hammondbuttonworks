@@ -63,6 +63,8 @@ export default async function HomePage({
         images={[
           { name: "banner-metal-rows", alt: dict.home.bannerAlt },
           { name: "banner-horn-rows", alt: dict.home.bannerAlt },
+          // Added 2026-10-08 (Taro): the four sample-card sheets on a light ground.
+          { name: "banner-sample-cards", alt: dict.home.bannerAlt, phoneGround: "#f8f7f5" },
           { name: "banner-horn-diagonal", alt: dict.home.bannerAlt },
         ]}
         priority

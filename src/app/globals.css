@@ -52,14 +52,16 @@ body {
    underneath; the later ones fade in over it in turn. Reduced motion keeps the
    first slide only.
    Two slides: the second fades in and back out, 8s each.
-   Three slides, 24s: a 1.5s fade at 6.5s, 14.5s and 22.5s, so each slide holds
-   for 6.5s. The second stays opaque until the third has fully covered it, so
-   the hand-off never dips through to the first. */
+   Three or four slides: a 1.5s fade every 8s (at 6.5s, 14.5s, 22.5s, ...), the
+   last fading out as the cycle ends, so each slide holds for 6.5s. A slide stays
+   opaque until the next has fully covered it, so a hand-off never dips through
+   to the first. */
 @keyframes banner-fade {
   0%, 45% { opacity: 0; }
   50%, 95% { opacity: 1; }
   100% { opacity: 0; }
 }
+/* 24s cycle */
 @keyframes banner-fade-2of3 {
   0%, 27.08% { opacity: 0; }
   33.33%, 66.67% { opacity: 1; }
@@ -70,18 +72,33 @@ body {
   66.67%, 93.75% { opacity: 1; }
   100% { opacity: 0; }
 }
-.banner-fade,
-.banner-fade-2of3,
-.banner-fade-3of3 {
+/* 32s cycle */
+@keyframes banner-fade-2of4 {
+  0%, 20.31% { opacity: 0; }
+  25%, 50% { opacity: 1; }
+  53%, 100% { opacity: 0; }
+}
+@keyframes banner-fade-3of4 {
+  0%, 45.31% { opacity: 0; }
+  50%, 75% { opacity: 1; }
+  78%, 100% { opacity: 0; }
+}
+@keyframes banner-fade-4of4 {
+  0%, 70.31% { opacity: 0; }
+  75%, 95.31% { opacity: 1; }
+  100% { opacity: 0; }
+}
+[class*="banner-fade"] {
   opacity: 0;
   animation: banner-fade 16s ease-in-out infinite;
 }
 .banner-fade-2of3 { animation-name: banner-fade-2of3; animation-duration: 24s; }
 .banner-fade-3of3 { animation-name: banner-fade-3of3; animation-duration: 24s; }
+.banner-fade-2of4 { animation-name: banner-fade-2of4; animation-duration: 32s; }
+.banner-fade-3of4 { animation-name: banner-fade-3of4; animation-duration: 32s; }
+.banner-fade-4of4 { animation-name: banner-fade-4of4; animation-duration: 32s; }
 @media (prefers-reduced-motion: reduce) {
-  .banner-fade,
-  .banner-fade-2of3,
-  .banner-fade-3of3 { animation: none; }
+  [class*="banner-fade"] { animation: none; }
 }
 
 /* Heritage double-line frame — mirrors the Hammond logo lockup. */
