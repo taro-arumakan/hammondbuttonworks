@@ -98,10 +98,11 @@ export default async function HomePage({
       </section>
 
       {/* Value props — owner's layout (2026-10): two photos on the left, the
-          three props stacked on the right. Japanese copy breaks at each 。 so
+          three props stacked on the right, spread so the text block's top and
+          bottom line up with the photos' edges. Japanese copy breaks at each 。 so
           every sentence sits on its own line. Photos are the owner's catalog
           shots 0826_000706 (pouch) and 0826_000707 (sample card). */}
-      <section className="pb-14 lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-[3fr_2fr] lg:items-center lg:px-4 lg:py-14">
+      <section className="pb-14 xl:mx-auto xl:grid xl:max-w-[1600px] xl:grid-cols-[2fr_1fr] xl:px-6 xl:py-16">
         <div className="grid grid-cols-2">
           {FEATURE_IMAGES.map((src, i) => (
             <img
@@ -115,11 +116,11 @@ export default async function HomePage({
             />
           ))}
         </div>
-        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:mx-0 lg:space-y-10 lg:pl-12 lg:pr-0 lg:pt-0 xl:pl-16">
+        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
           {dict.home.props.map((b) => (
-            <div key={b.t}>
-              <h3 className="font-serif text-2xl sm:text-3xl">{b.t}</h3>
-              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base">
+            <div key={b.t} className="xl:last:-mb-2">
+              <h3 className="font-serif text-2xl sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
+              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base xl:mt-4">
                 {b.d.split(/(?<=。)/).map((line) => (
                   <span key={line} className="block">
                     {line}
