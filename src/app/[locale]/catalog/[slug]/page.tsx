@@ -61,7 +61,7 @@ function Spec({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between border-b border-stone-100 py-2 text-sm">
       <dt className="text-stone-500">{label}</dt>
-      <dd className="text-right font-medium">{value}</dd>
+      <dd className="text-right">{value}</dd>
     </div>
   );
 }
@@ -110,7 +110,7 @@ export default async function ProductPage({
             colorLabels={colorLabels}
           />
 
-          <h2 className="mt-8 text-lg font-semibold">{dict.product.specs}</h2>
+          <h2 className="mt-8 text-lg">{dict.product.specs}</h2>
           <dl className="mt-2">
             {/* productType is deliberately empty until the owner classifies
                 the range — no row beats a row with a blank value. */}
@@ -122,6 +122,13 @@ export default async function ProductPage({
               value={fmt(dict.product.leadTimeValue, { days: product.leadTimeDays })}
             />
           </dl>
+          <p className="mt-3 text-sm text-stone-600">
+            {dict.product.otherSizesBefore}
+            <Link href={`/${locale}/quote#inquiry`} className="underline underline-offset-4 hover:text-accent">
+              {dict.product.otherSizesLink}
+            </Link>
+            {dict.product.otherSizesAfter}
+          </p>
         </div>
 
         {/* Title, copy, pricing/order */}

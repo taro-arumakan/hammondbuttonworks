@@ -302,6 +302,11 @@ const en = {
     origin: "Origin",
     certifications: "Certifications",
     careLabel: "Care:",
+    // Under the spec table. Owner's Japanese (2026-10-08); English is ours.
+    // Rendered as: {otherSizesBefore}<link to the inquiry form>{otherSizesLink}</link>{otherSizesAfter}
+    otherSizesBefore: "* For sizes not listed here, please contact us ",
+    otherSizesLink: "via our inquiry form",
+    otherSizesAfter: ".",
     mockupNote: "Photographed samples — natural colour and grain vary piece to piece.",
   },
 
