@@ -140,7 +140,7 @@ export default async function HomePage({
             {dict.home.materialsMore}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-x-2 gap-y-8 lg:gap-y-12">
+        <div className="mt-6 grid grid-cols-2 gap-x-2 gap-y-5 lg:gap-y-6">
           {MATERIAL_SLUGS.map((slug) => {
             const m = dict.materials.items.find((i) => i.id === slug)!;
             return (
