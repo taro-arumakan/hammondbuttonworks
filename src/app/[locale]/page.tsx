@@ -110,11 +110,14 @@ export default async function HomePage({
             {dict.home.materialsMore}
           </Link>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-x-2 gap-y-5 lg:gap-y-6">
+        {/* Mobile (owner's mock, 2026-10): one full-width tile per row with the
+            name centred over the photo and no "View more". From sm up: the 2x2
+            grid with the name and "View more" under each photo. */}
+        <div className="mt-6 grid grid-cols-1 gap-y-2 sm:grid-cols-2 sm:gap-x-2 sm:gap-y-5 lg:gap-y-6">
           {MATERIAL_SLUGS.map((slug) => {
             const m = dict.materials.items.find((i) => i.id === slug)!;
             return (
-              <Link key={slug} href={`/${locale}/materials/${slug}`} className="group block">
+              <Link key={slug} href={`/${locale}/materials/${slug}`} className="group relative block">
                 <div className="overflow-hidden bg-[#141312]">
                   <img
                     src={`/images/site/${MATERIAL_IMAGES[slug].card}-1200.jpg`}
@@ -126,13 +129,12 @@ export default async function HomePage({
                   />
                 </div>
                 {/* The whole card is the link, so "View more" is a styled span
-                    rather than a nested <a>. It wraps under the name on the
-                    narrow mobile cards. */}
-                <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <h3 className="font-serif text-sm uppercase leading-snug tracking-[0.2em] group-hover:text-accent sm:text-base">
+                    rather than a nested <a>. */}
+                <div className="absolute inset-0 flex items-center justify-center px-4 sm:static sm:mt-3 sm:flex-wrap sm:items-baseline sm:justify-start sm:gap-x-4 sm:gap-y-1 sm:px-0">
+                  <h3 className="text-center font-serif text-xl uppercase leading-snug tracking-[0.2em] text-white [text-shadow:0_1px_8px_rgb(0_0_0/0.6)] sm:text-left sm:text-base sm:text-foreground sm:[text-shadow:none] sm:group-hover:text-accent">
                     {m.name}
                   </h3>
-                  <span className="font-serif text-[11px] uppercase tracking-[0.1em] text-stone-600 underline underline-offset-4 group-hover:text-accent sm:text-xs">
+                  <span className="hidden font-serif text-xs uppercase tracking-[0.1em] text-stone-600 underline underline-offset-4 group-hover:text-accent sm:inline">
                     {dict.home.materialsViewMore}
                   </span>
                 </div>
