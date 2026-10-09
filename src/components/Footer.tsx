@@ -59,8 +59,8 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
         </div>
 
         <div className="flex flex-col items-start gap-4 md:items-center">
-          <Logo variant="full" className="h-auto w-36 md:w-40" />
-          <p className="font-serif text-[11px] uppercase tracking-[0.02em] md:text-center lg:whitespace-nowrap">
+          <Logo variant="full" className="h-auto w-28 sm:w-36 md:w-40" />
+          <p className="font-serif text-[10px] uppercase tracking-[0.02em] sm:text-[11px] md:text-center lg:whitespace-nowrap">
             {f.copy}
           </p>
         </div>
