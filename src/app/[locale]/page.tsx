@@ -80,19 +80,19 @@ export default async function HomePage({
           <h1 className="mt-4 max-w-3xl font-serif text-3xl leading-tight tracking-tight sm:text-4xl">
             {dict.home.title}
           </h1>
-          <p className="mt-4 max-w-3xl whitespace-pre-line text-base leading-relaxed text-stone-600">
+          <p className="mt-4 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-stone-600 sm:text-base">
             {dict.home.subtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={`/${locale}/catalog`}
-              className="rounded-md bg-foreground px-5 py-3 font-medium text-background hover:bg-accent"
+              className="rounded-md bg-foreground px-4 py-2.5 text-sm font-medium text-background sm:px-5 sm:py-3 sm:text-base hover:bg-accent"
             >
               {dict.home.browse}
             </Link>
             <Link
               href={`/${locale}/quote`}
-              className="rounded-md border border-foreground/30 px-5 py-3 font-medium hover:border-accent hover:text-accent"
+              className="rounded-md border border-foreground/30 px-4 py-2.5 text-sm font-medium sm:px-5 sm:py-3 sm:text-base hover:border-accent hover:text-accent"
             >
               {dict.home.requestQuote}
             </Link>
@@ -163,11 +163,11 @@ export default async function HomePage({
             />
           ))}
         </div>
-        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
+        <div className="mx-auto max-w-6xl space-y-6 px-4 pt-8 sm:space-y-8 sm:pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
           {dict.home.props.map((b) => (
             <div key={b.t} className="xl:last:-mb-2">
-              <h3 className="font-serif text-2xl sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
-              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base xl:mt-4">
+              <h3 className="font-serif text-lg sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
+              <p className="mt-2 text-[12px] leading-relaxed text-stone-600 sm:mt-3 sm:text-base sm:leading-loose xl:mt-4">
                 {b.d.split(/(?<=。)/).map((line) => (
                   <span key={line} className="block">
                     {line}
