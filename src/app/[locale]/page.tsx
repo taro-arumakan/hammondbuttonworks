@@ -161,11 +161,11 @@ export default async function HomePage({
             />
           ))}
         </div>
-        <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
+        <div className="mx-auto max-w-6xl space-y-6 px-4 pt-8 sm:space-y-8 sm:pt-10 xl:mx-0 xl:flex xl:flex-col xl:justify-between xl:space-y-0 xl:pl-16 xl:pr-0 xl:pt-0">
           {dict.home.props.map((b) => (
             <div key={b.t} className="xl:last:-mb-2">
-              <h3 className="font-serif text-2xl sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
-              <p className="mt-3 text-sm leading-loose text-stone-600 sm:text-base xl:mt-4">
+              <h3 className="font-serif text-lg sm:text-3xl xl:text-4xl xl:leading-none">{b.t}</h3>
+              <p className="mt-2 text-[12px] leading-relaxed text-stone-600 sm:mt-3 sm:text-base sm:leading-loose xl:mt-4">
                 {b.d.split(/(?<=。)/).map((line) => (
                   <span key={line} className="block">
                     {line}
