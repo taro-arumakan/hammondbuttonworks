@@ -38,7 +38,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
         <div>
           <nav aria-label={f.navLabel} className="flex gap-12 sm:gap-20">
             {columns.map((col, i) => (
-              <ul key={i} className="space-y-2 text-[13px] uppercase tracking-[0.04em]">
+              <ul key={i} className="space-y-2 text-[12px] uppercase tracking-[0.04em] sm:text-[13px]">
                 {col.map((l) => (
                   <li key={l.label}>
                     {l.href.startsWith("mailto:") ? (
