@@ -97,6 +97,28 @@ const DEFINITIONS = [
     ],
     pin: true,
   },
+  {
+    name: "Category",
+    namespace: "hbw",
+    key: "category",
+    ownerType: "PRODUCT",
+    // A LIST, like hbw.material: one design can read as several styles (the
+    // owner gave most of them two to four). The keys are CATEGORIES in
+    // src/lib/catalog.ts, mirrored by the tooling importer, which writes this
+    // from its product master; labels live in dict.labels.category. The
+    // catalog's Category filter reads it.
+    type: "list.single_line_text_field",
+    description:
+      "Style categories for the catalog's Category filter; pick every one " +
+      "that applies.",
+    validations: [
+      {
+        name: "choices",
+        value: JSON.stringify(["classic", "work", "tailored", "vintage", "military", "toggle"]),
+      },
+    ],
+    pin: true,
+  },
 ];
 
 /**

@@ -475,11 +475,13 @@ const ja = {
     // Category and color values display in ENGLISH even on the JA UI
     // (owner direction, 2026-07 — matches the English style names).
     category: {
-      military: "Military",
+      // Keys are `hbw.category` values (CATEGORIES in lib/catalog.ts).
       classic: "Classic",
       work: "Work",
-      craft: "Craft",
-      design: "Design",
+      tailored: "Tailored",
+      vintage: "Vintage",
+      military: "Military",
+      toggle: "Toggle",
     } as Record<string, string>,
     color: {
       brown: "Brown",

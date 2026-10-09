@@ -19,7 +19,6 @@ import { TilePrice } from "./TilePrice";
 export function ProductCard({
   slug,
   name,
-  category,
   color,
   colorLabel,
   image,
@@ -29,7 +28,6 @@ export function ProductCard({
 }: {
   slug: string;
   name: string;
-  category: string;
   color: string; // exact option value — the identity the link carries
   colorLabel: string; // what the buyer reads (see productColorLabels)
   image?: string;
@@ -43,12 +41,11 @@ export function ProductCard({
   // bare size and price. Same mark in both locales.
   const ranged = sizesMm.length > 1;
   const sizeLabel = sizesMm.length ? `${minMm}mm${ranged ? "~" : ""}` : "";
-  const categoryLabel = category?.trim()
-    ? (dict.labels.category[category.toLowerCase()] ?? category)
-    : "";
-  // Colour leads the meta line — it's what distinguishes sibling tiles. An
-  // empty category is skipped, not rendered as a stray "·".
-  const meta = [color ? colorLabel : "", categoryLabel, sizeLabel]
+  // Colour leads the meta line — it's what distinguishes sibling tiles. The
+  // categories are not on the tile: a design carries several (owner's
+  // classification, 2026-10-09), which would crowd the line; they are a
+  // catalog filter and a row on the product page instead.
+  const meta = [color ? colorLabel : "", sizeLabel]
     .filter(Boolean)
     .join(" · ");
   const href = color

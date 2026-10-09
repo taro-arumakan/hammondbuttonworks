@@ -11,7 +11,7 @@ import type { Locale } from "./i18n-config";
  * JSON. Returns a clean view-model (`ShopifyProduct`) that the pages consume.
  *
  * Data model in Shopify (see scripts/seed-shopify.mjs):
- *  - design = Product; `productType` = category (Military/Classic/Work)
+ *  - design = Product; `hbw.category` (list metafield) = its style categories
  *  - options: Color × Size ("15mm")
  *  - variant.price = base price per (color × size), in the shop currency (JPY)
  *  - metafields hbw.{name_ja, short_ja, lead_time_days}; variant hbw.{in_stock, material}
@@ -172,7 +172,8 @@ export type ShopifyProduct = {
   name: string;
   nameJa?: string;
   shortJa?: string;
-  category: string; // productType
+  /** `hbw.category` keys (see CATEGORIES in lib/catalog.ts), [] when unclassified. */
+  categories: string[];
   createdAt: string; // ISO timestamp, for "newest" sorting
   updatedAt: string; // ISO timestamp, for sitemap lastModified
   descriptionHtml: string;
@@ -223,7 +224,6 @@ const productFields = (mediaFirst: number) => `
   handle
   status
   title
-  productType
   createdAt
   updatedAt
   descriptionHtml
@@ -233,6 +233,7 @@ const productFields = (mediaFirst: number) => `
   shortJa: metafield(namespace: "hbw", key: "short_ja") { value }
   lead: metafield(namespace: "hbw", key: "lead_time_days") { value }
   construction: metafield(namespace: "hbw", key: "construction") { value }
+  categories: metafield(namespace: "hbw", key: "category") { value }
   options { name optionValues { name } }
   variants(first: 100) {
     nodes {
@@ -261,7 +262,6 @@ type RawProduct = {
   handle: string;
   status: string;
   title: string;
-  productType: string;
   createdAt: string;
   updatedAt: string;
   descriptionHtml: string;
@@ -271,6 +271,7 @@ type RawProduct = {
   shortJa: { value: string } | null;
   lead: { value: string } | null;
   construction: { value: string } | null;
+  categories: { value: string } | null;
   options: { name: string; optionValues: { name: string }[] }[];
   variants: { nodes: RawVariant[] };
 };
@@ -320,7 +321,7 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     name: p.title,
     nameJa: p.nameJa?.value,
     shortJa: p.shortJa?.value,
-    category: p.productType,
+    categories: parseList(p.categories?.value),
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
     descriptionHtml: p.descriptionHtml,

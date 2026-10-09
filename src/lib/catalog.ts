@@ -34,7 +34,7 @@ const PRICE_SORTS: SortKey[] = ["price-asc", "price-desc"];
 export type Availability = "in" | "mto";
 
 export type CatalogQuery = {
-  categories: string[]; // lowercased productType tokens
+  categories: string[]; // CATEGORIES keys
   sizes: string[]; // size-filter keys (see `sizeKeyOf`), e.g. "buffalo-20", "toggle-45", "metal-19"
   colors: string[]; // facet tokens (see `facetColor`), e.g. "dark brown" for H2 and HB01
   stock: Availability[];
@@ -66,6 +66,18 @@ export function productColorLabels(
 ): Record<string, string> {
   return colorLabels([...p.colors, ...p.variants.map((v) => v.color)], names, p.slug);
 }
+
+// --- Category filter -------------------------------------------------------------
+
+/**
+ * Style categories, as the keys stored in the product list metafield
+ * `hbw.category` (owner's classification, 2026-10-09). This order is the
+ * sidebar order. The tooling importer mirrors it as CATEGORY_CHOICES and the
+ * metafield definition (scripts/define-metafields.mjs) carries the same values
+ * as its `choices`, so a value outside it cannot reach the store. Labels live
+ * in `dict.labels.category`.
+ */
+export const CATEGORIES = ["classic", "work", "tailored", "vintage", "military", "toggle"] as const;
 
 // --- Size filter -----------------------------------------------------------------
 
@@ -200,7 +212,7 @@ export type CatalogTile = {
   filterColor: string; // facet token, e.g. "dark brown"
   colorLabel: string; // what the buyer reads, e.g. "Dark Brown / Dull"
   image?: string;
-  category: string; // productType (display case; compared lowercased; may be empty)
+  categories: string[]; // `hbw.category` keys; a design can be several, or none yet
   createdAt: string; // ISO, for "newest"
   currency: string;
   sizesMm: number[]; // sizes available in this colour
@@ -230,7 +242,7 @@ export function toTiles(colorways: Colorway[]): CatalogTile[] {
     filterColor: cw.filterColor,
     colorLabel: cw.colorLabel,
     image: cw.image,
-    category: cw.product.category,
+    categories: cw.product.categories,
     createdAt: cw.product.createdAt,
     currency: cw.product.currency,
     sizesMm: [...new Set(cw.variants.map((v) => v.sizeMm))].sort((a, b) => a - b),
@@ -263,7 +275,9 @@ export function parseCatalogQuery(sp: SearchParams, allowPriceSort: boolean): Ca
   const page = Math.max(1, Math.floor(Number(pageRaw)) || 1);
 
   return {
-    categories: csv(sp.category).map((c) => c.toLowerCase()),
+    categories: csv(sp.category)
+      .map((c) => c.toLowerCase())
+      .filter((c) => (CATEGORIES as readonly string[]).includes(c)),
     // Unknown tokens (including the bare-mm keys of the old flat list) drop.
     sizes: csv(sp.size)
       .map((s) => s.toLowerCase())
@@ -282,7 +296,8 @@ type Dimension = "categories" | "sizes" | "colors" | "stock";
 function matchesDimension(t: CatalogTile, q: CatalogQuery, dim: Dimension): boolean {
   switch (dim) {
     case "categories":
-      return q.categories.length === 0 || q.categories.includes(t.category.toLowerCase());
+      // OR within the dimension, like every other: any of the tile's categories.
+      return q.categories.length === 0 || t.categories.some((c) => q.categories.includes(c));
     case "sizes":
       return q.sizes.length === 0 || t.sizeKeys.some((k) => q.sizes.includes(k));
     case "colors":
@@ -327,27 +342,28 @@ export function facetCounts(tiles: CatalogTile[], q: CatalogQuery) {
   const forColors = crossFiltered(tiles, q, "colors");
   const forStock = crossFiltered(tiles, q, "stock");
 
-  // An empty productType is not a category — real products deliberately have
-  // none yet — so it gets no (blank) option; with none at all the dimension
-  // has no options and the sidebar hides it.
-  const categories = new Map<string, number>();
-  for (const t of tiles) if (t.category.trim()) categories.set(t.category.toLowerCase(), 0);
+  // Options are the categories some tile carries (over ALL tiles, so one
+  // filtered away greys out rather than vanishing), in CATEGORIES order. An
+  // unclassified product adds none; with none at all the sidebar hides it.
+  const present = new Set(tiles.flatMap((t) => t.categories));
+  const categories = new Map<string, number>(
+    CATEGORIES.filter((c) => present.has(c)).map((c) => [c, 0]),
+  );
   for (const t of forCategories) {
-    const k = t.category.toLowerCase();
-    if (categories.has(k)) categories.set(k, (categories.get(k) ?? 0) + 1);
+    for (const c of t.categories) if (categories.has(c)) categories.set(c, (categories.get(c) ?? 0) + 1);
   }
 
   // Options are every size that exists in the catalogue (over ALL tiles, so
   // one picked elsewhere greys out rather than vanishing), grouped and sorted.
   const sizeCounts = new Map<string, number>();
   for (const t of forSizes) for (const k of t.sizeKeys) sizeCounts.set(k, (sizeCounts.get(k) ?? 0) + 1);
-  const present = [...new Set(tiles.flatMap((t) => t.sizeKeys))].flatMap((k) => {
+  const presentSizes = [...new Set(tiles.flatMap((t) => t.sizeKeys))].flatMap((k) => {
     const p = parseSizeKey(k);
     return p ? [{ value: k, ...p }] : [];
   });
   const sizes = SIZE_GROUPS.map((group) => ({
     group,
-    options: present
+    options: presentSizes
       .filter((p) => p.group === group)
       .sort((a, b) => a.mm - b.mm)
       .map(({ value, mm }) => ({ value, mm, count: sizeCounts.get(value) ?? 0 })),

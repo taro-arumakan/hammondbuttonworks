@@ -496,11 +496,13 @@ const en = {
 
   labels: {
     category: {
-      military: "Military",
+      // Keys are `hbw.category` values (CATEGORIES in lib/catalog.ts).
       classic: "Classic",
       work: "Work",
-      craft: "Craft",
-      design: "Design",
+      tailored: "Tailored",
+      vintage: "Vintage",
+      military: "Military",
+      toggle: "Toggle",
     } as Record<string, string>,
     color: {
       brown: "Brown",
