@@ -82,8 +82,9 @@ export default async function ProductPage({
   if (!base) notFound();
   const product = localizeProduct(base, locale);
 
-  const category = product.category?.trim();
-  const categoryLabel = category ? (dict.labels.category[category.toLowerCase()] ?? category) : "";
+  const categoryLabel = product.categories
+    .map((c) => dict.labels.category[c] ?? c)
+    .join(locale === "ja" ? "・" : ", ");
   const sizes = product.sizesMm.map((s) => `${s}mm`).join(", ");
   // Labels are display-only, keyed by the exact option value (an identity the
   // order panel and /api/price still compare) — see productColorLabels.
@@ -112,8 +113,8 @@ export default async function ProductPage({
 
           <h2 className="mt-8 text-lg">{dict.product.specs}</h2>
           <dl className="mt-2">
-            {/* productType is deliberately empty until the owner classifies
-                the range — no row beats a row with a blank value. */}
+            {/* An unclassified product (no hbw.category) gets no row rather
+                than a row with a blank value. */}
             {categoryLabel && <Spec label={dict.product.category} value={categoryLabel} />}
             <Spec label={dict.product.sizes} value={sizes} />
             <Spec label={dict.product.colors} value={colors} />

@@ -191,7 +191,6 @@ export default async function HomePage({
               key={cw.key}
               slug={cw.product.slug}
               name={cw.product.name}
-              category={cw.product.category}
               color={cw.color}
               colorLabel={cw.colorLabel}
               image={cw.image}
