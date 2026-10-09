@@ -65,10 +65,10 @@ export function ProductCard({
           <div className="h-full w-full bg-stone-100" />
         )}
       </div>
-      {/* niceness.jp text metrics: 17px product number (Arimo); 12px/1px sub;
+      {/* niceness.jp text metrics: 17px product number (Arimo; 15px on phones); 12px/1px sub;
           26px image→title, 10px title→sub; centered, generous bottom air. */}
       <div className="px-2 pt-[26px] pb-10 text-center">
-        <h3 className="font-code text-[17px] leading-tight tracking-[0.06em] text-foreground">
+        <h3 className="font-code text-[15px] leading-tight sm:text-[17px] tracking-[0.06em] text-foreground">
           {name}
         </h3>
         <p className="mt-[10px] text-[11px] uppercase tracking-[0.08em] text-stone-600">

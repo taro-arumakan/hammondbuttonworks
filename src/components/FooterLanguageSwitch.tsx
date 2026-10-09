@@ -19,7 +19,7 @@ export function FooterLanguageSwitch({ current }: { current: Locale }) {
     return parts.join("/") || `/${loc}`;
   }
   return (
-    <p className="mt-8 flex items-center gap-2 text-[13px] tracking-[0.04em]">
+    <p className="mt-8 flex items-center gap-2 text-[12px] sm:text-[13px] tracking-[0.04em]">
       {ORDER.map(({ loc, label }, i) => (
         <span key={loc} className="flex items-center gap-2">
           {i > 0 && <span aria-hidden="true">/</span>}

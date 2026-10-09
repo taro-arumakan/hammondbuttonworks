@@ -34,6 +34,41 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Mobile type scale (niceness.jp-style: phones read a step smaller than
+   desktop). Below the `sm` breakpoint — where the header switches to
+   MobileNav — every Tailwind text size steps down: body sizes by ~1px,
+   headings by more. Overriding the theme variables (rather than adding
+   per-component classes) keeps sm:/md: overrides working, since those
+   utilities only apply at 640px and up. Spacing is rem-based too, so the
+   root font size is left alone and only text shrinks. */
+@media (max-width: 639.98px) {
+  :root {
+    --text-xs: 0.6875rem; /* 12 → 11px */
+    --text-sm: 0.8125rem; /* 14 → 13px */
+    --text-base: 0.9375rem; /* 16 → 15px */
+    --text-lg: 1rem; /* 18 → 16px */
+    --text-xl: 1.0625rem; /* 20 → 17px */
+    --text-2xl: 1.25rem; /* 24 → 20px */
+    --text-3xl: 1.5rem; /* 30 → 24px */
+    --text-4xl: 1.75rem; /* 36 → 28px */
+  }
+}
+/* Copy with no size class inherits from body, so body steps down too. Form
+   fields stay at 16px: iOS Safari zooms the page into any field smaller than
+   that. Layered as base so a field's own text-* class still wins. */
+@layer base {
+  @media (max-width: 639.98px) {
+    body {
+      font-size: var(--text-base);
+    }
+    input,
+    select,
+    textarea {
+      font-size: 1rem;
+    }
+  }
+}
+
 /* Japanese pages: body text leads with Zen Kaku Gothic New, Latin included, so
    the occasional English word or size (BLACK（HT01）, 20mm) in Japanese copy is
    set in the same Gothic rather than Baskerville beside Gothic kana. Headings
