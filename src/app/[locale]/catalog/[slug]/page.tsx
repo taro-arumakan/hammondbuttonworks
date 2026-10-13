@@ -41,7 +41,12 @@ export async function generateMetadata({
   const base = await getProductBySlug(slug, PAGE_REVALIDATE, GALLERY_MEDIA);
   if (!base) return {};
   const product = localizeProduct(base, locale);
-  const description = locale === "ja" ? product.shortJa : undefined;
+  // The Japanese body is several paragraphs; the search-engine description is
+  // its first one, on one line.
+  const description =
+    locale === "ja" && product.shortJa
+      ? product.shortJa.split(/\n\s*\n/)[0].replace(/\s*\n\s*/g, "")
+      : undefined;
   return {
     title: product.name,
     // Only set description when we have one: `description: undefined` still
@@ -137,7 +142,15 @@ export default async function ProductPage({
           <h1 className="font-code text-4xl tracking-tight">{product.name}</h1>
 
           {locale === "ja" && product.shortJa ? (
-            <p className="mt-4 leading-relaxed text-stone-600">{product.shortJa}</p>
+            // Plain text from the owner: a blank line starts a paragraph, a
+            // single line break is kept as typed.
+            <div className="mt-4 leading-relaxed text-stone-600 [&_p+p]:mt-3">
+              {product.shortJa.split(/\n\s*\n/).map((para, i) => (
+                <p key={i} className="whitespace-pre-line">
+                  {para.trim()}
+                </p>
+              ))}
+            </div>
           ) : (
             <div
               className="mt-4 leading-relaxed text-stone-600 [&_p]:mt-3"
