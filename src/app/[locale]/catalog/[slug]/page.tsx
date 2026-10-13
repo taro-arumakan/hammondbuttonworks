@@ -128,6 +128,7 @@ export default async function ProductPage({
               value={fmt(dict.product.leadTimeValue, { days: product.leadTimeDays })}
             />
           </dl>
+          <p className="mt-2 text-xs text-stone-500">{dict.product.leadTimeNote}</p>
           <p className="mt-3 text-sm text-stone-600">
             {dict.product.otherSizesBefore}
             <Link href={`/${locale}/quote#inquiry`} className="underline underline-offset-4 hover:text-accent">
