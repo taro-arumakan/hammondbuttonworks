@@ -44,8 +44,8 @@ export async function generateMetadata({
   // The Japanese body is several paragraphs; the search-engine description is
   // its first one, on one line.
   const description =
-    locale === "ja" && product.shortJa
-      ? product.shortJa.split(/\n\s*\n/)[0].replace(/\s*\n\s*/g, "")
+    locale === "ja" && product.descriptionJa
+      ? product.descriptionJa.split(/\n\s*\n/)[0].replace(/\s*\n\s*/g, "")
       : undefined;
   return {
     title: product.name,
@@ -128,6 +128,7 @@ export default async function ProductPage({
               value={fmt(dict.product.leadTimeValue, { days: product.leadTimeDays })}
             />
           </dl>
+          <p className="mt-2 text-xs text-stone-500">{dict.product.leadTimeNote}</p>
           <p className="mt-3 text-sm text-stone-600">
             {dict.product.otherSizesBefore}
             <Link href={`/${locale}/quote#inquiry`} className="underline underline-offset-4 hover:text-accent">
@@ -141,11 +142,11 @@ export default async function ProductPage({
         <div>
           <h1 className="font-code text-4xl tracking-tight">{product.name}</h1>
 
-          {locale === "ja" && product.shortJa ? (
+          {locale === "ja" && product.descriptionJa ? (
             // Plain text from the owner: a blank line starts a paragraph, a
             // single line break is kept as typed.
             <div className="mt-4 leading-relaxed text-stone-600 [&_p+p]:mt-3">
-              {product.shortJa.split(/\n\s*\n/).map((para, i) => (
+              {product.descriptionJa.split(/\n\s*\n/).map((para, i) => (
                 <p key={i} className="whitespace-pre-line">
                   {para.trim()}
                 </p>

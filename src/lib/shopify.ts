@@ -14,7 +14,8 @@ import type { Locale } from "./i18n-config";
  *  - design = Product; `hbw.category` (list metafield) = its style categories
  *  - options: Color × Size ("15mm")
  *  - variant.price = base price per (color × size), in the shop currency (JPY)
- *  - metafields hbw.{name_ja, short_ja, lead_time_days}; variant hbw.{in_stock, material}
+ *  - metafields hbw.{name_ja, description_ja, lead_time_days}; variant hbw.{in_stock, material}
+ *    (`hbw.short_ja` is the old key of description_ja, read only as a fallback)
  *
  * ⚠️ Material used to be encoded INSIDE the colour option ("Brown (Rosewood)",
  * SKU round-no9-BrownRosewood-18mm). Superseded 2026-09-04 by the per-variant
@@ -171,7 +172,8 @@ export type ShopifyProduct = {
   slug: string; // Shopify handle
   name: string;
   nameJa?: string;
-  shortJa?: string;
+  /** Japanese body text (`hbw.description_ja`), plain text; blank lines separate paragraphs. */
+  descriptionJa?: string;
   /** `hbw.category` keys (see CATEGORIES in lib/catalog.ts), [] when unclassified. */
   categories: string[];
   createdAt: string; // ISO timestamp, for "newest" sorting
@@ -230,6 +232,7 @@ const productFields = (mediaFirst: number) => `
   featuredMedia { preview { image { url } } }
   media(first: ${mediaFirst}) { nodes { alt preview { image { url } } } }
   nameJa: metafield(namespace: "hbw", key: "name_ja") { value }
+  descriptionJa: metafield(namespace: "hbw", key: "description_ja") { value }
   shortJa: metafield(namespace: "hbw", key: "short_ja") { value }
   lead: metafield(namespace: "hbw", key: "lead_time_days") { value }
   construction: metafield(namespace: "hbw", key: "construction") { value }
@@ -268,6 +271,7 @@ type RawProduct = {
   featuredMedia: { preview: { image: { url: string } | null } | null } | null;
   media: { nodes: { alt: string | null; preview: { image: { url: string } | null } | null }[] };
   nameJa: { value: string } | null;
+  descriptionJa: { value: string } | null;
   shortJa: { value: string } | null;
   lead: { value: string } | null;
   construction: { value: string } | null;
@@ -320,7 +324,8 @@ function mapProduct(p: RawProduct, currency: string): ShopifyProduct {
     slug: p.handle,
     name: p.title,
     nameJa: p.nameJa?.value,
-    shortJa: p.shortJa?.value,
+    // short_ja is the pre-2026-10-13 key; drop the fallback once it is deleted.
+    descriptionJa: p.descriptionJa?.value || p.shortJa?.value,
     categories: parseList(p.categories?.value),
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,

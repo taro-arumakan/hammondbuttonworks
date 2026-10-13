@@ -65,13 +65,13 @@ export async function buildOrderLines(
       engraving: !!spec.engraving,
       shipNote: variant.inStock
         ? "在庫あり — 短納期で出荷"
-        : `受注生産 — 約${product.leadTimeDays}日（出荷目安 ${shipDate(product.leadTimeDays)}）`,
+        : `受注生産 — ${product.leadTimeDays}日〜（出荷目安 ${shipDate(product.leadTimeDays)}以降）`,
     });
   }
 
   const maxDays = mtoDays.length ? Math.max(...mtoDays) : 0;
   const shippingJa = maxDays
-    ? `${shipDate(maxDays)}（約${maxDays}日・受注生産品を含む）`
+    ? `${shipDate(maxDays)}以降（${maxDays}日〜・受注生産品を含む）`
     : "在庫あり — 短納期で出荷";
 
   return { lines, currency, maxDays, shippingJa };
