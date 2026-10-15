@@ -81,8 +81,8 @@ const DEFINITIONS = [
     namespace: "hbw",
     key: "construction",
     ownerType: "PRODUCT",
-    // One value: a button has one construction. The vocabulary is HOLE_TYPES
-    // in src/lib/schema.ts, mirrored by the tooling importer, which writes this
+    // One value: a button has one construction. The vocabulary is the keys of
+    // dict.labels.holeType, mirrored by the tooling importer, which writes this
     // from its product master. The catalog size filter reads it to list
     // toggles under Toggle (lib/catalog.ts, sizeGroupOf).
     type: "single_line_text_field",
