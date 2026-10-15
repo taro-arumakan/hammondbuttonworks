@@ -63,12 +63,10 @@ customer metafield (`src/lib/customer.ts`).
    leak was found and fixed once already — keep it fixed.)
 2. **Catalog & product pages are public for SEO** — only the *prices* are gated, not the
    pages. Don't move catalog behind auth.
-3. ~~**Product JSON is the source of truth and is Zod-validated at build.**~~ ⚠️ **NO LONGER
-   TRUE — the backend has been Shopify since 2026-07.** `ProductSchema` in `src/lib/schema.ts`
-   has **zero importers** and the six `content/products/*.json` files have **zero readers**
-   (verified 2026-10-04), so this invariant validates nothing and `next build` cannot fail on
-   it. The build-time guard that *does* exist is `scripts/guard-guest-html.mjs` (invariant #1).
-   The legacy model is dead code and should be deleted, not maintained.
+3. **Shopify is the only product source.** The pilot's `content/products/*.json` + Zod
+   `ProductSchema` (and the unused SVG `ButtonSwatch`) were deleted on 2026-10-15; there is
+   no product data in the repo. The build-time guard is `scripts/guard-guest-html.mjs`
+   (invariant #1).
 4. The **logo wordmark is an approximation** of a custom typeface (`src/components/Logo.tsx`,
    geometric font stack + dot-in-`o` accent). Swap in the real vector/font when the owner
    provides it.
@@ -76,8 +74,7 @@ customer metafield (`src/lib/customer.ts`).
 ## Architecture & key files
 | Concern | File |
 |---|---|
-| Zod schema (single source of truth; tiers, `tack` holeType) | `src/lib/schema.ts` |
-| Product loader + build-time validation | `src/lib/products.ts` |
+| Product loader (Shopify, ISR) | `src/lib/products.ts` |
 | Server-only tier/quantity price resolver | `src/lib/pricing.ts` |
 | Signed magic-link + session tokens (Web Crypto) | `src/lib/session.ts` |
 | `auth()` / session cookie helpers | `src/lib/auth.ts` |
@@ -91,12 +88,10 @@ customer metafield (`src/lib/customer.ts`).
 | **i18n**: per-product copy localizer (falls back to EN) | `src/lib/localize.ts` |
 | Language switcher (swaps the `/{locale}` segment) | `src/components/LanguageSwitcher.tsx` |
 | SVG logo (compact/full/stamp) | `src/components/Logo.tsx` |
-| Photoreal-ish SVG button render (struck metal, patina, emboss, warp) | `src/components/ButtonSwatch.tsx` |
 | Grid cell / price block / order panel / quote form | `src/components/{ProductCard,PriceBlock,TradeOrderPanel,QuoteForm}.tsx` |
 | Pages (under `/[locale]`) | `src/app/[locale]/{page,catalog,catalog/[slug],quote,login}` |
 | Root vs locale layout | `src/app/layout.tsx` (pass-through) · `src/app/[locale]/layout.tsx` (chrome) |
 | APIs (NOT locale-prefixed) | `src/app/api/{price,quote,auth/verify,auth/logout}/route.ts` + `app/[locale]/login/actions.ts` |
-| 6 products | `content/products/*.json` |
 | Product photos | `public/images/products/*.jpg` (cropped from `references/`) |
 | Real vector logo | `public/brand/hammond-lockup.svg` → `src/components/Logo.tsx` |
 | Brand source assets (gitignored) | `references/` — AI/SVG logo + supplier catalog PDFs |
@@ -116,14 +111,9 @@ the seed convention that baked the species into the colour option ("Brown (Rosew
 - Shopify cannot change a definition's type in place, so the script refuses a type change
   unless run with `--recreate` (which deletes stored values).
 
-**Data model:** product = a button *style*; variants = size (mm/ligne) × finish. Tiers:
-`tier_standard` / `tier_volume` / `tier_partner`, each with ascending quantity breaks.
-`material` includes `buffalo` (horn), `wood`, `metal`; sizes display in **mm**; `unit` is
-`piece` for the handcraft line. Optional `face` (`flat`/`stamped`/`open`/`domed`) drives
-the SVG fallback render; optional **`image`** (path under `/public`) shows a real photo
-instead of the SVG. Each product JSON may carry an optional `translations.ja` block (name,
-descriptions, careNotes, per-finish names, seo); `localizeProduct()` applies it, falls
-back to EN. **`references/` is gitignored** (repo is public; don't publish supplier PDFs).
+**Data model:** product = a button *style* in Shopify; variants = size × colour; sizes
+display in **mm**. Japanese copy comes from Shopify (`hbw.description_ja` etc.);
+`localizeProduct()` applies it and falls back to EN. **`references/` is gitignored** (repo is public; don't publish supplier PDFs).
 
 **i18n (bilingual EN/JA):** all pages live under `/[locale]` (`en` | `ja`); the root
 layout is a pass-through and `[locale]/layout.tsx` renders `<html lang>` + chrome.
@@ -170,7 +160,7 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 ## Status (2026-07-05) — Shopify headless
 - **Backend is now Shopify** (dev store `hammondbuttonworks.myshopify.com`, Admin GraphQL
   2025-07; env `SHOPIFY_STORE_DOMAIN/_ADMIN_TOKEN/_API_VERSION`, set on Vercel). Products
-  read server-side via `src/lib/shopify.ts`; `content/products/*.json` is legacy. Two
+  read server-side via `src/lib/shopify.ts` (the legacy JSON was deleted 2026-10-15). Two
   customer classes replace tiers: `standard` ×1.0 / `plus` ×1.1 (`src/lib/customer.ts`);
   **the ×1.1 is computed in the storefront, never a Shopify discount** — at checkout it's
   stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`). NB `priceOverride`
@@ -326,8 +316,6 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   committing the name to packaging/hardware. (Repo is now **public** under this name.)
 - Replace placeholder product specs/prices with the owner's real data.
 - Pixel-perfect logo once the original vector/font is supplied.
-- Photoreal hero images (prompts ready in `content/image-prompts.md`); save to
-  `public/images/products/<variantSku>.jpg` and wire via `next/image`.
 - Wire **Resend** (+ verified domain) so trade magic links email instead of hitting logs.
 - Set `NEXT_PUBLIC_SITE_URL` once the domain is finalized.
 - Optional `DEPLOY.md` (Route 53 + Vercel records) — offered, not yet written.
@@ -340,6 +328,5 @@ and/or `@domain` entries) · `ADMIN_HOST` (the host that serves `/admin`; elsewh
 `NEXT_PUBLIC_CART_PROVIDER` · `QUOTE_SHEET_WEBHOOK_URL`.
 
 ## Post-pilot roadmap
-Phase 2 live checkout + tax/shipping/order emails · Phase 3 headless CMS (reuse the Zod
-schema) + full catalog/filters · Phase 4 self-serve trade-account application + admin
+Phase 2 live checkout + tax/shipping/order emails · Phase 3 headless CMS + full catalog/filters · Phase 4 self-serve trade-account application + admin
 approval + customers DB · Phase 5 graduate cart to Medusa (B2B price lists) + B2C surface.

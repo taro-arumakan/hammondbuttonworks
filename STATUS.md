@@ -216,9 +216,8 @@ construction corrections to `hbw/overrides.csv` and HBWProductMaster column E.
   why the format was settled before the first import. ⚠️ That form's placeholder is still the
   retired `round-no9-BrownRosewood-18mm` and should become a real one, e.g.
   `WBT-3586-darkbrown-20`.
-- **The construction vocabulary already exists.** `dict.labels.holeType` in both dictionaries,
-  and `HoleType` in `src/lib/schema.ts`, already carry exactly
-  `2-hole / 4-hole / shank / toggle / tack`. Nothing reads them, but the labels are written, so
+- **The construction vocabulary already exists.** `dict.labels.holeType` in both dictionaries
+  already carries exactly `2-hole / 4-hole / shank / toggle / tack`. Nothing reads them, but the labels are written, so
   `hbw.construction` should mirror that set rather than invent one.
 
 ## Traps that have already cost a session
@@ -257,9 +256,6 @@ construction corrections to `hbw/overrides.csv` and HBWProductMaster column E.
 
 ## Known stale things, worth fixing when nearby
 
-- **CLAUDE.md calls `content/products/*.json` the source of truth.** It is dead code:
-  `ProductSchema` in `src/lib/schema.ts` has zero importers and those six JSON files have zero
-  readers. The backend has been Shopify since 2026-07.
 - **The staff runbook** (`Hammond Button Works — スタッフ運用ガイド`) tells staff to pick
   "standard or plus"; the metafield now offers `standard` / `plus5` / `plus10`. §6 also predates
   the material metafield and the current photography model. Tracked as Jira OT-24.

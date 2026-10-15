@@ -13,8 +13,7 @@ Showcases 4 products and validates three B2B fundamentals before a full build:
 Built with **Next.js 15 (App Router) + React 19 + Tailwind v4**. No database. Cart/checkout
 is offloaded to **Snipcart** (swappable behind `src/lib/cart.ts`).
 
-> Product visuals are consistent **SVG mockups** (`src/components/ButtonSwatch.tsx`).
-> See `content/image-prompts.md` to generate photoreal heroes later.
+> Product data, photos and prices live in **Shopify**; there is no product data in this repo.
 
 ---
 
@@ -47,8 +46,7 @@ No email/cart keys are needed for local dev:
 
 | Concern | Where | Notes |
 |---|---|---|
-| Product data | `content/products/*.json` | Validated by Zod at build — bad data fails `next build`. |
-| Schema (source of truth) | `src/lib/schema.ts` | Product → variant model; tiers + quantity breaks. |
+| Product data | Shopify via `src/lib/shopify.ts` / `products.ts` | Read server-side; pages are static/ISR. |
 | Price resolution | `src/lib/pricing.ts` (`server-only`) | Returns `null` for guests; never runs client-side. |
 | Gated price API | `src/app/api/price/route.ts` | 401 for guests (via `middleware.ts`); powers the live pricer. |
 | Auth | `src/lib/{session,auth,allowlist}.ts` | Signed (HMAC) magic-link + session cookie. No DB. |
@@ -74,14 +72,9 @@ All env vars are documented in `.env.local.example`. Summary:
 - `NEXT_PUBLIC_SITE_URL` — absolute URL for email links in production.
 
 ### Adding / editing products
-Add a JSON file under `content/products/` matching `src/lib/schema.ts`. `npm run build`
-validates it. Sizes are in **ligne** (`sizeLigne`) with `sizeMm` (1 ligne ≈ 0.635 mm);
-prices are per-tier arrays of `{ minQty, unitPrice }` sorted ascending.
-
-### Adding photoreal images
-Generate with the prompts in `content/image-prompts.md`, save to
-`public/images/products/<variantSku>.jpg`, then render them via `next/image` in
-`ButtonSwatch`/product page (and add the host to `next.config.ts` if remote).
+Products, photos, descriptions and prices are managed in Shopify (prices and lead times
+are imported from the owner's sheet by the private tooling repo). Nothing in this repo
+needs editing.
 
 ### Quote → Google Sheet (optional)
 Create a Google Apps Script web app that does `SpreadsheetApp...appendRow([...])` from the
@@ -116,12 +109,12 @@ Or simply copy the `button-pilot/` directory into a fresh repo — it's fully se
 
 ## Roadmap (post-pilot)
 - **Phase 2:** live checkout, tax/shipping, order emails.
-- **Phase 3:** move products to a headless CMS (reuse the Zod schema); full catalog + filters.
+- **Phase 3:** move products to a headless CMS ; full catalog + filters.
 - **Phase 4:** self-serve trade-account application + admin approve/reject + customers DB.
 - **Phase 5:** graduate cart to Medusa (B2B price lists); add a B2C surface with retail pricing.
 
 ## Scripts
 - `npm run dev` — local dev server
-- `npm run build` — production build (validates all product JSON)
+- `npm run build` — production build (+ guest-HTML price guard)
 - `npm run typecheck` — TypeScript check
 - `npm run lint` — Next lint
