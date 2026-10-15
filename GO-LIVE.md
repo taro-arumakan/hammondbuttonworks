@@ -60,7 +60,7 @@ are correct in production, neither of which is readable back from the dashboard.
 long-standing "pending one switch" note in CLAUDE.md was stale). But the path
 cart → `/api/checkout` → draft order has never been exercised on this project. Run one
 signed-in order through and confirm the draft appears in Shopify with the correct
-`priceOverride` for a `plus` customer.
+`priceOverride` for a `plus5` or `plus10` customer (base × 1.05 / × 1.10, whole yen).
 
 ### 5. Replace the dummy catalog
 

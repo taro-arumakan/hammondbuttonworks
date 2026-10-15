@@ -7,8 +7,10 @@ import { CLASS_MULTIPLIER, type CustomerClass } from "./customer";
  * error — prices NEVER cross into client code. Guests (no class) resolve to
  * `null`, which is how the catalog stays price-free for unauthenticated views.
  *
- * price = variant.basePrice × class multiplier (standard ×1.0, plus ×1.1).
- * No quantity breaks. JPY is rounded to whole yen.
+ * price = variant.basePrice × class multiplier (standard ×1.00, plus5 ×1.05,
+ * plus10 ×1.10). basePrice is the Shopify price, already 税込.
+ * No quantity breaks. JPY is rounded to the whole yen and NOTHING more: no
+ * rounding to ¥5 or ¥10, for any class (owner decision, 2026-10-15).
  */
 
 export type ResolvedPrice = {
@@ -33,7 +35,7 @@ export function resolvePrice(
  * colour, not the cheapest across all colours.
  *
  * Resolving here — and having callers pass the returned NUMBER to the card rather
- * than the customer's class — keeps the tier name (`standard`/`plus`) out of the
+ * than the customer's class — keeps the tier name (`standard`/`plus5`/`plus10`) out of the
  * client RSC payload. (Any prop handed to a component in the tree is serialized;
  * a bare price is fine to expose to the logged-in buyer, the class name is not.)
  */

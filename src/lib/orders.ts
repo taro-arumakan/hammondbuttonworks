@@ -8,7 +8,7 @@ import type { CustomerClass } from "./customer";
  * admin and marks it paid on bank transfer — there is no payment gateway.
  *
  * Class pricing: Shopify stores only the base (standard ×1.0) variant price.
- * The computed class price (base × multiplier, e.g. plus ×1.1) is stamped on
+ * The computed class price (base × multiplier, e.g. plus10 ×1.10, whole yen) is stamped on
  * each line via `priceOverride`, so the draft order / invoice totals are
  * correct for the buyer's class while the catalog keeps a single price.
  * NEVER create these lines without the override — a manual draft order in

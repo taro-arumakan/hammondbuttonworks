@@ -48,7 +48,7 @@ npm run typecheck
 Demo trade accounts (see `src/lib/allowlist.ts`), magic link prints to the **server console**
 when no Resend key is set:
 - `buyer@example-standard.com` (standard tier)
-- `buyer@example-plus.com` (plus tier)
+- `buyer@example-plus.com` (plus5 / plus10 tier)
 
 ⚠️ The three-tier model (standard/volume/partner) is retired. Customer classes are now
 **`standard` ×1.00 / `plus5` ×1.05 / `plus10` ×1.10**, from the `hbw.pricing_segment`
@@ -170,16 +170,19 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
 ## Status (2026-07-05) — Shopify headless
 - **Backend is now Shopify** (dev store `hammondbuttonworks.myshopify.com`, Admin GraphQL
   2025-07; env `SHOPIFY_STORE_DOMAIN/_ADMIN_TOKEN/_API_VERSION`, set on Vercel). Products
-  read server-side via `src/lib/shopify.ts`; `content/products/*.json` is legacy. Two
-  customer classes replace tiers: `standard` ×1.0 / `plus` ×1.1 (`src/lib/customer.ts`);
-  **the ×1.1 is computed in the storefront, never a Shopify discount** — at checkout it's
+  read server-side via `src/lib/shopify.ts`; `content/products/*.json` is legacy. Three
+  customer classes: `standard` ×1.00 / `plus5` ×1.05 / `plus10` ×1.10 (`src/lib/customer.ts`).
+  **Class price = Shopify price (税込) × multiplier, rounded to the whole yen and nothing
+  more** — no rounding to ¥5 or ¥10, for any class (owner decision 2026-10-15; the Shopify
+  price itself is the sheet's 税別 price × 1.10, half-up to the yen).
+  **The multiplier is computed in the storefront, never a Shopify discount** — at checkout it's
   stamped per line via draft-order `priceOverride` (`src/lib/orders.ts`). NB `priceOverride`
   is the only lever that can RAISE a unit price — `appliedDiscount` (the sole price control
   the Shopify admin UI exposes on draft orders) can only reduce. So a **manually created
-  draft order in the admin will NOT apply the +10%**, and staff cannot add it to a variant
-  line; the workaround is a custom line item at the ×1.1 price, or create it via the API.
+  draft order in the admin will NOT apply the +5% / +10%**, and staff cannot add it to a variant
+  line; use the staff tool (`/admin/orders/new`), which goes through the same path.
 - **Onboarding & login = Shopify-driven, passwordless, segment-gated.** A customer's class
-  lives in the **`hbw.pricing_segment`** customer metafield (choices `standard`/`plus`;
+  lives in the **`hbw.pricing_segment`** customer metafield (choices `standard`/`plus5`/`plus10`;
   defined via `scripts/define-metafields.mjs`, pinned dropdown in admin). `resolveTradeAccount`
   in `src/lib/shopify.ts` looks the customer up by email at login and reads that metafield:
   **segment set → access at that class; unset/no customer → no access** ("not yet onboarded").
@@ -201,7 +204,7 @@ container draws top/left edge, each cell draws right/bottom. Footer carries the 
   Tools: `/admin/orders/new` (create an order on a customer's behalf) and
   `/admin/signin-link` (mint a 24h login link to relay by LINE).
   **`src/lib/order-lines.ts` is the single order-line builder** used by BOTH storefront
-  checkout and the staff tool — that's what stops the ×1.1 drifting between them. Staff
+  checkout and the staff tool — that's what stops the class price drifting between them. Staff
   orders are tagged `staff` and carry `作成者: <email>` in the note for audit.
   **Live on `admin.hammondbutton.works` since 2026-07-11.** Two traps, both hit once:
   (a) the staff magic link must be built with **`adminBaseUrl()`**, not `baseUrl()` — the
