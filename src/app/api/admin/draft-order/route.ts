@@ -10,10 +10,11 @@ import { buildOrderLines, UnknownSkuError } from "@/lib/order-lines";
  *
  * The whole reason this exists: Shopify's draft-order admin UI only exposes
  * `appliedDiscount`, which can only REDUCE a price. There is no UI control that
- * raises one, so a manually-built draft order silently bills a `plus` customer
+ * raises one, so a manually-built draft order silently bills a `plus5`/`plus10` customer
  * at 100%. Here we go through the same `buildOrderLines` + `createDraftOrder`
  * path as storefront checkout, which stamps `priceOverride` at the customer's
- * class — so the ×1.1 can never be forgotten or drift from the storefront.
+ * class — so the ×1.05 / ×1.10 can never be forgotten or drift from the storefront.
+ * Same rounding as the storefront too: whole yen, nothing more (resolvePrice).
  *
  * Auth: staff session (middleware 401s /api/admin/* without one). The staff
  * email is recorded on the order note for audit.

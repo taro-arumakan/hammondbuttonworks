@@ -6,7 +6,7 @@ import type { CustomerClass } from "./customer";
 
 /**
  * The single place an order's lines are built. BOTH the storefront checkout and
- * the staff draft-order tool go through here, so the class multiplier (×1.1) and
+ * the staff draft-order tool go through here, so the class multiplier (×1.05 / ×1.10) and
  * the ship-note wording can never diverge between them — a divergence would mean
  * mispriced invoices, which is the exact failure `priceOverride` exists to avoid.
  *
