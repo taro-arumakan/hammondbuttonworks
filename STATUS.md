@@ -155,7 +155,7 @@ the English label buyers see now, a proposed Japanese label and where the mappin
 row has a 確認 dropdown (OK / 修正あり / わからない) plus a comment column. Yellow rows are the
 judgement calls: `H2` (photos look black), `TH01` (never in the owner's list, no photo — black is
 our placeholder), `DO` (the record says "dull ordinary"), `SP`, `AG`, and constructions
-`HBT-3578` (slots), `HTB-3581` / `HTB-3601` (toggle shape, sewn through two holes).
+`HBT-3578` (slots), `HBT-3581` / `HBT-3601` (toggle shape, sewn through two holes).
 ⚠️ The photos are `IMAGE()` formulas: they show `#REF!` until someone clicks **Allow access** on
 the external-data banner once in a desktop browser. The 15 unregistered codes' photos are 50
 unattached files in Shopify **Files**, all named `owner-review-*` — delete them once the review

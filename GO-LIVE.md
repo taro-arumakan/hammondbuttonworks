@@ -129,7 +129,7 @@ manufacturable sizes per metal code has been requested and is not yet in hand.
 it suspicious. The correction completes a family that was previously broken: three toggle
 designs, each made in both horn and wood —
 
-| design | horn (`HTB-`) | wood (`WBT-`) |
+| design | horn (`HBT-`) | wood (`WBT-`) |
 |---|---|---|
 | 3581 | H3 buffalo | brown acacia |
 | 3592 | HB01 buffalo | beige mango |
@@ -247,7 +247,7 @@ Known limits, deliberately not closed, all documented in the importer's own READ
   work. The trade was taken deliberately.
 - On the **first** run only, against an empty store, a one-column paste shift cannot be caught
   on the six priced grid codes that have no sibling colourway to compare against: `WBT-3580`,
-  `WBT-3585`, `WBT-3588`, `HTB-3581`, `HTB-3592`, `HTB-3601`. Read those six rows' ladders
+  `WBT-3585`, `WBT-3588`, `HBT-3581`, `HBT-3592`, `HBT-3601`. Read those six rows' ladders
   before the first commit. From the second run on, the live store covers them.
 - A mis-key combined with a second edit in the same batch — pricing the waiting codes, or
   tidying away the duplicate blank row the mis-key leaves behind — is **reported** by the
@@ -299,7 +299,7 @@ Import as DRAFT, flip at least one real product to ACTIVE, and **only then** del
 seeded products. Reversed, no product page prerenders and `guard-guest-html.mjs` fails every
 Vercel deploy.
 
-First real run should be `--commit --only MEA-0212` (1 colour, 1 size, 4 photographs). No
+First real run should be `--commit --only MBT-0212` (1 colour, 1 size, 4 photographs). No
 mutation payload in this importer has ever hit Shopify.
 
 Unrelated finding from the same work: this repo defaults `SHOPIFY_API_VERSION` to `2025-07`,
