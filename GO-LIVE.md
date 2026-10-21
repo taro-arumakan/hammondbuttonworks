@@ -299,7 +299,7 @@ Import as DRAFT, flip at least one real product to ACTIVE, and **only then** del
 seeded products. Reversed, no product page prerenders and `guard-guest-html.mjs` fails every
 Vercel deploy.
 
-First real run should be `--commit --only MEA-0212` (1 colour, 1 size, 4 photographs). No
+First real run should be `--commit --only MBT-0212` (1 colour, 1 size, 4 photographs). No
 mutation payload in this importer has ever hit Shopify.
 
 Unrelated finding from the same work: this repo defaults `SHOPIFY_API_VERSION` to `2025-07`,
